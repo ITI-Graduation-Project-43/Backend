@@ -10,8 +10,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDb2"),
-        b => b.MigrationsAssembly("MindMission"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDb"),
+        b => b.MigrationsAssembly("MindMission.API"));
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
