@@ -1,4 +1,4 @@
-namespace MindMission
+namespace WebApplication1
 {
     public class WeatherForecast
     {

@@ -1,8 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using MindMission.Infrastructure;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<MindMissionDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDb2"),
+        b => b.MigrationsAssembly("MindMission"));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

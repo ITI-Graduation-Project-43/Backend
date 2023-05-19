@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace MindMission.Controllers
+namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("[controller]")]
