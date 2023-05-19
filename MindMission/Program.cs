@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Infrastructure;
-using System;
+using MindMission.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDb"),
         b => b.MigrationsAssembly("MindMission.API"));
 });
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
