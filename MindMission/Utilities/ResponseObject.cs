@@ -2,7 +2,7 @@
 
 namespace MindMission.API.Utilities
 {
-    public class ResonposeObjectL<T> where T : class
+    public class ResponseObject<T> where T : class
     {
         public bool Success { get; set; }
         public string Message { get; set; }
