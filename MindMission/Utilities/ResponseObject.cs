@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace MindMission.API.Utilities
+﻿namespace MindMission.API.Utilities
 {
-    public class ResonposeObjectL<T> where T : class
+    public class ResponseObject<T> where T : class
     {
         public bool Success { get; set; }
         public string Message { get; set; }
@@ -11,7 +9,7 @@ namespace MindMission.API.Utilities
         public int ItemNumberPerPages { get; set; }
         public int TotalPages { get; set; }
 
-        public void ReturnedResponse (bool _Success, string _Message, List<T> _Items, int _PageNumber, int _ItemNumberPerPages, int _TotalPages)
+        public void ReturnedResponse(bool _Success, string _Message, List<T> _Items, int _PageNumber, int _ItemNumberPerPages, int _TotalPages)
         {
             Success = _Success;
             Message = _Message;

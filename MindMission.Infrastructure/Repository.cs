@@ -4,41 +4,41 @@ using MindMission.Domain;
 
 namespace MindMission.Infrastructure
 {
-    public class Repository<T> : IRepository<T> where T : class, IEntity, new()
+    public class Repository<TClass, TDataType> : IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, new()
     {
         private readonly MindMissionDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly DbSet<TClass> _dbSet;
 
         public Repository(MindMissionDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
+            _dbSet = _context.Set<TClass>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<TClass>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<TClass> GetByIdAsync(TDataType id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<TClass> AddAsync(TClass entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(TClass entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TDataType id)
         {
             _dbSet.Remove(await GetByIdAsync(id));
             await _context.SaveChangesAsync();
