@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MindMission.Application\MindMission.Application.csproj" />
     <ProjectReference Include="..\MindMission.Domain\MindMission.Domain.csproj" />
   </ItemGroup>
 
