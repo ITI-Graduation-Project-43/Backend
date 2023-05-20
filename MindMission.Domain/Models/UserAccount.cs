@@ -8,7 +8,7 @@ namespace MindMission.Domain.Models
 {
     [Index(nameof(UserId), nameof(AccountId), Name = "UX_UserAccounts_User_AccountType", IsUnique = true)]
     [Index(nameof(UserId), Name = "idx_useraccounts_userid")]
-    public partial class UserAccount
+    public partial class UserAccount : IEntity<int>
     {
         [Key]
         public int Id { get; set; }

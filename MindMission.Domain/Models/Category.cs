@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Category
+    public partial class Category : IEntity<int>
     {
         public Category()
         {

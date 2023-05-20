@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MindMission.Migrations
+namespace MindMission.API.Migrations
 {
     public partial class init : Migration
     {
@@ -234,7 +234,7 @@ namespace MindMission.Migrations
                 name: "Instructors",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Bio = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: false),
@@ -250,10 +250,10 @@ namespace MindMission.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Instructors", x => x.UserId);
+                    table.PrimaryKey("PK_Instructors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Instructors_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Instructors_AspNetUsers_Id",
+                        column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
@@ -263,7 +263,7 @@ namespace MindMission.Migrations
                 name: "Students",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Bio = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: false),
@@ -275,10 +275,10 @@ namespace MindMission.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Students", x => x.UserId);
+                    table.PrimaryKey("PK_Students", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Students_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Students_AspNetUsers_Id",
+                        column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
@@ -338,16 +338,16 @@ namespace MindMission.Migrations
                 name: "AdminPermissions",
                 columns: table => new
                 {
-                    AdminId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false),
                     GrantedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__AdminPer__9F658B3A6B1E0167", x => new { x.AdminId, x.PermissionId });
+                    table.PrimaryKey("PK__AdminPer__9F658B3A6B1E0167", x => new { x.Id, x.PermissionId });
                     table.ForeignKey(
                         name: "FK__AdminPerm__Admin__6EC0713C",
-                        column: x => x.AdminId,
+                        column: x => x.Id,
                         principalTable: "Admins",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -402,7 +402,7 @@ namespace MindMission.Migrations
                         name: "FK__Courses__Instruc__01142BA1",
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
-                        principalColumn: "UserId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -454,12 +454,12 @@ namespace MindMission.Migrations
                         name: "FK__CourseFee__Instr__4F47C5E3",
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
-                        principalColumn: "UserId");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK__CourseFee__Stude__4E53A1AA",
                         column: x => x.StudentId,
                         principalTable: "Students",
-                        principalColumn: "UserId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -484,7 +484,7 @@ namespace MindMission.Migrations
                         name: "FK__Enrollmen__Stude__55F4C372",
                         column: x => x.StudentId,
                         principalTable: "Students",
-                        principalColumn: "UserId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -509,7 +509,7 @@ namespace MindMission.Migrations
                         name: "FK__Wishlists__Stude__5AB9788F",
                         column: x => x.StudentId,
                         principalTable: "Students",
-                        principalColumn: "UserId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -687,7 +687,7 @@ namespace MindMission.Migrations
             migrationBuilder.CreateIndex(
                 name: "idx_adminpermissions_adminid",
                 table: "AdminPermissions",
-                column: "AdminId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AdminPermissions_PermissionId",
@@ -817,17 +817,6 @@ namespace MindMission.Migrations
                 name: "idx_quizzes_lessonid",
                 table: "Quizzes",
                 column: "LessonId");
-
-            migrationBuilder.CreateIndex(
-                name: "idx_students_userid",
-                table: "Students",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ__Students__1788CC4D11934C53",
-                table: "Students",
-                column: "UserId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "idx_useraccounts_userid",

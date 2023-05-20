@@ -57,14 +57,14 @@ namespace MindMission.Infrastructure
 
             modelBuilder.Entity<AdminPermission>(entity =>
             {
-                entity.HasKey(e => new { e.AdminId, e.PermissionId })
+                entity.HasKey(e => new { e.Id, e.PermissionId })
                     .HasName("PK__AdminPer__9F658B3A6B1E0167");
 
                 entity.Property(e => e.GrantedAt).HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Admin)
                     .WithMany(p => p.AdminPermissions)
-                    .HasForeignKey(d => d.AdminId)
+                    .HasForeignKey(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__AdminPerm__Admin__6EC0713C");
 

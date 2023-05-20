@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MindMission.Domain.Models
 {
     [Index(nameof(CourseId), Name = "idx_wishlists_courseid")]
-    public partial class Wishlist
+    public partial class Wishlist : IEntity<int>
     {
         [Key]
         public int Id { get; set; }

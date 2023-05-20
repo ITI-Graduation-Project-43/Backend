@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Admin
+    public partial class Admin : IEntity<int>
     {
         public Admin()
         {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    public partial class User : IdentityUser
+    public partial class User : IdentityUser, IEntity<string>
     {
         public bool? IsActive { get; set; }
         public bool IsBlocked { get; set; }

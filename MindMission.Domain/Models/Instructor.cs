@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Instructor
+    public partial class Instructor : IEntity<string>
     {
         public Instructor()
         {
@@ -15,7 +15,7 @@ namespace MindMission.Domain.Models
         }
         [Required]
         [Key]
-        public string UserId { get; set; }
+        public string Id { get; set; }
         [Required]
         [StringLength(50)]
         [Unicode(false)]
@@ -44,7 +44,7 @@ namespace MindMission.Domain.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }
 
         [InverseProperty(nameof(CourseFeedback.Instructor))]

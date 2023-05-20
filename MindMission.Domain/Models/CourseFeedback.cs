@@ -8,7 +8,7 @@ namespace MindMission.Domain.Models
 {
     [Table("CourseFeedback")]
     [Index(nameof(CourseId), Name = "idx_coursefeedback_courseid")]
-    public partial class CourseFeedback
+    public partial class CourseFeedback : IEntity<int>
     {
         [Key]
         public int Id { get; set; }

@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MindMission.Domain.Models
 {
-    [Index(nameof(UserId), Name = "UQ__Students__1788CC4D11934C53", IsUnique = true)]
-    [Index(nameof(UserId), Name = "idx_students_userid")]
-    public partial class Student
+    //[Index(nameof(Id), Name = "UQ__Students__1788CC4D11934C53", IsUnique = true)]
+    //[Index(nameof(Id), Name = "idx_students_userid")]
+    public partial class Student : IEntity<string>
     {
         public Student()
         {
@@ -18,7 +18,7 @@ namespace MindMission.Domain.Models
         }
 
         [Key]
-        public string UserId { get; set; }
+        public string Id { get; set; }
         [Required]
         [StringLength(50)]
         [Unicode(false)]
@@ -38,7 +38,7 @@ namespace MindMission.Domain.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }
 
         [InverseProperty(nameof(CourseFeedback.Student))]

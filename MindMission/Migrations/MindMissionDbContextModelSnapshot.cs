@@ -8,7 +8,7 @@ using MindMission.Infrastructure;
 
 #nullable disable
 
-namespace MindMission.Migrations
+namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
     partial class MindMissionDbContextModelSnapshot : ModelSnapshot
@@ -230,7 +230,7 @@ namespace MindMission.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.AdminPermission", b =>
                 {
-                    b.Property<int>("AdminId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<int>("PermissionId")
@@ -241,12 +241,12 @@ namespace MindMission.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.HasKey("AdminId", "PermissionId")
+                    b.HasKey("Id", "PermissionId")
                         .HasName("PK__AdminPer__9F658B3A6B1E0167");
 
                     b.HasIndex("PermissionId");
 
-                    b.HasIndex(new[] { "AdminId" }, "idx_adminpermissions_adminid");
+                    b.HasIndex(new[] { "Id" }, "idx_adminpermissions_adminid");
 
                     b.ToTable("AdminPermissions");
                 });
@@ -647,7 +647,7 @@ namespace MindMission.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Instructor", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<double?>("AvgRating")
@@ -706,7 +706,7 @@ namespace MindMission.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Instructors");
                 });
@@ -873,7 +873,7 @@ namespace MindMission.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Bio")
@@ -914,12 +914,7 @@ namespace MindMission.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
-
-                    b.HasIndex(new[] { "UserId" }, "UQ__Students__1788CC4D11934C53")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "UserId" }, "idx_students_userid");
+                    b.HasKey("Id");
 
                     b.ToTable("Students");
                 });
@@ -1198,7 +1193,7 @@ namespace MindMission.Migrations
                 {
                     b.HasOne("MindMission.Domain.Models.Admin", "Admin")
                         .WithMany("AdminPermissions")
-                        .HasForeignKey("AdminId")
+                        .HasForeignKey("Id")
                         .IsRequired()
                         .HasConstraintName("FK__AdminPerm__Admin__6EC0713C");
 
@@ -1355,7 +1350,7 @@ namespace MindMission.Migrations
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1399,7 +1394,7 @@ namespace MindMission.Migrations
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
