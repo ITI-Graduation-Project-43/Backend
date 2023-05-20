@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain;
-using MindMission.Domain.Models;
 
 namespace MindMission.Infrastructure
 {
