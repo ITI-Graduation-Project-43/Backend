@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Infrastructure;
 using MindMission.Infrastructure.Repositories;
+using Stripe;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,15 @@ builder.Services.AddCors(option =>
             builder.AllowAnyOrigin();
         });
 });
+
+
+
+// Stripe Service Registeration
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<ChargeService, ChargeService>();
+builder.Services.AddScoped<TokenService, TokenService>();
+builder.Services.AddScoped<CustomerService, CustomerService>();
+StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
 var app = builder.Build();
 
