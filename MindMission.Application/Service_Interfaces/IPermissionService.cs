@@ -1,7 +1,7 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 
-namespace MindMission.Application.Services
+namespace MindMission.Application.Service_Interfaces
 {
     public interface IPermissionService : IRepository<Permission, int>
     {
