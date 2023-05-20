@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Enums;
 
 namespace MindMission.Domain.Models
 {
@@ -21,9 +22,8 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string Name { get; set; }
         [Required]
-        [StringLength(20)]
-        [Unicode(false)]
-        public string Type { get; set; }
+        public CategoryType Type { get; set; }
+
         public int? ParentId { get; set; }
         public bool Approved { get; set; }
         public DateTime CreatedAt { get; set; }
