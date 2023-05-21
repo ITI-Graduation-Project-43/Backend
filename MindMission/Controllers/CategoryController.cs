@@ -24,11 +24,10 @@ namespace MindMission.API.Controllers
         #region Get
         // GET: api/Category
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryService.GetAllAsync();
-            var categoryTasks = categories.Select(category => MapCategoryToDTO(category));
-            var categoryDTOs = await Task.WhenAll(categoryTasks);
+            var categoryDTOs = await Task.WhenAll(categories.Select(category => MapCategoryToDTO(category)));
 
             var response = new ResponseObject<CategoryDTO>
             {
@@ -46,7 +45,7 @@ namespace MindMission.API.Controllers
 
         // GET: api/Category/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetCategoryById(int id)
         {
             var category = await _categoryService.GetByIdAsync(id);
 
@@ -74,27 +73,41 @@ namespace MindMission.API.Controllers
         // GET: api/Category/Type/{type}
 
         [HttpGet("Type/{type}")]
-        public async Task<IActionResult> GetByType(CategoryType type)
+        public async Task<IActionResult> GetCategoriesByType(CategoryType type)
         {
             var categories = await _categoryService.GetByTypeAsync(type);
 
-            ResponseObject<Category> categoriesByType = new();
-            categoriesByType.ReturnedResponse(true, $"All Categories of Type: {type}", categories, 3, 10, categories.Count());
+            var response = new ResponseObject<Category>
+            {
+                Success = true,
+                Message = $"All Categories of Type: {type}",
+                Items = categories.ToList(),
+                PageNumber = 1,
+                ItemsPerPage = 10,
+                TotalPages = categories.Count()
+            };
 
-            return Ok(categoriesByType);
+            return Ok(response);
         }
 
         // GET: api/Category/Parent/{parentId}
 
         [HttpGet("Parent/{parentId}")]
-        public async Task<IActionResult> GetByParentId(int parentId)
+        public async Task<IActionResult> GetCategoriesByParentId(int parentId)
         {
             var categories = await _categoryService.GetByParentIdAsync(parentId);
 
-            ResponseObject<Category> categoriesByParentId = new();
-            categoriesByParentId.ReturnedResponse(true, $"All Categories with ParentId: {parentId}", categories, 3, 10, categories.Count());
+            var response = new ResponseObject<Category>
+            {
+                Success = true,
+                Message = $"All Categories with ParentId: {parentId}",
+                Items = categories.ToList(),
+                PageNumber = 1,
+                ItemsPerPage = 10,
+                TotalPages = categories.Count()
+            };
 
-            return Ok(categoriesByParentId);
+            return Ok(response);
         }
         #endregion
 
@@ -103,43 +116,37 @@ namespace MindMission.API.Controllers
 
         // POST: api/Category
         [HttpPost]
-        public async Task<ActionResult<CategoryDTO>> AddCategoryGeneral([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDTO>> AddCategory([FromBody] CategoryDTO categoryDTO)
         {
-            if (categoryDTO.Type == CategoryType.Category)
-            {
-                return await AddCategoryAsync(categoryDTO);
-            }
-            else if (categoryDTO.Type == CategoryType.SubCategory)
-            {
-                // Validate ParentCategoryId
-                var parentCategory = await _categoryService.GetByIdAsync(categoryDTO.ParentCategoryId.Value);
-                if (parentCategory == null || parentCategory.Type != CategoryType.Category)
-                {
-                    return BadRequest("Invalid parent category.");
-                }
-
-                return await AddCategoryAsync(categoryDTO);
-            }
-            else if (categoryDTO.Type == CategoryType.Topic)
-            {
-                // Validate ParentSubCategoryId
-                var parentSubCategory = await _categoryService.GetByIdAsync(categoryDTO.ParentSubCategoryId.Value);
-                if (parentSubCategory == null || parentSubCategory.Type != CategoryType.SubCategory)
-                {
-                    return BadRequest("Invalid parent subcategory.");
-                }
-
-                return await AddCategoryAsync(categoryDTO);
-            }
-            else
+            if (!IsValidCategoryType(categoryDTO.Type))
             {
                 return BadRequest("Invalid category type.");
             }
+
+            if (categoryDTO.Type == CategoryType.SubCategory)
+            {
+                if (!await IsValidParentCategoryIdAsync(categoryDTO.ParentCategoryId))
+                {
+                    return BadRequest("Invalid parent category.");
+                }
+            }
+            else if (categoryDTO.Type == CategoryType.Topic)
+            {
+                if (!await IsValidParentSubCategoryIdAsync(categoryDTO.ParentSubCategoryId))
+                {
+                    return BadRequest("Invalid parent subcategory.");
+                }
+            }
+
+            var createdCategoryDTO = await AddCategoryAsync(categoryDTO);
+
+            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategoryDTO.Id }, createdCategoryDTO);
         }
+
 
         // POST: api/Category
         [HttpPost("Category")]
-        public async Task<ActionResult<CategoryDTO>> AddCategory([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDTO>> AddCategoryType([FromBody] CategoryDTO categoryDTO)
         {
             if (categoryDTO.Type != CategoryType.Category)
             {
@@ -185,32 +192,6 @@ namespace MindMission.API.Controllers
             }
 
             return await AddCategoryAsync(categoryDTO);
-        }
-
-
-
-        private async Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDTO)
-        {
-            var category = new Category
-            {
-                Name = categoryDTO.Name,
-                Type = categoryDTO.Type,
-                Approved = categoryDTO.Approved,
-                CreatedAt = categoryDTO.CreatedAt,
-                UpdatedAt = categoryDTO.UpdatedAt,
-                ParentId = categoryDTO.Type switch
-                {
-                    CategoryType.SubCategory => categoryDTO.ParentCategoryId,
-                    CategoryType.Topic => categoryDTO.ParentSubCategoryId,
-                    _ => null
-                }
-            };
-
-            var createdCategory = await _categoryService.AddAsync(category);
-
-            var createdCategoryDTO = await MapCategoryToDTO(createdCategory);
-
-            return createdCategoryDTO;
         }
 
         #endregion
@@ -325,8 +306,26 @@ namespace MindMission.API.Controllers
 
         #endregion
 
+        #region Helper Methods
 
-        #region Mapper
+        private async Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDTO)
+        {
+            var category = new Category
+            {
+                Name = categoryDTO.Name,
+                Type = categoryDTO.Type,
+                Approved = categoryDTO.Approved,
+                CreatedAt = categoryDTO.CreatedAt,
+                UpdatedAt = categoryDTO.UpdatedAt,
+                ParentId = GetParentId(categoryDTO)
+            };
+
+            var createdCategory = await _categoryService.AddAsync(category);
+            var createdCategoryDTO = await MapCategoryToDTO(createdCategory);
+
+            return createdCategoryDTO;
+        }
+
         private async Task<CategoryDTO> MapCategoryToDTO(Category category)
         {
             var categoryDTO = new CategoryDTO
@@ -365,10 +364,49 @@ namespace MindMission.API.Controllers
                 }
             }
 
-
             return categoryDTO;
         }
 
+        private static int? GetParentId(CategoryDTO categoryDTO)
+        {
+            if (categoryDTO.Type == CategoryType.SubCategory)
+            {
+                return categoryDTO.ParentCategoryId;
+            }
+            else if (categoryDTO.Type == CategoryType.Topic)
+            {
+                return categoryDTO.ParentSubCategoryId;
+            }
+
+            return null;
+        }
+
+        private static bool IsValidCategoryType(CategoryType type)
+        {
+            return type == CategoryType.Category || type == CategoryType.SubCategory || type == CategoryType.Topic;
+        }
+
+        private async Task<bool> IsValidParentCategoryIdAsync(int? parentId)
+        {
+            if (parentId.HasValue)
+            {
+                var parentCategory = await _categoryService.GetByIdAsync(parentId.Value);
+                return parentCategory != null && parentCategory.Type == CategoryType.Category;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> IsValidParentSubCategoryIdAsync(int? parentSubCategoryId)
+        {
+            if (parentSubCategoryId.HasValue)
+            {
+                var parentSubCategory = await _categoryService.GetByIdAsync(parentSubCategoryId.Value);
+                return parentSubCategory != null && parentSubCategory.Type == CategoryType.SubCategory;
+            }
+
+            return false;
+        }
 
         #endregion
 
