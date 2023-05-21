@@ -24,4 +24,8 @@
     <ProjectReference Include="..\MindMission.Infrastructure\MindMission.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
 </Project>

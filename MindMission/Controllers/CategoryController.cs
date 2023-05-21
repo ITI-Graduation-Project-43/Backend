@@ -212,16 +212,16 @@ namespace MindMission.API.Controllers
 
         #region Edit Patch/Put 
 
-        // PUT: api/Category/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto categoryDTO)
+        // PUT: api/Category/{categoryId}
+        [HttpPut("{categoryId}")]
+        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryDto categoryDTO)
         {
-            if (id != categoryDTO.Id)
+            if (categoryId != categoryDTO.Id)
             {
                 return BadRequest();
             }
 
-            var category = await _categoryService.GetByIdAsync(id);
+            var category = await _categoryService.GetByIdAsync(categoryId);
 
             if (category == null)
             {
@@ -252,11 +252,15 @@ namespace MindMission.API.Controllers
             return NoContent();
         }
 
-        // PATCH: api/Category/{id}
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchCategory(int id, [FromBody] JsonPatchDocument<CategoryDto> patchDocument)
+        // PATCH: api/Category/{categoryId}
+        [HttpPatch("{categoryId}")]
+        public async Task<IActionResult> PatchCategory(int categoryId, [FromBody] JsonPatchDocument<CategoryDto> patchDocument)
         {
-            var category = await _categoryService.GetByIdAsync(id);
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+            var category = await _categoryService.GetByIdAsync(categoryId);
 
             if (category == null)
             {
