@@ -108,6 +108,10 @@ namespace MindMission.Infrastructure
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
                     .HasConstraintName("FK__Categorie__Paren__7B5B524B");
+
+                entity.Property(e => e.ParentId).IsRequired(false);
+                entity.HasIndex(e => e.Name).IsUnique();
+
             });
 
             modelBuilder.Entity<Chapter>(entity =>

@@ -1,5 +1,6 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Services
@@ -34,6 +35,16 @@ namespace MindMission.Application.Services
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
+        }
+
+        public Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type)
+        {
+            return _context.GetByTypeAsync(type);
+        }
+
+        public Task<IEnumerable<Category>> GetByParentIdAsync(int parentId)
+        {
+            return _context.GetByParentIdAsync(parentId);
         }
     }
 }

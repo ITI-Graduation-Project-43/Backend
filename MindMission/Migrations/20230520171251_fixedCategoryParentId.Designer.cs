@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230520171251_fixedCategoryParentId")]
+    partial class fixedCategoryParentId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,9 +353,6 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.HasIndex("ParentId");
 

@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
         {
             var permission = await DiscussionService.GetAllAsync();
 
-            ResponseObject<Discussion> AllDiscussion = new ResponseObject<Discussion>();
+            ResponseObject<Discussion> AllDiscussion = new();
             AllDiscussion.ReturnedResponse(true, "All Discussions", permission, 3, 10, permission.Count());
 
             return Ok(AllDiscussion);
