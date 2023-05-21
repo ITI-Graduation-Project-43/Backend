@@ -1,4 +1,4 @@
-﻿using MindMission.Domain;
+﻿using MindMission.Domain.Common;
 
 namespace MindMission.Application.Repository_Interfaces
 {

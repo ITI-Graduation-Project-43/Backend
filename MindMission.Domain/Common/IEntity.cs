@@ -1,4 +1,4 @@
-﻿namespace MindMission.Domain
+﻿namespace MindMission.Domain.Common
 {
     public interface IEntity<T>
     {

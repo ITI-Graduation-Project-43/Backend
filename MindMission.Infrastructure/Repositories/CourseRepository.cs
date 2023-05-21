@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure.Exceptions;
+using MindMission.Infrastructure.Context;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -18,16 +18,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<Course> GetByNameAsync(string name)
         {
-
-            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Title == name);
-
-            if (course == null)
-            {
-                throw new EntityNotFoundException($"No course with the title {name} found.");
-            }
-
-            return course;
-
+            return await _context.Courses.FirstOrDefaultAsync(c => c.Title == name);
         }
 
     }

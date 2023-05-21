@@ -1,77 +1,120 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using MindMission.API.Utilities;
+using MindMission.API.Controllers.Base;
 using MindMission.Application.DTO;
+using MindMission.Application.DTOs;
+using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure.Exceptions;
 
 namespace MindMission.API.Controllers
 {
-    // TODO: Refactor code and add Try catch block, comments
-    // TODO: Add data so i can test each action
+
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class CourseController : BaseController<Course, CourseDto>
     {
         private readonly ICourseService _courseService;
-        private readonly IInstructorService _instructorService;
-
-        public CourseController(ICourseService courseService, IInstructorService instructorService)
+        private readonly CourseMappingService _courseMappingService;
+        public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
         {
-            _courseService = courseService;
-            _instructorService = instructorService;
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _courseMappingService = courseMappingService ?? throw new ArgumentNullException(nameof(courseMappingService));
         }
-
 
 
         #region Get
         // GET: api/Course
         [HttpGet]
-        public async Task<IActionResult> GetAllCourses()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses([FromQuery] PaginationDto pagination)
         {
             var courses = await _courseService.GetAllAsync();
-            if (courses == null) return NotFound("No courses found.");
+            if (courses == null) return NotFoundResponse("Courses");
 
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
 
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = "All Courses",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
+            return Ok(response);
+        }
 
+
+        // GET: api/Course/category/{categoryId}
+
+        [HttpGet("category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetAllByCategoryAsync(categoryId);
+            if (courses == null) return NotFoundResponse("Courses");
+
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
+            return Ok(response);
+        }
+
+        // GET: api/Course/{courseId}/related
+
+        [HttpGet("{courseId}/related")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetRelatedCourses(int courseId, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetRelatedCoursesAsync(courseId);
+            if (courses == null) return NotFoundResponse("Courses");
+
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
+            return Ok(response);
+        }
+
+        // GET: api/Course/instructor/{instructorId}
+
+        [HttpGet("instructor/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetAllByInstructorAsync(instructorId);
+            if (courses == null) return NotFoundResponse("Courses");
+
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
+            return Ok(response);
+        }
+
+        // GET: api/Course/top/{topNumber}
+
+        [HttpGet("top/{topNumber}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetTopRatedCourses(int topNumber, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetTopRatedCoursesAsync(topNumber);
+            if (courses == null) return NotFoundResponse("Courses");
+
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
+
+            return Ok(response);
+        }
+
+        // GET: api/Course/recent/{recentNumber}
+
+        [HttpGet("recent/{recentNumber}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetRecentCourses(int recentNumber, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetRecentCoursesAsync(recentNumber);
+            if (courses == null) return NotFoundResponse("Courses");
+
+            var courseDTOs = await MapEntitiesToDTOs(courses);
+            var response = CreateResponse(courseDTOs, pagination, "Courses");
             return Ok(response);
         }
 
         // GET: api/Course/{courseId}
         [HttpGet("{courseId}")]
-        public async Task<IActionResult> GetCourseById(int courseId)
+        public async Task<ActionResult<CourseDto>> GetCourseById(int courseId)
         {
             var course = await _courseService.GetByIdAsync(courseId);
 
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            var courseDto = await MapCourseToDTO(course);
+            if (course == null) return NotFoundResponse("Course");
 
 
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = "Course found",
-                Items = new List<CourseDto> { courseDto },
-                PageNumber = 1,
-                ItemsPerPage = 1,
-                TotalPages = 1
-            };
+            var courseDto = await MapEntityToDTO(course);
+            var response = CreateResponse(courseDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "Course");
 
             return Ok(response);
         }
@@ -80,149 +123,18 @@ namespace MindMission.API.Controllers
         [HttpGet("name/{name}")]
         public async Task<ActionResult<CourseDto>> GetCourseByName(string name)
         {
-            try
-            {
-                var course = await _courseService.GetByNameAsync(name);
 
-                if (course == null)
-                {
-                    return NotFound();
-                }
+            var course = await _courseService.GetByNameAsync(name);
 
-                var courseDto = await MapCourseToDTO(course);
+            if (course == null) return NotFoundResponse("Course");
 
-                var response = new ResponseObject<CourseDto>
-                {
-                    Success = true,
-                    Message = "Course found",
-                    Items = new List<CourseDto> { courseDto },
-                    PageNumber = 1,
-                    ItemsPerPage = 1,
-                    TotalPages = 1
-                };
+            var courseDto = await MapEntityToDTO(course);
 
-                return Ok(response);
-            }
-            catch (EntityNotFoundException)
-            {
-                return NotFound();
-            }
-        }
-
-        // GET: api/Course/category/{categoryId}
-
-        [HttpGet("category/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId)
-        {
-            var courses = await _courseService.GetAllByCategoryAsync(categoryId);
-            if (courses == null) return NotFound("No courses found.");
-
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
-
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = $"All Courses for category {categoryId}",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
-
+            var response = CreateResponse(courseDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "Course");
             return Ok(response);
+
         }
 
-        // GET: api/Course/{courseId}/related
-
-        [HttpGet("{courseId}/related")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetRelatedCourses(int courseId)
-        {
-            var courses = await _courseService.GetRelatedCoursesAsync(courseId);
-            if (courses == null) return NotFound("No courses found.");
-
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
-
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = $"All Courses related to {courseId}",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
-
-            return Ok(response);
-        }
-
-        // GET: api/Course/instructor/{instructorId}
-
-        [HttpGet("instructor/{instructorId}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId)
-        {
-            var courses = await _courseService.GetAllByInstructorAsync(instructorId);
-            if (courses == null) return NotFound("No courses found.");
-
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
-
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = $"All Courses for {instructorId}",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
-
-            return Ok(response);
-        }
-
-        // GET: api/Course/top/{topNumber}
-
-        [HttpGet("top/{topNumber}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetTopRatedCourses(int topNumber)
-        {
-            var courses = await _courseService.GetTopRatedCoursesAsync(topNumber);
-            if (courses == null) return NotFound("No courses found.");
-
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
-
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = $"Top {topNumber} Courses",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
-
-            return Ok(response);
-        }
-
-        // GET: api/Course/recent/{recentNumber}
-
-        [HttpGet("recent/{recentNumber}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetRecentCourses(int recentNumber)
-        {
-            var courses = await _courseService.GetRecentCoursesAsync(recentNumber);
-            if (courses == null) return NotFound("No courses found.");
-
-            var courseDTOs = await Task.WhenAll(courses.Select(course => MapCourseToDTO(course)));
-
-            var response = new ResponseObject<CourseDto>
-            {
-                Success = true,
-                Message = $"Recent {recentNumber} Courses",
-                Items = courseDTOs.ToList(),
-                PageNumber = 1,
-                ItemsPerPage = 10,
-                TotalPages = courseDTOs.Length
-            };
-
-            return Ok(response);
-        }
         #endregion
 
         #region Add 
@@ -232,10 +144,10 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<CourseDto>> AddCourse([FromBody] CourseDto courseDTO)
         {
 
-            var course = MapDTOToCourse(courseDTO);
+            var course = _courseMappingService.MapDtoToEntity(courseDTO);
             await _courseService.AddAsync(course);
 
-            var result = await MapCourseToDTO(course);
+            var result = await _courseMappingService.MapEntityToDto(course);
 
             return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
         }
@@ -276,7 +188,7 @@ namespace MindMission.API.Controllers
                 return NotFound();
             }
 
-            course = MapDTOToCourse(courseDto);
+            course = _courseMappingService.MapDtoToEntity(courseDto);
 
 
             await _courseService.UpdateAsync(course);
@@ -299,7 +211,7 @@ namespace MindMission.API.Controllers
                 return NotFound();
             }
 
-            var courseDto = await MapCourseToDTO(course);
+            var courseDto = await _courseMappingService.MapEntityToDto(course);
 
             // apply patch
             patchDocument.ApplyTo(
@@ -314,7 +226,7 @@ namespace MindMission.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            course = MapDTOToCourse(courseDto);
+            course = _courseMappingService.MapDtoToEntity(courseDto);
 
             await _courseService.UpdateAsync(course);
 
@@ -322,103 +234,7 @@ namespace MindMission.API.Controllers
         }
         #endregion
 
-        #region Helper Methods
-        private async Task<CourseDto> MapCourseToDTO(Course course)
-        {
-            var courseDTO = new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                ShortDescription = course.ShortDescription,
-                Description = course.Description,
-                WhatWillLearn = course.WhatWillLearn,
-                Requirements = course.Requirements,
-                WholsFor = course.WholsFor,
-                ImageUrl = course.ImageUrl,
-                Language = (Language)Enum.Parse(typeof(Language), course.Language),
-                Price = course.Price,
-                Level = (Level)Enum.Parse(typeof(Level), course.Level),
-                AvgReview = course.AvgReview,
-                NoOfReviews = course.NoOfReviews,
-                NoOfStudents = course.NoOfStudents,
-                Discount = course.Discount,
-                ChapterCount = course.ChapterCount,
-                LessonCount = course.LessonCount,
-                NoOfVideos = course.NoOfVideos,
-                NoOfArticles = course.NoOfArticles,
-                NoOfAttachments = course.NoOfAttachments,
-                NoOfHours = course.NoOfHours,
-                Published = course.Published,
-                Approved = course.Approved,
-                CreatedAt = course.CreatedAt,
-                UpdatedAt = course.UpdatedAt,
-                CategoryId = course.CategoryId
-            };
 
-
-            var instructor = await _instructorService.GetByIdAsync(course.InstructorId);
-            if (instructor != null)
-            {
-                courseDTO.InstructorId = instructor.Id;
-                courseDTO.InstructorName = instructor.FirstName + " " + instructor.LastName;
-                courseDTO.InstructorBio = instructor.Bio;
-                courseDTO.InstructorProfilePicture = instructor.ProfilePicture;
-                courseDTO.InstructorTitle = instructor.Title;
-                courseDTO.InstructorDescription = instructor.Description;
-                courseDTO.InstructorNoOfCourses = instructor.Courses.Count;
-                courseDTO.InstructorNoOfStudents = instructor.NoOfStudents;
-                courseDTO.InstructorAvgRating = instructor.AvgRating;
-                courseDTO.InstructorNoOfRatings = instructor.NoOfRatings;
-            }
-
-            // Get additional information about the category
-            if (course.Category != null)
-            {
-                courseDTO.CategoryName = course.Category.Name;
-            }
-
-            // Map the chapter names
-            foreach (var chapter in course.Chapters)
-            {
-                courseDTO.ChapterNames.Add(chapter.Title);
-            }
-
-            return courseDTO;
-        }
-
-        private static Course MapDTOToCourse(CourseDto courseDTO)
-        {
-            return new Course
-            {
-                Title = courseDTO.Title,
-                ShortDescription = courseDTO.ShortDescription,
-                Description = courseDTO.Description,
-                WhatWillLearn = courseDTO.WhatWillLearn,
-                Requirements = courseDTO.Requirements,
-                WholsFor = courseDTO.WholsFor,
-                ImageUrl = courseDTO.ImageUrl,
-                Language = courseDTO.Language.ToString(),
-                Price = courseDTO.Price,
-                Level = courseDTO.Level.ToString(),
-                AvgReview = courseDTO.AvgReview,
-                NoOfReviews = courseDTO.NoOfReviews,
-                NoOfStudents = courseDTO.NoOfStudents,
-                Discount = courseDTO.Discount,
-                ChapterCount = courseDTO.ChapterCount,
-                LessonCount = courseDTO.LessonCount,
-                NoOfVideos = courseDTO.NoOfVideos,
-                NoOfArticles = courseDTO.NoOfArticles,
-                NoOfAttachments = courseDTO.NoOfAttachments,
-                NoOfHours = courseDTO.NoOfHours,
-                Published = courseDTO.Published,
-                Approved = courseDTO.Approved,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = null, // Not updated yet
-                CategoryId = courseDTO.CategoryId,
-                InstructorId = courseDTO.InstructorId
-            };
-        }
-        #endregion
 
     }
 }

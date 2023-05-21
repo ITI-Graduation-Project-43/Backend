@@ -15,4 +15,9 @@
     <ProjectReference Include="..\MindMission.Domain\MindMission.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helper\" />
+    <Folder Include="Interfaces\Services\" />
+  </ItemGroup>
+
 </Project>

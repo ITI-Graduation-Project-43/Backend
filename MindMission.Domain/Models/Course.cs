@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace MindMission.Domain.Models
 {
@@ -19,6 +21,7 @@ namespace MindMission.Domain.Models
         }
 
         [Key]
+
         public int Id { get; set; }
         public int CategoryId { get; set; }
         public string InstructorId { get; set; } = string.Empty;
@@ -90,9 +93,9 @@ namespace MindMission.Domain.Models
 
         [Range(0, int.MaxValue, ErrorMessage = "Number of hours must be greater than or equal to 0.")]
         public int NoOfHours { get; set; }
-        public bool Published { get; set; }
-        public bool Approved { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public bool Published { get; set; } = false;
+        public bool Approved { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey(nameof(CategoryId))]

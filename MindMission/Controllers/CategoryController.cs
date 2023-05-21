@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTO;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
@@ -15,7 +16,10 @@ namespace MindMission.API.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService) { _categoryService = categoryService; }
+        public CategoryController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        }
 
 
 

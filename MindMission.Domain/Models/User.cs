@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

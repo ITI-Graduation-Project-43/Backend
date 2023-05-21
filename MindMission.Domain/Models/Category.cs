@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
 
 namespace MindMission.Domain.Models
