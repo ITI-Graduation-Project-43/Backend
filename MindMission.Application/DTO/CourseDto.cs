@@ -34,12 +34,12 @@ namespace MindMission.Application.DTO
         public bool Approved { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string SubCategoryName { get; set; } = string.Empty;
         public string TopicName { get; set; } = string.Empty;
         public string InstructorId { get; set; } = string.Empty;
-        public string InstructorFirstName { get; set; } = string.Empty;
-        public string InstructorLastName { get; set; } = string.Empty;
+        public string InstructorName { get; set; } = string.Empty;
         public string InstructorBio { get; set; } = string.Empty;
         public string InstructorProfilePicture { get; set; } = string.Empty;
         public string InstructorTitle { get; set; } = string.Empty;

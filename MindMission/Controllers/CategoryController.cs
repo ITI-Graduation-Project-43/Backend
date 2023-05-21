@@ -8,7 +8,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
-    // TODE: Refactor code and add Try catch block, comments
+    // TODO: Refactor code and add Try catch block, comments
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -26,6 +26,8 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryService.GetAllAsync();
+            if (categories == null) return NotFound("No categories found.");
+
             var categoryDTOs = await Task.WhenAll(categories.Select(category => MapCategoryToDTO(category)));
 
             var response = new ResponseObject<CategoryDto>
