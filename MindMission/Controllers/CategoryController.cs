@@ -8,16 +8,15 @@ using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
+    // TODE: Refactor code and add Try catch block, comments
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
+        public CategoryController(ICategoryService categoryService) { _categoryService = categoryService; }
+
 
 
 
@@ -29,7 +28,7 @@ namespace MindMission.API.Controllers
             var categories = await _categoryService.GetAllAsync();
             var categoryDTOs = await Task.WhenAll(categories.Select(category => MapCategoryToDTO(category)));
 
-            var response = new ResponseObject<CategoryDTO>
+            var response = new ResponseObject<CategoryDto>
             {
                 Success = true,
                 Message = "All Categories",
@@ -56,11 +55,11 @@ namespace MindMission.API.Controllers
 
             var categoryDTO = await MapCategoryToDTO(category);
 
-            var response = new ResponseObject<CategoryDTO>
+            var response = new ResponseObject<CategoryDto>
             {
                 Success = true,
                 Message = "Category found",
-                Items = new List<CategoryDTO> { categoryDTO },
+                Items = new List<CategoryDto> { categoryDTO },
                 PageNumber = 1,
                 ItemsPerPage = 1,
                 TotalPages = 1
@@ -113,10 +112,9 @@ namespace MindMission.API.Controllers
 
         #region Add 
 
-
         // POST: api/Category
         [HttpPost]
-        public async Task<ActionResult<CategoryDTO>> AddCategory([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] CategoryDto categoryDTO)
         {
             if (!IsValidCategoryType(categoryDTO.Type))
             {
@@ -130,12 +128,9 @@ namespace MindMission.API.Controllers
                     return BadRequest("Invalid parent category.");
                 }
             }
-            else if (categoryDTO.Type == CategoryType.Topic)
+            else if (categoryDTO.Type == CategoryType.Topic && !await IsValidParentSubCategoryIdAsync(categoryDTO.ParentSubCategoryId))
             {
-                if (!await IsValidParentSubCategoryIdAsync(categoryDTO.ParentSubCategoryId))
-                {
-                    return BadRequest("Invalid parent subcategory.");
-                }
+                return BadRequest("Invalid parent subcategory.");
             }
 
             var createdCategoryDTO = await AddCategoryAsync(categoryDTO);
@@ -146,7 +141,7 @@ namespace MindMission.API.Controllers
 
         // POST: api/Category
         [HttpPost("Category")]
-        public async Task<ActionResult<CategoryDTO>> AddCategoryType([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDto>> AddCategoryType([FromBody] CategoryDto categoryDTO)
         {
             if (categoryDTO.Type != CategoryType.Category)
             {
@@ -158,7 +153,7 @@ namespace MindMission.API.Controllers
 
         // POST: api/SubCategory
         [HttpPost("SubCategory")]
-        public async Task<ActionResult<CategoryDTO>> AddSubCategory([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDto>> AddSubCategory([FromBody] CategoryDto categoryDTO)
         {
             if (categoryDTO.Type != CategoryType.SubCategory)
             {
@@ -177,7 +172,7 @@ namespace MindMission.API.Controllers
 
         // POST: api/Topic
         [HttpPost("Topic")]
-        public async Task<ActionResult<CategoryDTO>> AddTopic([FromBody] CategoryDTO categoryDTO)
+        public async Task<ActionResult<CategoryDto>> AddTopic([FromBody] CategoryDto categoryDTO)
         {
             if (categoryDTO.Type != CategoryType.Topic)
             {
@@ -193,14 +188,31 @@ namespace MindMission.API.Controllers
 
             return await AddCategoryAsync(categoryDTO);
         }
+        #endregion
 
+        #region Delete
+        // DELETE: api/Category/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var category = await _categoryService.GetByIdAsync(id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            await _categoryService.DeleteAsync(id);
+
+            return NoContent();
+        }
         #endregion
 
         #region Edit Patch/Put 
 
         // PUT: api/Category/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto categoryDTO)
         {
             if (id != categoryDTO.Id)
             {
@@ -240,7 +252,7 @@ namespace MindMission.API.Controllers
 
         // PATCH: api/Category/{id}
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchCategory(int id, [FromBody] JsonPatchDocument<CategoryDTO> patchDocument)
+        public async Task<IActionResult> PatchCategory(int id, [FromBody] JsonPatchDocument<CategoryDto> patchDocument)
         {
             var category = await _categoryService.GetByIdAsync(id);
 
@@ -251,10 +263,12 @@ namespace MindMission.API.Controllers
 
             var categoryDTO = await MapCategoryToDTO(category);
 
-            patchDocument.ApplyTo(categoryDTO, error =>
-            {
-                ModelState.AddModelError("JsonPatch", error.ErrorMessage);
-            });
+            patchDocument.ApplyTo(
+                categoryDTO,
+                error =>
+                {
+                    ModelState.AddModelError("JsonPatch", error.ErrorMessage);
+                });
 
 
             if (!ModelState.IsValid)
@@ -287,28 +301,8 @@ namespace MindMission.API.Controllers
         }
         #endregion
 
-        #region Delete
-        // DELETE: api/Category/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
-        {
-            var category = await _categoryService.GetByIdAsync(id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            await _categoryService.DeleteAsync(id);
-
-            return NoContent();
-        }
-
-        #endregion
-
         #region Helper Methods
-
-        private async Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDTO)
+        private async Task<CategoryDto> AddCategoryAsync(CategoryDto categoryDTO)
         {
             var category = new Category
             {
@@ -326,9 +320,9 @@ namespace MindMission.API.Controllers
             return createdCategoryDTO;
         }
 
-        private async Task<CategoryDTO> MapCategoryToDTO(Category category)
+        private async Task<CategoryDto> MapCategoryToDTO(Category category)
         {
-            var categoryDTO = new CategoryDTO
+            var categoryDTO = new CategoryDto
             {
                 Id = category.Id,
                 Name = category.Name,
@@ -367,7 +361,7 @@ namespace MindMission.API.Controllers
             return categoryDTO;
         }
 
-        private static int? GetParentId(CategoryDTO categoryDTO)
+        private static int? GetParentId(CategoryDto categoryDTO)
         {
             if (categoryDTO.Type == CategoryType.SubCategory)
             {
@@ -382,9 +376,7 @@ namespace MindMission.API.Controllers
         }
 
         private static bool IsValidCategoryType(CategoryType type)
-        {
-            return type == CategoryType.Category || type == CategoryType.SubCategory || type == CategoryType.Topic;
-        }
+        { return type == CategoryType.Category || type == CategoryType.SubCategory || type == CategoryType.Topic; }
 
         private async Task<bool> IsValidParentCategoryIdAsync(int? parentId)
         {
@@ -407,8 +399,6 @@ namespace MindMission.API.Controllers
 
             return false;
         }
-
         #endregion
-
     }
 }

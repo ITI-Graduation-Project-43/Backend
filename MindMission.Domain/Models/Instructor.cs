@@ -12,31 +12,32 @@ namespace MindMission.Domain.Models
         {
             CourseFeedbacks = new HashSet<CourseFeedback>();
             Courses = new HashSet<Course>();
+            User = new User();
         }
         [Required]
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         [Required]
         [StringLength(50)]
         [Unicode(false)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
         [Required]
         [StringLength(50)]
         [Unicode(false)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         [StringLength(1000)]
         [Unicode(false)]
-        public string Bio { get; set; }
+        public string Bio { get; set; } = string.Empty;
         [StringLength(500)]
         [Unicode(false)]
-        public string ProfilePicture { get; set; }
+        public string ProfilePicture { get; set; } = string.Empty;
         [Required]
         [StringLength(255)]
         [Unicode(false)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         [StringLength(2048)]
         [Unicode(false)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public int NoOfCourses { get; set; }
         public int NoOfStudents { get; set; }
         public double? AvgRating { get; set; }
@@ -51,5 +52,9 @@ namespace MindMission.Domain.Models
         public virtual ICollection<CourseFeedback> CourseFeedbacks { get; set; }
         [InverseProperty(nameof(Course.Instructor))]
         public virtual ICollection<Course> Courses { get; set; }
+
+
+        [NotMapped]
+        public string FullName => FirstName + " " + LastName;
     }
 }

@@ -3,11 +3,11 @@
 
 namespace MindMission.Application.DTO
 {
-    public class CategoryDTO
+    public class CategoryDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public CategoryType Type { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public CategoryType Type { get; set; } = CategoryType.Category;
         public bool Approved { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; } = null;
