@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTO;
 using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure;
 using MindMission.Infrastructure.Repositories;
+using Stripe;
 
 
 string TextCore = "Messi";
@@ -42,6 +45,11 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -57,6 +65,15 @@ builder.Services.AddCors(option =>
         });
 });
 
+
+
+
+// Stripe Service Registeration
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<ChargeService, ChargeService>();
+builder.Services.AddScoped<TokenService, TokenService>();
+builder.Services.AddScoped<CustomerService, CustomerService>();
+StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
 
 var app = builder.Build();
