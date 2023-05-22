@@ -21,7 +21,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(100)]
         [Unicode(false)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [Required]
         public CategoryType Type { get; set; }
 

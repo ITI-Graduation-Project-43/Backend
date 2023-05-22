@@ -13,6 +13,7 @@ namespace MindMission.Domain.Models
         public Chapter()
         {
             Lessons = new HashSet<Lesson>();
+            Course = new Course();
         }
 
         [Key]
@@ -21,7 +22,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(100)]
         [Unicode(false)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         public int NoOfLessons { get; set; }
         public int NoOfHours { get; set; }
         public DateTime CreatedAt { get; set; }

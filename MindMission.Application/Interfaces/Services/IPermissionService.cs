@@ -3,7 +3,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Service_Interfaces
 {
-    public interface IPermissionService : IRepository<Permission, int>
+    public interface IPermissionService : IPermissionRepository
     {
 
     }

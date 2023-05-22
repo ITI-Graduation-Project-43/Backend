@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
+using MindMission.Infrastructure.Context;
 
-namespace MindMission.Infrastructure
+namespace MindMission.Infrastructure.Repositories
 {
     public class Repository<TClass, TDataType> : IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, new()
     {
