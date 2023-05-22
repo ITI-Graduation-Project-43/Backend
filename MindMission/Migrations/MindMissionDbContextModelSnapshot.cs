@@ -341,19 +341,19 @@ namespace MindMission.API.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<int?>("ParentId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -1235,8 +1235,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Category", "Parent")
                         .WithMany("InverseParent")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__Categorie__Paren__7B5B524B");
 
                     b.Navigation("Parent");

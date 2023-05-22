@@ -20,8 +20,8 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var permission = await _permissionService.GetAllAsync();
-            
-            ResponseObject<Permission> AllPermission = new ResponseObject<Permission>();
+
+            ResponseObject<Permission> AllPermission = new();
             AllPermission.ReturnedResponse(true, "All permissions", permission, 3, 10, permission.Count());
 
             return Ok(AllPermission);

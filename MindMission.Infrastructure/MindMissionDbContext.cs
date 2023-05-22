@@ -4,7 +4,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Infrastructure
 {
-    public class MindMissionDbContext: IdentityDbContext<User>
+    public class MindMissionDbContext : IdentityDbContext<User>
     {
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Admin> Admins { get; set; }
@@ -103,12 +103,15 @@ namespace MindMission.Infrastructure
 
                 entity.Property(e => e.Name).IsUnicode(false);
 
-                entity.Property(e => e.Type).IsUnicode(false);
-
+                entity.Property(e => e.Type).HasConversion<string>();
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
                     .HasConstraintName("FK__Categorie__Paren__7B5B524B");
+
+                entity.Property(e => e.ParentId).IsRequired(false);
+                entity.HasIndex(e => e.Name).IsUnique();
+
             });
 
             modelBuilder.Entity<Chapter>(entity =>
