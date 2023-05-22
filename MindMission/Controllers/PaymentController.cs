@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MindMission.API.Utilities;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Stripe;
 
@@ -17,17 +18,32 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("Customer/add")]
-        public async Task<IActionResult> AddStripeCustomer(AddStripeCustomer customer, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddStripeCustomer(AddStripeCustomer customer)
         {
-            StripeCustomer stripeCustomer = await _stripeService.AddStripeCustomerAsync(customer, cancellationToken);
-            return Ok(stripeCustomer);
+            if(_stripeService.CheckSameYearPassedMonth(customer.CreditCard.ExpirationYear, customer.CreditCard.ExpirationMonth))
+            {
+                return BadRequest("Expired Card");
+            }
+
+            if (ModelState.IsValid)
+            {
+                StripeCustomer stripeCustomer = await _stripeService.AddStripeCustomerAsync(customer);
+                SaveCustomerId.CustomerId = stripeCustomer.CustomerId;
+                return Ok(stripeCustomer);
+            }
+
+            return BadRequest(customer);            
         }
 
         [HttpPost("payment/add")]
-        public async Task<IActionResult> AddStripePayment(AddStripePayment payment, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddStripePayment(AddStripePayment payment)
         {
-            StripePayment stripePayment = await _stripeService.AddStripePaymentAsync(payment, cancellationToken);
-            return Ok(stripePayment);
+            if(payment.CustomerId ==  SaveCustomerId.CustomerId)
+            {
+                StripePayment stripePayment = await _stripeService.AddStripePaymentAsync(payment);
+                return Ok(stripePayment);
+            }
+            return BadRequest("Invalid Customer Id");
         }
     }
 }

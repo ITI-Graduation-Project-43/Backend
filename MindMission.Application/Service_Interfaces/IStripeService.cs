@@ -9,7 +9,8 @@ namespace MindMission.Application.Service_Interfaces
 {
     public interface IStripeService
     {
-        Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer, CancellationToken cancellationToken);
-        Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment, CancellationToken cancellationToken);
+        Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer);
+        Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment);
+        bool CheckSameYearPassedMonth(string year, string month);
     }
 }

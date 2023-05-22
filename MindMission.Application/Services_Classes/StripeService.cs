@@ -23,7 +23,7 @@ namespace MindMission.Application.Services_Classes
             _tokenService = tokenService;
         }
 
-        public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer, CancellationToken cancellationToken)
+        public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
         {
             //////Configuration of Stripe card token
             TokenCreateOptions tokenCreateOptions = new TokenCreateOptions()
@@ -39,7 +39,7 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the token
-            Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions,null,cancellationToken);
+            Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions,null);
 
 
             //////Configuration of Stripe Customer
@@ -51,13 +51,13 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the Customer
-            Customer StripeCustomer = await _customerService.CreateAsync(customerCreateOptions,null,cancellationToken);
+            Customer StripeCustomer = await _customerService.CreateAsync(customerCreateOptions,null);
 
             //////Return the Customer in the StripeCustomer record
             return new StripeCustomer(StripeCustomer.Name, StripeCustomer.Email, StripeCustomer.Id);
         }
 
-        public async Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment, CancellationToken cancellationToken)
+        public async Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment)
         {
 
             //////Configuration of Stripe Payment
@@ -71,7 +71,7 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the payment
-            var StripePayment = await _chargeService.CreateAsync(chargeCreateOptions,null,cancellationToken);
+            var StripePayment = await _chargeService.CreateAsync(chargeCreateOptions,null);
 
             //////Return the Payment in the StripePayment record
             return new StripePayment(
@@ -81,6 +81,19 @@ namespace MindMission.Application.Services_Classes
                 StripePayment.Currency, 
                 StripePayment.Amount, 
                 StripePayment.Id);
+        }
+
+        //////Check for same year and a passed month
+        public bool CheckSameYearPassedMonth(string year, string month)
+        {
+            if (int.TryParse(year, out int expYear) && int.TryParse(month, out int expMonth))
+            {
+                if ((expYear + 2000) == DateTime.Now.Year && expMonth < DateTime.Now.Month)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
