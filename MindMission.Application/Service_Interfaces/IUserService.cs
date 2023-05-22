@@ -3,7 +3,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Service_Interfaces
 {
-    public interface IUserService : IRepository<User, string>
+    public interface IUserService : IUserRepository
     {
     }
 }
