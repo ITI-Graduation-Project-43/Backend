@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Infrastructure.DTO_Classes
+namespace MindMission.Application.DTOs
 {
     public class DiscussionDTO
     {

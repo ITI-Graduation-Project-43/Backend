@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MindMission.Application.DTO;
+using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
-using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure;
 using MindMission.Infrastructure.Repositories;

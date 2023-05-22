@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MindMission.API.Utilities;
-using MindMission.Application.DTO_Classes;
+using MindMission.Application.DTOs;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
-using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -17,7 +16,7 @@ namespace MindMission.API.Controllers
     {
         private readonly UserManager<User> UserManager;
 
-        public UserController(UserManager<User> _UserManager) 
+        public UserController(UserManager<User> _UserManager)
         {
             UserManager = _UserManager;
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.Service_Interfaces
+namespace MindMission.Application.Interfaces.Services
 {
     public interface IStripeService
     {

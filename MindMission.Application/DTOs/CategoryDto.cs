@@ -1,7 +1,7 @@
 ﻿using MindMission.Domain.Enums;
 
 
-namespace MindMission.Application.DTO
+namespace MindMission.Application.DTOs
 {
     public class CategoryDto
     {

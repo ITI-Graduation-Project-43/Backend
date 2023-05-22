@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.DTO
+namespace MindMission.Application.DTOs
 {
     public class CourseDto
     {

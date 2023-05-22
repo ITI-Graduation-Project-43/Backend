@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
-using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Stripe;
 
 namespace MindMission.API.Controllers

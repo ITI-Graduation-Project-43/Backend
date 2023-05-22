@@ -1,4 +1,4 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
 
 namespace MindMission.Infrastructure.Repositories

@@ -1,4 +1,4 @@
-﻿using MindMission.Application.DTO;
+﻿using MindMission.Application.DTOs;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Common;
 using MindMission.Domain.Enums;

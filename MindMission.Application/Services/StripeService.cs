@@ -1,4 +1,4 @@
-﻿using MindMission.Application.Service_Interfaces;
+﻿using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Stripe;
 using Stripe;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.Services_Classes
+namespace MindMission.Application.Services
 {
     public class StripeService : IStripeService
     {
@@ -39,7 +39,7 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the token
-            Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions,null);
+            Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions, null);
 
 
             //////Configuration of Stripe Customer
@@ -51,7 +51,7 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the Customer
-            Customer StripeCustomer = await _customerService.CreateAsync(customerCreateOptions,null);
+            Customer StripeCustomer = await _customerService.CreateAsync(customerCreateOptions, null);
 
             //////Return the Customer in the StripeCustomer record
             return new StripeCustomer(StripeCustomer.Name, StripeCustomer.Email, StripeCustomer.Id);
@@ -71,15 +71,15 @@ namespace MindMission.Application.Services_Classes
             };
 
             //////Create the payment
-            var StripePayment = await _chargeService.CreateAsync(chargeCreateOptions,null);
+            var StripePayment = await _chargeService.CreateAsync(chargeCreateOptions, null);
 
             //////Return the Payment in the StripePayment record
             return new StripePayment(
-                StripePayment.CustomerId, 
-                StripePayment.ReceiptEmail, 
-                StripePayment.Description, 
-                StripePayment.Currency, 
-                StripePayment.Amount, 
+                StripePayment.CustomerId,
+                StripePayment.ReceiptEmail,
+                StripePayment.Description,
+                StripePayment.Currency,
+                StripePayment.Amount,
                 StripePayment.Id);
         }
 
@@ -88,7 +88,7 @@ namespace MindMission.Application.Services_Classes
         {
             if (int.TryParse(year, out int expYear) && int.TryParse(month, out int expMonth))
             {
-                if ((expYear + 2000) == DateTime.Now.Year && expMonth < DateTime.Now.Month)
+                if (expYear + 2000 == DateTime.Now.Year && expMonth < DateTime.Now.Month)
                 {
                     return true;
                 }

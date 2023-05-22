@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
-using MindMission.Application.DTO;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;

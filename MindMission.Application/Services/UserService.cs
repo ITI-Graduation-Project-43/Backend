@@ -1,5 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
-using MindMission.Application.Service_Interfaces;
+﻿using MindMission.Application.Interfaces.Repository;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.Services_Classes
+namespace MindMission.Application.Services
 {
     public class UserService : IUserService
     {
