@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Models;
 
-namespace MindMission.Infrastructure.Context
+namespace MindMission.Infrastructure
 {
     public class MindMissionDbContext : IdentityDbContext<User>
     {

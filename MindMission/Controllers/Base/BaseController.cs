@@ -30,7 +30,6 @@ namespace MindMission.API.Controllers.Base
         }
 
 
-
         protected ActionResult NotFoundResponse(string entityName)
         {
             return NotFound(string.Format(ErrorMessages.ResourceNotFound, entityName));
@@ -52,16 +51,7 @@ namespace MindMission.API.Controllers.Base
             return response;
         }
 
-        /*protected async Task<ActionResult<TDto>> GetEntity(Func<Task<TEntity>> getEntityFunc, string entityName)
-        {
-            var entity = await getEntityFunc();
-            if (entity == null) return NotFoundResponse(entityName);
 
-            var dto = await _entityMappingService.MapEntityToDto(entity);
-            var response = CreateResponse(new List<TDto> { dto }, string.Format(SuccessMessages.RetrievedSuccessfully, entityName), 1, 1);
-
-            return Ok(response);
-        }*/
 
 
 

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\MindMission.Domain\MindMission.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Context\" />
+  </ItemGroup>
+
 </Project>

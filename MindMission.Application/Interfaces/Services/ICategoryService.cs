@@ -4,9 +4,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Service_Interfaces
 {
-    public interface ICategoryService : IRepository<Category, int>
+    public interface ICategoryService : ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type);
-        Task<IEnumerable<Category>> GetByParentIdAsync(int parentId);
     }
 }

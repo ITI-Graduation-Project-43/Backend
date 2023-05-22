@@ -5,7 +5,7 @@ using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure.Context;
+using MindMission.Infrastructure;
 using MindMission.Infrastructure.Repositories;
 
 
