@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MindMission.API.Utilities;
 using MindMission.Application.DTO_Classes;
 using MindMission.Application.Service_Interfaces;
@@ -13,20 +15,20 @@ namespace MindMission.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService UserService;
+        private readonly UserManager<User> UserManager;
 
-        public UserController(IUserService _UserService) 
+        public UserController(UserManager<User> _UserManager) 
         {
-            UserService = _UserService;
+            UserManager = _UserManager;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsers() 
+        public async Task<IActionResult> GetAllUsers()
         {
-            var Users = await UserService.GetAllAsync();
+            var Users = UserManager.Users.ToListAsync();
 
             ResponseObject<User> AllUsers = new ResponseObject<User>();
-            AllUsers.ReturnedResponse(true, "All Users", Users, 3, 10, Users.Count());
+            AllUsers.ReturnedResponse(true, "All Users", Users.Result, 3, 10, Users.Result.Count());
 
             return Ok(AllUsers);
         }
@@ -37,11 +39,13 @@ namespace MindMission.API.Controllers
             if (UserDTO != null)
             {
                 User user = new User();
+                user.UserName = UserDTO.UserName;
                 user.Email = UserDTO.Email;
                 user.PasswordHash = UserDTO.Password;
                 user.IsBlocked = UserDTO.IsBlocked;
                 user.IsDeactivated = UserDTO.IsDeactivated;
-                var CreatedUser = await UserService.AddAsync(user);
+                //var CreatedUser = await UserService.AddAsync(user);
+                var CreatedUser = await UserManager.CreateAsync(user);
                 return Ok(CreatedUser);
             }
             else
