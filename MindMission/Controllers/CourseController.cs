@@ -13,6 +13,8 @@ namespace MindMission.API.Controllers
     [ApiController]
     public class CourseController : BaseController<Course, CourseDto>
     {
+
+        //TODO: refactor get functions
         private readonly ICourseService _courseService;
         private readonly CourseMappingService _courseMappingService;
         public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)

@@ -1,5 +1,6 @@
 ﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.Context;
 
 namespace MindMission.Infrastructure.Repositories
 {
