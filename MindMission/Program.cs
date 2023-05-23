@@ -46,6 +46,8 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
+builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();

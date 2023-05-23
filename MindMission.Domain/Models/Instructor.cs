@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 
@@ -31,6 +32,7 @@ namespace MindMission.Domain.Models
         public string Bio { get; set; } = string.Empty;
         [StringLength(500)]
         [Unicode(false)]
+        [AllowNull]
         public string ProfilePicture { get; set; } = string.Empty;
         [Required]
         [StringLength(255)]
