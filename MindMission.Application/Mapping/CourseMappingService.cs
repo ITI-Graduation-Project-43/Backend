@@ -1,6 +1,5 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
@@ -83,6 +82,7 @@ namespace MindMission.Application.Mapping
         {
             return new Course
             {
+                Id = courseDTO.Id,
                 Title = courseDTO.Title,
                 ShortDescription = courseDTO.ShortDescription,
                 Description = courseDTO.Description,
@@ -106,7 +106,7 @@ namespace MindMission.Application.Mapping
                 Published = courseDTO.Published,
                 Approved = courseDTO.Approved,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = null, // Not updated yet
+                UpdatedAt = null,
                 CategoryId = courseDTO.CategoryId,
                 InstructorId = courseDTO.InstructorId
             };

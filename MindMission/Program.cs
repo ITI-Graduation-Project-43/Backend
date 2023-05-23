@@ -32,10 +32,14 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
 builder.Services.AddScoped<IDiscussionService, DiscussionService>();
+
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<CategoryMappingService, CategoryMappingService>();
+builder.Services.AddScoped<IMappingService<Category, CategoryDto>, CategoryMappingService>();
 
 
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
