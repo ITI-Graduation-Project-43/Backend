@@ -47,7 +47,7 @@ namespace MindMission.API.Controllers
         }
 
 
-        [HttpGet("instructorID")]
+        [HttpGet("{instructorID}")]
         public async Task<ActionResult<InstructorDto>> GetById(string InstructorId)
         {
             var instructor = await _instructorService.GetByIdAsync(InstructorId);
