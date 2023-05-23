@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MindMission.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,13 +21,13 @@ namespace MindMission.Application.DTOs
         public int NoOfStudents { get; set; }
         public int NoOfCourses { get; set; }
         public double AvgRating { get; set; }
-
         public int NoOfRating { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        //todo accounts 
-        //todo feedback
+        public Dictionary<string,string> accounts { get; set; } = new Dictionary<string,string>();
+        
+        
+        
     }
 }

@@ -49,6 +49,11 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
 builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
 
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<UserAccountMappingService, UserAccountMappingService>();
+builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAccountMappingService>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
