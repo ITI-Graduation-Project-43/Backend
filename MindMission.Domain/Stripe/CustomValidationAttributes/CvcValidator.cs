@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Domain.Stripe.CustomValidationAttributes
 {
-    internal class CvcValidator : ValidationAttribute
+    public class CvcValidator : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {

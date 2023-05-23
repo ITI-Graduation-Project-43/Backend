@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Domain.Stripe.CustomValidationAttributes
 {
-    internal class ExpirationYearValidator : ValidationAttribute
+    public class ExpirationYearValidator : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {

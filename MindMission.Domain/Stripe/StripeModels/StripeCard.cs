@@ -6,24 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Domain.Stripe
+namespace MindMission.Domain.Stripe.StripeModels
 {
     public record StripeCard
     (
-        [Required(ErrorMessage = "Name on card is required")]
-        [StringLength(50,MinimumLength = 3, ErrorMessage = "Name on card length is between 3 and 50")]
         string Name,
-
-        [CardNumberValidator]
         string CardNumber,
-
-        [ExpirationYearValidator]
         string ExpirationYear,
-
-        [ExpirationMonthValidator("ExpirationYear")]
         string ExpirationMonth,
-
-        [CvcValidator]
         string CVC
     );
 }
