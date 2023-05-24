@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -25,6 +26,11 @@ namespace MindMission.Application.Services
         public Task<IEnumerable<Enrollment>> GetAllAsync()
         {
             return _context.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Enrollment>> GetAllAsync(params Expression<Func<Enrollment, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
         }
 
         public Task<IEnumerable<Enrollment>> GetAllByCourseIdAsync(int courseId)
