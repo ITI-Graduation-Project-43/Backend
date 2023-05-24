@@ -2,6 +2,7 @@
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
 using MindMission.Infrastructure.Context;
+using System.Linq.Expressions;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -45,5 +46,11 @@ namespace MindMission.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
+        {
+            IQueryable<TClass> Query = _dbSet;
+            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
+            return await Query.ToListAsync();
+        }
     }
 }

@@ -4,6 +4,7 @@ using MindMission.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,11 @@ namespace MindMission.Application.Services
         public Task DeleteAsync(string id)
         {
             return Context.DeleteAsync(id);
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] IncludeProperties)
+        {
+            return await Context.GetAllAsync(IncludeProperties);
         }
     }
 }

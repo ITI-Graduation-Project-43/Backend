@@ -2,6 +2,7 @@
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -82,5 +83,9 @@ namespace MindMission.Application.Services
             return courses.OrderByDescending(c => c.CreatedAt).Take(recentNumber);
         }
 
+        public async Task<IEnumerable<Course>> GetAllAsync(params Expression<Func<Course, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
+        }
     }
 }
