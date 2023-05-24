@@ -19,6 +19,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(15)]
         [Unicode(false)]
+        [EnumDataType(typeof(UserAccount))]
         public string AccountType { get; set; }
 
         [InverseProperty(nameof(UserAccount.Account))]

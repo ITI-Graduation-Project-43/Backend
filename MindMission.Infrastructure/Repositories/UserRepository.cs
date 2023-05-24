@@ -9,5 +9,6 @@ namespace MindMission.Infrastructure.Repositories
         public UserRepository(MindMissionDbContext context) : base(context)
         {
         }
+
     }
 }

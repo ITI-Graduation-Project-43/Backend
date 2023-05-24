@@ -51,6 +51,13 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
+builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
+
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<UserAccountMappingService, UserAccountMappingService>();
+builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAccountMappingService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -66,6 +73,11 @@ builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
 
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
+
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
+builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
 
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();

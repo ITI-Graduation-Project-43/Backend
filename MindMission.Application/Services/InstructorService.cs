@@ -35,5 +35,10 @@ namespace MindMission.Application.Services
         {
             return _context.DeleteAsync(id);
         }
+
+        public Task<IEnumerable<Instructor>> GetTopInstructorsAsync()
+        {
+            return _context.GetTopInstructorsAsync();
+        }
     }
 }
