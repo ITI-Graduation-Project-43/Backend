@@ -49,5 +49,10 @@ namespace MindMission.Application.Services
         {
             return await Context.GetAllAsync(IncludeProperties);
         }
+
+        public Task<Discussion> GetByIdAsync(int id, params Expression<Func<Discussion, object>>[] IncludeProperties)
+        {
+            return Context.GetByIdAsync(id,IncludeProperties);
+        }
     }
 }

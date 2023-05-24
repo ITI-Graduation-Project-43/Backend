@@ -52,5 +52,12 @@ namespace MindMission.Infrastructure.Repositories
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             return await Query.ToListAsync();
         }
+
+        public async Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties)
+        {
+            IQueryable<TClass> Query = _dbSet;
+            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
+            return await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
+        }
     }
 }
