@@ -4,6 +4,7 @@ using MindMission.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,11 @@ namespace MindMission.Application.Services
         public Task<IEnumerable<Student>> GetAllAsync()
         {
             return _context.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Student>> GetAllAsync(params Expression<Func<Student, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
         }
 
         public Task<Student> GetByIdAsync(string id)
