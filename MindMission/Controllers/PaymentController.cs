@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MindMission.API.Utilities;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.Application.Interfaces.Services;
-using MindMission.Domain.Stripe;
+using MindMission.Domain.Stripe.StripeModels;
+using MindMission.Domain.Stripe.CustomValidationAttributes;
+using MindMission.Application.DTOs;
 
 namespace MindMission.API.Controllers
 {
@@ -17,33 +17,45 @@ namespace MindMission.API.Controllers
             _stripeService = stripeService;
         }
 
-        [HttpPost("Customer/add")]
-        public async Task<IActionResult> AddStripeCustomer(AddStripeCustomer customer)
+        private async Task<StripeCustomer> AddStripeCustomer(AddStripeCustomer customer)
         {
-            if(_stripeService.CheckSameYearPassedMonth(customer.CreditCard.ExpirationYear, customer.CreditCard.ExpirationMonth))
-            {
-                return BadRequest("Expired Card");
-            }
-
-            if (ModelState.IsValid)
-            {
-                StripeCustomer stripeCustomer = await _stripeService.AddStripeCustomerAsync(customer);
-                SaveCustomerId.CustomerId = stripeCustomer.CustomerId;
-                return Ok(stripeCustomer);
-            }
-
-            return BadRequest(customer);            
+            StripeCustomer stripeCustomer = await _stripeService.AddStripeCustomerAsync(customer);
+            ReturnedCutomerId.CustomerId = stripeCustomer.CustomerId;
+            return stripeCustomer;        
         }
 
-        [HttpPost("payment/add")]
-        public async Task<IActionResult> AddStripePayment(AddStripePayment payment)
+        private async Task<StripePayment> AddStripePayment(AddStripePayment payment)
         {
-            if(payment.CustomerId ==  SaveCustomerId.CustomerId)
-            {
                 StripePayment stripePayment = await _stripeService.AddStripePaymentAsync(payment);
-                return Ok(stripePayment);
-            }
-            return BadRequest("Invalid Customer Id");
+                return stripePayment;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StripePayment(PaymentDto paymentDto)
+        {
+            AddStripeCustomer customer = new AddStripeCustomer
+            (
+                paymentDto.Name,
+                paymentDto.Email,
+                new StripeCard
+                (
+                    paymentDto.Name,
+                    paymentDto.CardNumber,
+                    paymentDto.ExpirationYear,
+                    paymentDto.ExpirationMonth,
+                    paymentDto.CVC
+                )
+            );
+            StripeCustomer stripeCustomer = await AddStripeCustomer(customer);
+            AddStripePayment addedStripePayment = new AddStripePayment
+                (
+                stripeCustomer.CustomerId,
+                paymentDto.Email,
+                paymentDto.Description,
+                "usd",
+                70
+                );
+            return Ok(await AddStripePayment(addedStripePayment));
         }
     }
 }

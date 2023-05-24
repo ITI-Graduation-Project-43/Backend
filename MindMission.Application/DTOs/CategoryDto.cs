@@ -1,9 +1,10 @@
-﻿using MindMission.Domain.Enums;
+﻿using MindMission.Application.DTOs.Base;
+using MindMission.Domain.Enums;
 
 
 namespace MindMission.Application.DTOs
 {
-    public class CategoryDto
+    public class CategoryDto : IDtoWithId
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

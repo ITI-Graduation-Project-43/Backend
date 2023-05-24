@@ -33,14 +33,14 @@ namespace MindMission.Infrastructure.Context
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.Entity<Account>(entity =>
+            builder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.AccountType).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Admin>(entity =>
+            builder.Entity<Admin>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -55,7 +55,7 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.ProfilePicture).IsUnicode(false);
             });
 
-            modelBuilder.Entity<AdminPermission>(entity =>
+            builder.Entity<AdminPermission>(entity =>
             {
                 entity.HasKey(e => new { e.Id, e.PermissionId })
                     .HasName("PK__AdminPer__9F658B3A6B1E0167");
@@ -75,7 +75,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__AdminPerm__Permi__6FB49575");
             });
 
-            modelBuilder.Entity<Article>(entity =>
+            builder.Entity<Article>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -86,7 +86,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Articles__Lesson__395884C4");
             });
 
-            modelBuilder.Entity<Attachment>(entity =>
+            builder.Entity<Attachment>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -97,7 +97,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Attachmen__Lesso__3D2915A8");
             });
 
-            modelBuilder.Entity<Category>(entity =>
+            builder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -114,7 +114,7 @@ namespace MindMission.Infrastructure.Context
 
             });
 
-            modelBuilder.Entity<Chapter>(entity =>
+            builder.Entity<Chapter>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -127,7 +127,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Chapters__Course__1CBC4616");
             });
 
-            modelBuilder.Entity<Course>(entity =>
+            builder.Entity<Course>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -162,7 +162,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Courses__Instruc__01142BA1");
             });
 
-            modelBuilder.Entity<CourseFeedback>(entity =>
+            builder.Entity<CourseFeedback>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -185,7 +185,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__CourseFee__Stude__4E53A1AA");
             });
 
-            modelBuilder.Entity<Discussion>(entity =>
+            builder.Entity<Discussion>(entity =>
             {
                 entity.Property(e => e.Content).IsUnicode(false);
 
@@ -203,7 +203,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Discussio__Paren__42E1EEFE");
             });
 
-            modelBuilder.Entity<Enrollment>(entity =>
+            builder.Entity<Enrollment>(entity =>
             {
                 entity.Property(e => e.EnrollmentDate).HasDefaultValueSql("(getdate())");
 
@@ -220,7 +220,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Enrollmen__Stude__55F4C372");
             });
 
-            modelBuilder.Entity<Instructor>(entity =>
+            builder.Entity<Instructor>(entity =>
             {
                 entity.Property(e => e.Bio).IsUnicode(false);
 
@@ -237,7 +237,7 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Title).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Lesson>(entity =>
+            builder.Entity<Lesson>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -250,14 +250,14 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Lessons__Chapter__245D67DE");
             });
 
-            modelBuilder.Entity<Permission>(entity =>
+            builder.Entity<Permission>(entity =>
             {
                 entity.Property(e => e.Description).IsUnicode(false);
 
                 entity.Property(e => e.Name).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Question>(entity =>
+            builder.Entity<Question>(entity =>
             {
                 entity.Property(e => e.CorrectAnswer)
                     .IsUnicode(false)
@@ -272,7 +272,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Questions__QuizI__30C33EC3");
             });
 
-            modelBuilder.Entity<Quiz>(entity =>
+            builder.Entity<Quiz>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -283,7 +283,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Quizzes__LessonI__2B0A656D");
             });
 
-            modelBuilder.Entity<Student>(entity =>
+            builder.Entity<Student>(entity =>
             {
                 entity.Property(e => e.Bio).IsUnicode(false);
 
@@ -296,7 +296,7 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.ProfilePicture).IsUnicode(false);
             });
 
-            modelBuilder.Entity<User>(entity =>
+            builder.Entity<User>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -308,7 +308,7 @@ namespace MindMission.Infrastructure.Context
 
             });
 
-            modelBuilder.Entity<UserAccount>(entity =>
+            builder.Entity<UserAccount>(entity =>
             {
                 entity.Property(e => e.AccountLink).IsUnicode(false);
 
@@ -321,7 +321,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK_UserAccounts_Accounts");
             });
 
-            modelBuilder.Entity<Video>(entity =>
+            builder.Entity<Video>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -332,14 +332,14 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
             });
 
-            modelBuilder.Entity<WebsiteFeedback>(entity =>
+            builder.Entity<WebsiteFeedback>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FeedbackText).IsUnicode(false);
             });
 
-            modelBuilder.Entity<Wishlist>(entity =>
+            builder.Entity<Wishlist>(entity =>
             {
                 entity.Property(e => e.AddedDate).HasDefaultValueSql("(getdate())");
 
@@ -356,7 +356,7 @@ namespace MindMission.Infrastructure.Context
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
             });
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
         }
     }
 }

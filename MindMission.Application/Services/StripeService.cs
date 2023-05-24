@@ -1,5 +1,5 @@
 ﻿using MindMission.Application.Interfaces.Services;
-using MindMission.Domain.Stripe;
+using MindMission.Domain.Stripe.StripeModels;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -71,7 +71,7 @@ namespace MindMission.Application.Services
             };
 
             //////Create the payment
-            var StripePayment = await _chargeService.CreateAsync(chargeCreateOptions, null);
+            Charge StripePayment = await _chargeService.CreateAsync(chargeCreateOptions, null);
 
             //////Return the Payment in the StripePayment record
             return new StripePayment(
@@ -81,19 +81,6 @@ namespace MindMission.Application.Services
                 StripePayment.Currency,
                 StripePayment.Amount,
                 StripePayment.Id);
-        }
-
-        //////Check for same year and a passed month
-        public bool CheckSameYearPassedMonth(string year, string month)
-        {
-            if (int.TryParse(year, out int expYear) && int.TryParse(month, out int expMonth))
-            {
-                if (expYear + 2000 == DateTime.Now.Year && expMonth < DateTime.Now.Month)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
