@@ -53,6 +53,17 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<WishlistMappingService, WishlistMappingService>();
+builder.Services.AddScoped<IMappingService<Wishlist, WishlistDto>, WishlistMappingService>();
+
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
+builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
+
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
