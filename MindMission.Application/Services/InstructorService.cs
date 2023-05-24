@@ -41,5 +41,10 @@ namespace MindMission.Application.Services
         {
             return await _context.GetAllAsync(IncludeProperties);
         }
+
+        public Task<IEnumerable<Instructor>> GetTopInstructorsAsync()
+        {
+            return _context.GetTopInstructorsAsync();
+        }
     }
 }
