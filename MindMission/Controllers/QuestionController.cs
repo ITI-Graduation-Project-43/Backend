@@ -18,7 +18,7 @@ namespace MindMission.API.Controllers
             base(questionMappingService)
         {
             _questionService = questionService ?? throw new ArgumentNullException(nameof(questionService));
-            _questionService = _questionService ?? throw new ArgumentNullException(nameof(questionMappingService));
+            _questionMappingService = questionMappingService ?? throw new ArgumentNullException(nameof(questionMappingService));
         }
 
         [HttpGet]

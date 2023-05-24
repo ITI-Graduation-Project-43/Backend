@@ -4,9 +4,9 @@ using MindMission.Infrastructure.Context;
 
 namespace MindMission.Infrastructure.Repositories
 {
-    public class QuestionRepository : Repository<Question, int>, IQuestionRepository
+    public class QuizRepository : Repository<Quiz, int>, IQuizRepository
     {
-        public QuestionRepository(MindMissionDbContext context) : base(context)
+        public QuizRepository(MindMissionDbContext context) : base(context)
         {
 
         }
