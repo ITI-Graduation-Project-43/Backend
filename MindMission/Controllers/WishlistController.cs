@@ -5,6 +5,7 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -29,6 +30,23 @@ namespace MindMission.API.Controllers
         {
             return await GetEntitiesResponse(_wishlistService.GetAllAsync, pagination, "Wishlists");
         }
+
+        // GET: api/Wishlist/Student/{StudentId}
+
+        [HttpGet("Student/{StudentId}")]
+        public async Task<ActionResult<IEnumerable<WishlistDto>>> GetWishlistsByStudentId(string StudentId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _wishlistService.GetAllByStudentIdAsync(StudentId), pagination, "Wishlists");
+        }
+
+        // GET: api/Wishlist/Course/{CourseId}
+
+        [HttpGet("Course/{CourseId}")]
+        public async Task<ActionResult<IEnumerable<WishlistDto>>> GetWishlistsByCourseId(int CourseId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _wishlistService.GetAllByCourseIdAsync(CourseId), pagination, "Wishlists");
+        }
+
         // GET: api/Wishlist/{wishlistId}
         [HttpGet("{wishlistId}")]
         public async Task<ActionResult<WishlistDto>> GetWishlistById(int wishlistId)

@@ -32,6 +32,16 @@ namespace MindMission.Application.Services
             return _context.GetAllAsync();
         }
 
+        public Task<IEnumerable<Wishlist>> GetAllByCourseIdAsync(int courseId)
+        {
+            return _context.GetAllByCourseIdAsync(courseId);
+        }
+
+        public Task<IEnumerable<Wishlist>> GetAllByStudentIdAsync(string studentId)
+        {
+            return _context.GetAllByStudentIdAsync(studentId);
+        }
+
         public Task<Wishlist> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
