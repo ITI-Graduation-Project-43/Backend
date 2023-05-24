@@ -7,6 +7,7 @@ using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
@@ -65,6 +66,26 @@ builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
 
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
+
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<QuestionMappingService, QuestionMappingService>();
+builder.Services.AddScoped<IMappingService<Question, QuestionDto>, QuestionMappingService>();
+
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<QuizMappingService, QuizMappingService>();
+builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>();
+
+builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
+builder.Services.AddScoped<IChapterService, ChapterService>();
+builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
+builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
+
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
