@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -34,6 +35,11 @@ namespace MindMission.Application.Services
         public Task DeleteAsync(string id)
         {
             return _context.DeleteAsync(id);
+        }
+
+        public async Task<IEnumerable<Instructor>> GetAllAsync(params Expression<Func<Instructor, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
         }
     }
 }
