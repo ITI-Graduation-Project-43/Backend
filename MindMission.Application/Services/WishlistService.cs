@@ -4,6 +4,7 @@ using MindMission.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,6 +31,11 @@ namespace MindMission.Application.Services
         public Task<IEnumerable<Wishlist>> GetAllAsync()
         {
             return _context.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Wishlist>> GetAllAsync(params Expression<Func<Wishlist, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
         }
 
         public Task<IEnumerable<Wishlist>> GetAllByCourseIdAsync(int courseId)
