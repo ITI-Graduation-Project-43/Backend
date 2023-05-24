@@ -63,8 +63,15 @@ builder.Services.AddScoped<IMappingService<Question, QuestionDto>, QuestionMappi
 
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<QuizMappingService, QuizMappingService>();
 builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>();
+
+builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
+builder.Services.AddScoped<IChapterService, ChapterService>();
+builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
+builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
+
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
