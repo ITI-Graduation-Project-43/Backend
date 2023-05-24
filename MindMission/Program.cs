@@ -71,7 +71,10 @@ builder.Services.AddScoped<IChapterService, ChapterService>();
 builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
 builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
 
-
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
