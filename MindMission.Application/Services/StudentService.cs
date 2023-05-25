@@ -42,6 +42,11 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id);
         }
 
+        public Task<Student> GetByIdAsync(string id, params Expression<Func<Student, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
+        }
+
         public Task UpdateAsync(Student entity)
         {
             return _context.UpdateAsync(entity);

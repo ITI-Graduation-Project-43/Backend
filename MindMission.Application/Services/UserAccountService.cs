@@ -42,6 +42,11 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id);
         }
 
+        public Task<UserAccount> GetByIdAsync(int id, params Expression<Func<UserAccount, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
+        }
+
         public List<UserAccount> GetUserAccountsAsync(string id)
         {
             return _context.GetUserAccountsAsync(id);
