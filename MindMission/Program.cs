@@ -67,6 +67,11 @@ builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<WishlistMappingService, WishlistMappingService>();
 builder.Services.AddScoped<IMappingService<Wishlist, WishlistDto>, WishlistMappingService>();
 
+builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
+builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
+
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<AdminMappingService, AdminMappingService>();

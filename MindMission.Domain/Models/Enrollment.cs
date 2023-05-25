@@ -10,6 +10,11 @@ namespace MindMission.Domain.Models
     [Index(nameof(CourseId), Name = "idx_enrollments_courseid")]
     public partial class Enrollment : IEntity<int>
     {
+        public Enrollment()
+        {
+            Student = new Student();
+            Course = new Course();
+        }
         [Key]
         public int Id { get; set; }
         public int CourseId { get; set; }

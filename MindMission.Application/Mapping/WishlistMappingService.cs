@@ -1,17 +1,18 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
-using Stripe;
-
 
 namespace MindMission.Application.Mapping
 {
     public class WishlistMappingService : IMappingService <Wishlist , WishlistDto>
     {
         private readonly ICourseService _CourseService;
-        public WishlistMappingService(ICourseService courseService)
+        private readonly IStudentService _StudentService;
+        public WishlistMappingService(ICourseService courseService, IStudentService studentService)
         {
-            _CourseService= courseService;
+            _CourseService = courseService;
+            _StudentService = studentService;
         }
         public async Task<WishlistDto> MapEntityToDto(Wishlist wishlist)
         {
@@ -25,12 +26,14 @@ namespace MindMission.Application.Mapping
             {
                 wishlistDto.CourseId = course.Id;
                 wishlistDto.CourseTitle = course.Title;
+                wishlistDto.CourseImageUrl = course.ImageUrl;
                 wishlistDto.CoursePrice = course.Price;
             }
-            if (wishlist.Student != null)
+            var student = await _StudentService.GetByIdAsync(wishlist.StudentId);
+            if (student != null)
             {
-                wishlistDto.StudentId = wishlist.StudentId;
-                wishlistDto.StudentName = wishlist.Student.FirstName + " " + wishlist.Student.LastName;
+                wishlistDto.StudentId = student.Id;
+                wishlistDto.StudentName = student.FirstName + " " + student.LastName;
             }
             return wishlistDto;
         }

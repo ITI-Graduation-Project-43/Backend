@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -10,6 +11,11 @@ namespace MindMission.Application.Services
         public AdminService(IAdminRepository context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<Admin>> GetAllAsync(params Expression<Func<Admin, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
         }
 
         Task<Admin> IRepository<Admin, int>.AddAsync(Admin entity)
