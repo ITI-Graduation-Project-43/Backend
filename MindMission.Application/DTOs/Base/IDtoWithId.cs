@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs.Base
 {
-    public interface IDtoWithId
+    public interface IDtoWithId<Type>
     {
-        int Id { get; set; }
+        Type Id { get; set; }
     }
 
 }

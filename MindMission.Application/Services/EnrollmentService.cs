@@ -5,15 +5,15 @@ using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
-    public class WishlistService : IWishlistService
+    public class EnrollmentService : IEnrollmentService
     {
-        private readonly IWishlistRepository _context;
-        public WishlistService(IWishlistRepository context)
+        private readonly IEnrollmentRepository _context;
+        public EnrollmentService(IEnrollmentRepository context)
         {
             _context = context;
         }
 
-        public Task<Wishlist> AddAsync(Wishlist entity)
+        public Task<Enrollment> AddAsync(Enrollment entity)
         {
             return _context.AddAsync(entity);
         }
@@ -23,37 +23,32 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllAsync()
+        public Task<IEnumerable<Enrollment>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
 
-        public async Task<IEnumerable<Wishlist>> GetAllAsync(params Expression<Func<Wishlist, object>>[] IncludeProperties)
+        public async Task<IEnumerable<Enrollment>> GetAllAsync(params Expression<Func<Enrollment, object>>[] IncludeProperties)
         {
             return await _context.GetAllAsync(IncludeProperties);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllByCourseIdAsync(int courseId)
+        public Task<IEnumerable<Enrollment>> GetAllByCourseIdAsync(int courseId)
         {
             return _context.GetAllByCourseIdAsync(courseId);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllByStudentIdAsync(string studentId)
+        public Task<IEnumerable<Enrollment>> GetAllByStudentIdAsync(string studentId)
         {
             return _context.GetAllByStudentIdAsync(studentId);
         }
 
-        public Task<Wishlist> GetByIdAsync(int id)
+        public Task<Enrollment> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
         }
 
-        public Task<Wishlist> GetByIdAsync(int id, params Expression<Func<Wishlist, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id,IncludeProperties);
-        }
-
-        public Task UpdateAsync(Wishlist entity)
+        public Task UpdateAsync(Enrollment entity)
         {
             return _context.UpdateAsync(entity);
         }

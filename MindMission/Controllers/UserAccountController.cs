@@ -10,7 +10,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserAccountController : BaseController<UserAccount, UserAccountDto>
+    public class UserAccountController : BaseController<UserAccount, UserAccountDto,int>
     {
         private readonly IUserAccountService _context;
         private readonly UserAccountMappingService _UserAccountMappingService;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs
 {
-    public class InstructorDto: IDtoWithId
+    public class InstructorDto: IDtoWithId<string>
     {
         public string Id { get; set; } = string.Empty;
         public string FirstName { get; set; }=string.Empty;
@@ -25,8 +25,6 @@ namespace MindMission.Application.DTOs
         public int NoOfRating { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public string Email { get; set; } = string.Empty;
         public Dictionary<string,string> accounts { get; set; } = new Dictionary<string,string>();
-        int IDtoWithId.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

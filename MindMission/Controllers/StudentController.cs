@@ -10,7 +10,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : BaseController<Student, StudentDto>
+    public class StudentController : BaseController<Student, StudentDto,string>
     {
         private readonly IStudentService _StudentService;
         private readonly StudentMappingService _StudentMappingService;
@@ -40,7 +40,7 @@ namespace MindMission.API.Controllers
             return Ok(response);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{StudnetId}")]
         public async Task<ActionResult> UpdateInstructor(string StudnetId, StudentDto StudentDto)
         {
             if (StudnetId != StudentDto.Id) return BadRequest();

@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WishlistController : BaseController<Wishlist,WishlistDto>
+    public class WishlistController : BaseController<Wishlist,WishlistDto,int>
     {
         private readonly IWishlistService _wishlistService;
         private readonly WishlistMappingService _wishlistMappingService;
