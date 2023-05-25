@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EnrollmentController : BaseController<Enrollment,EnrollmentDto>
+    public class EnrollmentController : BaseController<Enrollment,EnrollmentDto,int>
     {
         private readonly IEnrollmentService _EnrollmentService;
         private readonly EnrollmentMappingService _EnrollmentMappingService;

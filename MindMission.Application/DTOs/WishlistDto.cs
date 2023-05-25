@@ -2,7 +2,7 @@
 
 namespace MindMission.Application.DTOs
 {
-    public class WishlistDto : IDtoWithId
+    public class WishlistDto : IDtoWithId<int>
     {
         public string StudentName { get; set; } = string.Empty;
         public int Id { get; set; }

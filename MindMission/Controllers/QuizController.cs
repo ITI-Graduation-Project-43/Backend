@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuizController : BaseController<Quiz, QuizDto>
+    public class QuizController : BaseController<Quiz, QuizDto,int>
     {
         private readonly IQuizService _quizService;
         private readonly QuizMappingService _quizMappingService;

@@ -10,7 +10,7 @@ using MindMission.Domain.Constants;
 
 namespace MindMission.API.Controllers.Base
 {
-    public abstract class BaseController<TEntity, TDto> : ControllerBase where TEntity : class where TDto : class, IDtoWithId
+    public abstract class BaseController<TEntity, TDto,Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
     {
         private readonly IMappingService<TEntity, TDto> _entityMappingService;
 

@@ -14,7 +14,7 @@ namespace MindMission.API.Controllers
     // TODO: Refactor code and add Try catch block, comments
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : BaseController<Category, CategoryDto>
+    public class CategoryController : BaseController<Category, CategoryDto,int>
     {
         private readonly ICategoryService _categoryService;
         private readonly CategoryMappingService _categoryMappingService;
