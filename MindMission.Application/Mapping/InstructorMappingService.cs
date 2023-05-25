@@ -53,10 +53,10 @@ namespace MindMission.Application.Mapping
                 ProfilePicture = entity.ProfilePicture,
                 NoOfRating = entity.NoOfRatings
             };
-            /*foreach (var course in entity.Courses)
+            foreach (var course in entity.Courses)
             {
-                InstructorDTO.Courses.Add(new Dictionary<string, string> { { "title", course.Title },{"description",course.ShortDescription },{"NoOfStudents",$"{course.NoOfStudents}" },{ "Price",$"{course.Price}"} });    
-            }*/
+                InstructorDTO.Courses.Add(new Dictionary<string, string> { { "title", course.Title }, { "description", course.ShortDescription }, { "NoOfStudents", $"{course.NoOfStudents}" }, { "Price", $"{course.Price}" } });
+            }
             var UserAccounts =  _userAccountService.GetUserAccountsAsync(entity.Id);
             foreach (var account in UserAccounts)
             {

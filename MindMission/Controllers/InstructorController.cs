@@ -42,7 +42,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{instructorId}")]
         public async Task<ActionResult<InstructorDto>> GetById(string instructorId)
         {
-            var instructor = await _instructorService.GetByIdAsync(instructorId);
+            var instructor = await _instructorService.GetByIdAsync(instructorId, i => i.Courses);
             if (instructor is null) return NotFoundResponse("instructor");
             var instructorDto = await MapEntityToDTO(instructor);
             var response = CreateResponse(instructorDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "instructor");
