@@ -40,7 +40,7 @@ namespace MindMission.API.Controllers
             return Ok(response);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{StudnetId}")]
         public async Task<ActionResult> UpdateInstructor(string StudnetId, StudentDto StudentDto)
         {
             if (StudnetId != StudentDto.Id) return BadRequest();

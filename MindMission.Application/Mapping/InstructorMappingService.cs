@@ -11,11 +11,10 @@ namespace MindMission.Application.Mapping
 {
     public class InstructorMappingService : IMappingService<Instructor, InstructorDto>
     {
-        private readonly IUserService _userService;
+        
         private readonly IUserAccountService _userAccountService;
-        public InstructorMappingService(IUserService userContext,IUserAccountService userAccountContext) {
-            _userService = userContext;
-            _userAccountService = userAccountContext;
+        public InstructorMappingService(IUserAccountService userAccountContext) {
+             _userAccountService = userAccountContext;
         }
         public Instructor MapDtoToEntity(InstructorDto instructorDto)
         {
@@ -54,9 +53,7 @@ namespace MindMission.Application.Mapping
                 ProfilePicture = entity.ProfilePicture,
                 NoOfRating = entity.NoOfRatings
             };
-            var user=  await _userService.GetByIdAsync(entity.Id);
-            InstructorDTO.Email = user.Email;
-
+            
             var UserAccounts =  _userAccountService.GetUserAccountsAsync(entity.Id);
             foreach (var account in UserAccounts)
             {
