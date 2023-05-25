@@ -59,6 +59,8 @@ namespace MindMission.API.Controllers
             instructor = _instructorMappingService.MapDtoToEntity(instructorDto);
             await _instructorService.UpdateAsync(instructor);
             return NoContent();
+
+
         }
 
 
