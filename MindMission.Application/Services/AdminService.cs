@@ -18,6 +18,11 @@ namespace MindMission.Application.Services
             return await _context.GetAllAsync(IncludeProperties);
         }
 
+        public Task<Admin> GetByIdAsync(int id, params Expression<Func<Admin, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id,IncludeProperties);
+        }
+
         Task<Admin> IRepository<Admin, int>.AddAsync(Admin entity)
         {
             return _context.AddAsync(entity);

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.DTOs.Base
+namespace MindMission.Domain.Enums
 {
-    public interface IDtoWithId<Type>
+    public enum FileType
     {
-        Type Id { get; set; }
+        PDF = 1,
+        DOCX = 2
     }
-
 }

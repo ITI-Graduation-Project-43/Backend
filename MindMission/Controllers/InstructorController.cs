@@ -12,7 +12,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InstructorController : BaseController<Instructor, InstructorDto>
+    public class InstructorController : BaseController<Instructor, InstructorDto,string>
     {
         private readonly IInstructorService _instructorService;
         private readonly InstructorMappingService _instructorMappingService;
@@ -29,35 +29,28 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
         {
-            var instructors = await _instructorService.GetAllAsync();
-            if (instructors is null) return NotFoundResponse("Instructors");
-            var instructorDTOs = await MapEntitiesToDTOs(instructors);
-            var response = CreateResponse(instructorDTOs, pagination, "instructors");
-            return Ok(response);
+            return await GetEntitiesResponse(() => _instructorService.GetAllAsync(), pagination, "Instructors");
         }
 
         [HttpGet("TopTenInstructors")]
         public async Task<ActionResult<IEnumerable<InstructorDto>>> GetTopTenInstructors([FromQuery] PaginationDto pagination)
         {
-            var instructors = await _instructorService.GetTopInstructorsAsync();
-            if (instructors is null) return NotFoundResponse("Instructors");
-            var instructorDTOs = await MapEntitiesToDTOs(instructors);
-            var response = CreateResponse(instructorDTOs, new PaginationDto { PageNumber = 1, PageSize = 10 }, "instructors");
-            return Ok(response);
+            return await GetEntitiesResponse(() => _instructorService.GetTopInstructorsAsync(), new PaginationDto { PageNumber = 1, PageSize = 10 }, "Top 10 Instructors");
         }
 
 
-        [HttpGet("{instructorID}")]
-        public async Task<ActionResult<InstructorDto>> GetById(string InstructorId)
+        [HttpGet("{instructorId}")]
+        public async Task<ActionResult<InstructorDto>> GetById(string instructorId)
         {
-            var instructor = await _instructorService.GetByIdAsync(InstructorId);
+            var instructor = await _instructorService.GetByIdAsync(instructorId);
             if (instructor is null) return NotFoundResponse("instructor");
             var instructorDto = await MapEntityToDTO(instructor);
             var response = CreateResponse(instructorDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "instructor");
             return Ok(response);
+            
         }
         #endregion
-        [HttpPatch("{id}")]
+        [HttpPatch("{instructorId}")]
         public async Task<ActionResult> UpdateInstructor(string instructorId, InstructorDto instructorDto)
         {
             if (instructorId != instructorDto.Id) return BadRequest();

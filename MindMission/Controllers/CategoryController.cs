@@ -11,7 +11,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : BaseController<Category, CategoryDto>
+    public class CategoryController : BaseController<Category, CategoryDto,int>
     {
         private readonly ICategoryService _categoryService;
         private readonly CategoryMappingService _categoryMappingService;

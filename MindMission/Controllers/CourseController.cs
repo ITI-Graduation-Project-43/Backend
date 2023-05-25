@@ -12,7 +12,7 @@ namespace MindMission.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : BaseController<Course, CourseDto>
+    public class CourseController : BaseController<Course, CourseDto,int>
     {
 
         private readonly ICourseService _courseService;

@@ -109,6 +109,9 @@ builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
 
+builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
