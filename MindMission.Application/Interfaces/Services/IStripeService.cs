@@ -1,4 +1,5 @@
-﻿using MindMission.Domain.Stripe.StripeModels;
+﻿using MindMission.Domain.Models;
+using MindMission.Domain.Stripe.StripeModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace MindMission.Application.Interfaces.Services
     {
         Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer);
         Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment);
+        public Task<Course> GetEnrolledCourse(int id);
     }
 }

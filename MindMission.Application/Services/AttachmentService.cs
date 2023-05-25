@@ -24,30 +24,22 @@ namespace MindMission.Application.Services
             _lessonRepository = lessonRepository;
         }
 
-        public async Task<Attachment> AddAttachmentAsync(AttachmentDto attachmentDto)
+        public async Task<Attachment> AddAttachmentAsync(Attachment attachment, IFormFile file, Lesson lesson)
         {
-            Attachment Attachment = new Attachment()
-            {
-                FileName = attachmentDto.File.FileName,
-                LessonId = attachmentDto.LessonId,
-                FileType = $"{attachmentDto.FileType}",
-                CreatedAt = DateTime.Now,
-            };
-
             using (var Stream = new MemoryStream())
             {
-                attachmentDto.File.CopyTo(Stream);
-                Attachment.FileData = Stream.ToArray();
+                file.CopyTo(Stream);
+                attachment.FileData = Stream.ToArray();
             }
 
-            await _context.PostAttachmentAsync(Attachment);
-            return Attachment;
+            await _context.PostAttachmentAsync(lesson, attachment);
+            return attachment;
         }
 
-        public async Task<bool> IsExistedLesson(int id)
+        public async Task<Lesson> GetAttachmentLesson(int id)
         {
             Lesson Lesson = await _lessonRepository.GetByIdAsync(id);
-            return (Lesson != null);
+            return Lesson;
         }
     }
 }

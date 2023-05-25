@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
@@ -12,15 +14,18 @@ namespace MindMission.API.Controllers
     public class AttachmentController : ControllerBase
     {
         private readonly IAttachmentService _attachmentService;
+        private readonly IAttachmentMappingService _attachmentMappingService;
 
-        public AttachmentController(IAttachmentService attachmentService)
+        public AttachmentController(IAttachmentService attachmentService,
+            IAttachmentMappingService attachmentMappingService)
         {
             _attachmentService = attachmentService;
+            _attachmentMappingService = attachmentMappingService;
         }
 
         [HttpPost]
         public async Task<IActionResult> PostAttachment([FromForm] AttachmentDto attachmentDto)
-        {
+        {   
             if (attachmentDto == null)
             {
                 return BadRequest("Entered Attachment is required");
@@ -28,10 +33,14 @@ namespace MindMission.API.Controllers
 
             if (ModelState.IsValid)
             {
-                bool IsExistedLesson = await _attachmentService.IsExistedLesson(attachmentDto.LessonId);
-                if(IsExistedLesson)
-                    return Ok(await _attachmentService.AddAttachmentAsync(attachmentDto));
-                return BadRequest("NotExisted Lesson");
+                Lesson AttachmentLesson = await _attachmentService.GetAttachmentLesson(attachmentDto.LessonId);
+                if (AttachmentLesson != null)
+                {
+                    Attachment Attachment = _attachmentMappingService.MappingDtoToAttachment(attachmentDto);
+                    return Ok(await _attachmentService.AddAttachmentAsync(Attachment, attachmentDto.File, AttachmentLesson));
+                }
+
+                return BadRequest("Non-Existed Lesson");
             }
             return BadRequest(ModelState);
         }

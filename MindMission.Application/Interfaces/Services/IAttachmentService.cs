@@ -1,4 +1,5 @@
-﻿using MindMission.Application.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+using MindMission.Application.DTOs;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using System;
@@ -11,7 +12,7 @@ namespace MindMission.Application.Interfaces.Services
 {
     public interface IAttachmentService
     {
-        public Task<Attachment> AddAttachmentAsync(AttachmentDto attachmentDto);
-        public Task<bool> IsExistedLesson(int id);
+        public Task<Attachment> AddAttachmentAsync(Attachment attachment, IFormFile file, Lesson lesson);
+        public Task<Lesson> GetAttachmentLesson(int id);
     }
 }

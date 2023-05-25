@@ -1,4 +1,6 @@
 ﻿using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Models;
 using MindMission.Domain.Stripe.StripeModels;
 using Stripe;
 using System;
@@ -14,13 +16,20 @@ namespace MindMission.Application.Services
         private readonly ChargeService _chargeService;
         private readonly CustomerService _customerService;
         private readonly TokenService _tokenService;
+        private readonly ICourseRepository _courseRepository;
 
         //////Injection of Stripe services to be used to implement the two methods
-        public StripeService(ChargeService chargeService, CustomerService customerService, TokenService tokenService)
+        public StripeService(
+            ChargeService chargeService,
+            CustomerService customerService,
+            TokenService tokenService,
+            ICourseRepository courseRepository
+            )
         {
             _chargeService = chargeService;
             _customerService = customerService;
             _tokenService = tokenService;
+            _courseRepository = courseRepository;
         }
 
         public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
@@ -82,5 +91,9 @@ namespace MindMission.Application.Services
                 StripePayment.Amount,
                 StripePayment.Id);
         }
+
+
+        //////Get Choosed Course to enroll in.
+        public async Task<Course> GetEnrolledCourse(int id) => await _courseRepository.GetByIdAsync(id);
     }
 }

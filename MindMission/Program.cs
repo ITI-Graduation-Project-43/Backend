@@ -106,6 +106,7 @@ builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingServ
 
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+builder.Services.AddScoped<IAttachmentMappingService, AttachmentMappingService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -127,6 +128,7 @@ builder.Services.AddCors(option =>
 
 // Stripe Service Registeration
 builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IPaymentMappingService, PaymentMappingService>();
 builder.Services.AddScoped<ChargeService, ChargeService>();
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<CustomerService, CustomerService>();
