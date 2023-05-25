@@ -2,7 +2,7 @@
 
 namespace MindMission.Application.DTOs
 {
-    public class ChapterDto : IDtoWithId
+    public class ChapterDto : IDtoWithId<int>
     {
         public int Id { get; set; }
         public int CourseId { get; set; }

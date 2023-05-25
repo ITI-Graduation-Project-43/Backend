@@ -2,7 +2,7 @@
 
 namespace MindMission.Application.DTOs
 {
-    public class EnrollmentDto : IDtoWithId
+    public class EnrollmentDto : IDtoWithId<int>
     {
         public int Id { get; set; }
         public DateTime EnrollmentDate { get; set; }

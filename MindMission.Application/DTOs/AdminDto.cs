@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs
 {
-    public class AdminDto :IDtoWithId
+    public class AdminDto :IDtoWithId<int>
     {
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;

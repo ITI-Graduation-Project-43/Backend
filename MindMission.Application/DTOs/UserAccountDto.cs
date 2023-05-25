@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs
 {
-    public class UserAccountDto: IDtoWithId
+    public class UserAccountDto: IDtoWithId<int>
     {
         public string UserId { get; set; } = string.Empty;
         public int accountId { get; set; }
         public string accountLink { get; set; } = string.Empty;
-        public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Id { get; set; }
     }
 }

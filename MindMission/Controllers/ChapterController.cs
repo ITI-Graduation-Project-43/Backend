@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChapterController : BaseController<Chapter, ChapterDto>
+    public class ChapterController : BaseController<Chapter, ChapterDto,int>
     {
         private readonly IChapterService _chapterService;
         private readonly ChapterMappingService _chapterMappingService;

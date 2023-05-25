@@ -59,9 +59,6 @@ namespace MindMission.Application.Mapping
             {
                 InstructorDTO.accounts.Add(account.Account.AccountType, account.AccountLink);
             }
-
-
-
             return InstructorDTO;
         }
     }
