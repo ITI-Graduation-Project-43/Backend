@@ -17,10 +17,17 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllAsync();
         }
-
+        public async Task<IEnumerable<Category>> GetAllAsync(params Expression<Func<Category, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
+        }
         public Task<Category> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
+        }
+        public Task<Category> GetByIdAsync(int id, params Expression<Func<Category, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task<Category> AddAsync(Category entity)
@@ -48,14 +55,9 @@ namespace MindMission.Application.Services
             return _context.GetByParentIdAsync(parentId);
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync(params Expression<Func<Category, object>>[] IncludeProperties)
-        {
-            return await _context.GetAllAsync(IncludeProperties);
-        }
-
-        public Task<Category> GetByIdAsync(int id, params Expression<Func<Category, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id,IncludeProperties);
-        }
+        /*        public Task<IEnumerable<Category>> GetAllCategoriesWithParentsAsync()
+                {
+                    return _context.GetAllCategoriesWithParentsAsync();
+                }*/
     }
 }

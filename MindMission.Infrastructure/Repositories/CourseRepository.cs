@@ -18,7 +18,15 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<Course> GetByNameAsync(string name)
         {
-            return await _context.Courses.FirstOrDefaultAsync(c => c.Title == name);
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            var entity = await _context.Courses.FirstOrDefaultAsync(c => c.Title == name);
+
+            return entity ?? throw new KeyNotFoundException($"No entity with name {name} found.");
+
         }
 
     }

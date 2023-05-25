@@ -100,10 +100,12 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Name).IsUnicode(false);
-
                 entity.Property(e => e.Type).HasConversion<string>();
+
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
@@ -117,6 +119,7 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Chapter>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Title).IsUnicode(false);
 

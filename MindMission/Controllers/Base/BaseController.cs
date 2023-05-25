@@ -6,11 +6,11 @@ using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Responses;
 using MindMission.Domain.Constants;
-
+using System.Linq.Expressions;
 
 namespace MindMission.API.Controllers.Base
 {
-    public abstract class BaseController<TEntity, TDto,Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
+    public abstract class BaseController<TEntity, TDto, Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
     {
         private readonly IMappingService<TEntity, TDto> _entityMappingService;
 
@@ -58,6 +58,19 @@ namespace MindMission.API.Controllers.Base
         protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
+
+            if (entities == null)
+                return NotFoundResponse(entityName);
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var response = CreateResponse(entityDTOs, pagination, entityName);
+
+            return Ok(response);
+        }
+
+        protected async Task<ActionResult> GetEntitiesResponse2(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+            var entities = await serviceMethod.Invoke(IncludeProperties);
 
             if (entities == null)
                 return NotFoundResponse(entityName);

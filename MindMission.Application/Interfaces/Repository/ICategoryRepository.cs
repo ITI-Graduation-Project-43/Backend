@@ -7,5 +7,7 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type);
         Task<IEnumerable<Category>> GetByParentIdAsync(int parentId);
+        /*        Task<IEnumerable<Category>> GetAllCategoriesWithParentsAsync();
+        */
     }
 }

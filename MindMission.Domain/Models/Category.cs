@@ -22,12 +22,13 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string Name { get; set; } = string.Empty;
         [Required]
+
         public CategoryType Type { get; set; }
 
         public int? ParentId { get; set; }
         public bool Approved { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(ParentId))]
         [InverseProperty(nameof(InverseParent))]
