@@ -201,6 +201,35 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
+        //overload with string id for patch
+        protected async Task<ActionResult> UpdateEntityResponse(Func<string, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, string id, TDto dto, string entityName)
+        {
+            if (id.Equals(dto.Id))
+            {
+                var entity = await serviceGetMethod.Invoke(id);
+
+                if (entity == null)
+                    return NotFound();
+
+                var originalDto = MapEntityToDTO(entity);
+                if (originalDto.Equals(dto))
+                {
+                    return Ok($"No changes were made to the {entityName}.");
+                }
+
+                entity = MapDTOToEntity(dto);
+                //entity.UpdatedAt = DateTime.Now;
+                await serviceUpdateMethod.Invoke(entity);
+
+                return Ok($"{entityName} updated successfully.");
+            }
+            else
+            {
+                return BadRequest($"{entityName} ID mismatch.");
+            }
+        }
+
+
     }
 
 }

@@ -7,6 +7,7 @@ using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using System;
+using MindMission.Application.Interfaces.Services;
 
 namespace MindMission.API.Controllers
 {
@@ -42,23 +43,20 @@ namespace MindMission.API.Controllers
         [HttpGet("{instructorId}")]
         public async Task<ActionResult<InstructorDto>> GetById(string instructorId)
         {
-            var instructor = await _instructorService.GetByIdAsync(instructorId);
+            /*var instructor = await _instructorService.GetByIdAsync(instructorId, i => i.Courses);
             if (instructor is null) return NotFoundResponse("instructor");
             var instructorDto = await MapEntityToDTO(instructor);
             var response = CreateResponse(instructorDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "instructor");
-            return Ok(response);
-            
+            return Ok(response);*/
+            return await GetEntityResponse(() => _instructorService.GetByIdAsync(instructorId, i => i.Courses), "Instructor");
+
+
         }
         #endregion
         [HttpPatch("{instructorId}")]
         public async Task<ActionResult> UpdateInstructor(string instructorId, InstructorDto instructorDto)
         {
-            if (instructorId != instructorDto.Id) return BadRequest();
-            var instructor = await _instructorService.GetByIdAsync(instructorId);
-            if (instructor is null) return NotFound();
-            instructor = _instructorMappingService.MapDtoToEntity(instructorDto);
-            await _instructorService.UpdateAsync(instructor);
-            return NoContent();
+            return await UpdateEntityResponse(_instructorService.GetByIdAsync, _instructorService.UpdateAsync, instructorId, instructorDto, "instructor");
         }
 
 

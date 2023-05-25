@@ -50,7 +50,7 @@ namespace MindMission.Application.Services
 
         public Task<Enrollment> GetByIdAsync(int id, params Expression<Func<Enrollment, object>>[] IncludeProperties)
         {
-            throw new NotImplementedException();
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task UpdateAsync(Enrollment entity)
