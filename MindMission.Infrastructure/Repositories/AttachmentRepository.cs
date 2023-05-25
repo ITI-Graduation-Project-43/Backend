@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using MindMission.Application.Interfaces.Repository;
-using MindMission.Domain.Enums;
+﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 

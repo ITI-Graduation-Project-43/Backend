@@ -4,7 +4,7 @@ using MindMission.Domain.Enums;
 
 namespace MindMission.Application.DTOs
 {
-    public class CategoryDto : IDtoWithId<int>
+    public class CategoryDto : IDtoWithId<int>, IEquatable<CategoryDto>
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
