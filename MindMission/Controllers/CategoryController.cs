@@ -29,7 +29,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse2(
+            return await GetEntitiesResponseWithInclude(
                 _categoryService.GetAllAsync,
                 pagination,
                 "Categories",
@@ -42,7 +42,13 @@ namespace MindMission.API.Controllers
         [HttpGet("{Id}")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int Id)
         {
-            return await GetEntityResponse(() => _categoryService.GetByIdAsync(Id), "Category");
+            return await GetEntityResponseWithInclude(
+                    () => _categoryService.GetByIdAsync(Id,
+                        category => category.Parent,
+                        category => category.Parent.Parent
+                    ),
+                    "Category"
+                );
         }
 
 
@@ -89,7 +95,6 @@ namespace MindMission.API.Controllers
                 return BadRequest("Invalid parent subcategory.");
             }
 
-            categoryDTO.UpdatedAt = DateTime.Now;
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
 
@@ -103,7 +108,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid category type.");
             }
-            categoryDTO.UpdatedAt = DateTime.Now;
 
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
@@ -123,7 +127,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid parent category.");
             }
-            categoryDTO.UpdatedAt = DateTime.Now;
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
 
@@ -142,7 +145,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid parent subcategory.");
             }
-            categoryDTO.UpdatedAt = DateTime.Now;
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
         #endregion

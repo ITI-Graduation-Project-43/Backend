@@ -55,9 +55,6 @@ namespace MindMission.Application.Services
             return _context.GetByParentIdAsync(parentId);
         }
 
-        /*        public Task<IEnumerable<Category>> GetAllCategoriesWithParentsAsync()
-                {
-                    return _context.GetAllCategoriesWithParentsAsync();
-                }*/
+
     }
 }

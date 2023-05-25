@@ -68,7 +68,7 @@ namespace MindMission.API.Controllers.Base
             return Ok(response);
         }
 
-        protected async Task<ActionResult> GetEntitiesResponse2(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        protected async Task<ActionResult> GetEntitiesResponseWithInclude(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
         {
             var entities = await serviceMethod.Invoke(IncludeProperties);
 
@@ -80,6 +80,7 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
+
 
         protected async Task<ActionResult> GetEntityResponse(Func<Task<TEntity>> serviceMethod, string entityName)
         {
@@ -94,6 +95,18 @@ namespace MindMission.API.Controllers.Base
             return Ok(response);
         }
 
+        protected async Task<ActionResult> GetEntityResponseWithInclude(Func<Task<TEntity>> serviceMethod, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+            var entity = await serviceMethod.Invoke();
+
+            if (entity == null)
+                return NotFoundResponse(entityName);
+
+            var entityDto = await MapEntityToDTO(entity);
+            var response = CreateResponse(entityDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+
+            return Ok(response);
+        }
         protected async Task<ActionResult> DeleteEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<int, Task> serviceDeleteMethod, int id)
         {
             var entity = await serviceGetMethod.Invoke(id);
@@ -143,7 +156,6 @@ namespace MindMission.API.Controllers.Base
             {
                 return BadRequest(ModelState);
             }
-            //entity.UpdatedAt = DateTime.Now;
             entity = _entityMappingService.MapDtoToEntity(dto);
             await serviceUpdateMethod.Invoke(entity);
 
@@ -167,7 +179,6 @@ namespace MindMission.API.Controllers.Base
             }
 
             patchOperations(entity, dto);
-            //entity.UpdatedAt = DateTime.Now;
             await serviceUpdateMethod.Invoke(entity);
 
             return NoContent();
@@ -190,7 +201,6 @@ namespace MindMission.API.Controllers.Base
                 }
 
                 entity = MapDTOToEntity(dto);
-                //entity.UpdatedAt = DateTime.Now;
                 await serviceUpdateMethod.Invoke(entity);
 
                 return Ok($"{entityName} updated successfully.");
@@ -218,7 +228,6 @@ namespace MindMission.API.Controllers.Base
                 }
 
                 entity = MapDTOToEntity(dto);
-                //entity.UpdatedAt = DateTime.Now;
                 await serviceUpdateMethod.Invoke(entity);
 
                 return Ok($"{entityName} updated successfully.");

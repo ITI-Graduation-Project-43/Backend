@@ -15,13 +15,6 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        /* public async Task<IEnumerable<Category>> GetAllCategoriesWithParentsAsync()
-         {
-             return await _context.Categories
-                 .Include(category => category.Parent)
-                 .ThenInclude(parentCategory => parentCategory.Parent)
-                 .ToListAsync();
-         }*/
 
 
         public async Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type)
