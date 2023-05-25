@@ -92,8 +92,8 @@ namespace MindMission.API.Controllers.Base
 
             return NoContent();
         }
-        #region MyRegion
-        protected async Task<ActionResult> AddEntityResponse(Func<TEntity, Task<TEntity>> serviceMethod, TDto dto, string entityName, string actionName)
+
+        protected async Task<ActionResult> AddEntityResponse(Func<TEntity, Task<TEntity>> serviceAddMethod, TDto dto, string entityName, string actionName)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +101,9 @@ namespace MindMission.API.Controllers.Base
             }
 
             var entity = MapDTOToEntity(dto);
-            var addedEntity = await serviceMethod.Invoke(entity);
+            //entity.CreatedAt = DateTime.Now;
+            //entity.UpdatedAt = DateTime.Now;
+            var addedEntity = await serviceAddMethod.Invoke(entity);
 
             var createdDto = await MapEntityToDTO(addedEntity);
 
@@ -128,7 +130,7 @@ namespace MindMission.API.Controllers.Base
             {
                 return BadRequest(ModelState);
             }
-
+            //entity.UpdatedAt = DateTime.Now;
             entity = _entityMappingService.MapDtoToEntity(dto);
             await serviceUpdateMethod.Invoke(entity);
 
@@ -152,7 +154,7 @@ namespace MindMission.API.Controllers.Base
             }
 
             patchOperations(entity, dto);
-
+            //entity.UpdatedAt = DateTime.Now;
             await serviceUpdateMethod.Invoke(entity);
 
             return NoContent();
@@ -168,10 +170,17 @@ namespace MindMission.API.Controllers.Base
                 if (entity == null)
                     return NotFound();
 
+                var originalDto = MapEntityToDTO(entity);
+                if (originalDto.Equals(dto))
+                {
+                    return Ok($"No changes were made to the {entityName}.");
+                }
+
                 entity = MapDTOToEntity(dto);
+                //entity.UpdatedAt = DateTime.Now;
                 await serviceUpdateMethod.Invoke(entity);
 
-                return NoContent();
+                return Ok($"{entityName} updated successfully.");
             }
             else
             {
@@ -179,8 +188,6 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
-
-        #endregion
     }
 
 }

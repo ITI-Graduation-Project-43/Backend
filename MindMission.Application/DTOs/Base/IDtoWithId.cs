@@ -9,6 +9,8 @@ namespace MindMission.Application.DTOs.Base
     public interface IDtoWithId
     {
         int Id { get; set; }
+
+
     }
 
 }

@@ -23,8 +23,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
+
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
+    options.EnableSensitiveDataLogging();
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+
 });
 
 

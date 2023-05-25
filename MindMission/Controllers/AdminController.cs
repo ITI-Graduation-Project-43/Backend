@@ -9,13 +9,11 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : BaseController<Admin,AdminDto>
+    public class AdminController : BaseController<Admin, AdminDto>
     {
         private readonly IAdminService _adminService;
-        private readonly AdminMappingService _adminMappingService;
-        public AdminController(IAdminService adminService,AdminMappingService adminMappingService) : base(adminMappingService)
+        public AdminController(IAdminService adminService, AdminMappingService adminMappingService) : base(adminMappingService)
         {
-            _adminMappingService = adminMappingService;
             _adminService = adminService;
         }
         #region GET
