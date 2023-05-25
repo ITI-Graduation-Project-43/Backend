@@ -36,10 +36,26 @@ namespace MindMission.Application.Services
             return attachment;
         }
 
+        public async Task DownloadAttachmentAsync(int id)
+        {
+            Attachment? attachment = await _context.GetAttachmentAsync(id);
+            if (attachment != null)
+            {
+                var FileContent = new MemoryStream(attachment.FileData);
+                var FilePath = Path.Combine(Directory.GetCurrentDirectory(),attachment.FileName);
+
+                using(var Stream = new FileStream(FilePath,FileMode.Create, FileAccess.Write))
+                {
+                    FileContent.CopyTo(Stream);
+                }
+            }
+        }
+
         public async Task<Lesson> GetAttachmentLesson(int id)
         {
             Lesson Lesson = await _lessonRepository.GetByIdAsync(id);
             return Lesson;
         }
+
     }
 }

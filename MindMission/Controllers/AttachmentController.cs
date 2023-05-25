@@ -23,7 +23,7 @@ namespace MindMission.API.Controllers
             _attachmentMappingService = attachmentMappingService;
         }
 
-        [HttpPost]
+        [HttpPost("Upload")]
         public async Task<IActionResult> PostAttachment([FromForm] AttachmentDto attachmentDto)
         {   
             if (attachmentDto == null)
@@ -43,6 +43,20 @@ namespace MindMission.API.Controllers
                 return BadRequest("Non-Existed Lesson");
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpPost("Download")]
+        public async Task<IActionResult> DownloadAttachment(int id)
+        {
+            try
+            {
+                await _attachmentService.DownloadAttachmentAsync(id);
+                return Ok("File download successfully!");
+            }
+            catch
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 }
