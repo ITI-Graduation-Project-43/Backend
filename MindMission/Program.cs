@@ -23,8 +23,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
+
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
+    options.EnableSensitiveDataLogging();
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+
 });
 
 
@@ -103,6 +108,9 @@ builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
+
+builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

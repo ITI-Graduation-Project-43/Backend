@@ -46,5 +46,10 @@ namespace MindMission.Application.Services
         {
             return _context.GetTopInstructorsAsync();
         }
+
+        public Task<Instructor> GetByIdAsync(string id, params Expression<Func<Instructor, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
+        }
     }
 }

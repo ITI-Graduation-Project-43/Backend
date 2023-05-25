@@ -13,8 +13,6 @@ namespace MindMission.Application.Repository_Interfaces
 
         //Overloading methods to be able to "include" navigation properties
         Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, Object>>[] IncludeProperties);
-        //Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, Object>>[] IncludeProperties);
-
-
+        Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, Object>>[] IncludeProperties);
     }
 }

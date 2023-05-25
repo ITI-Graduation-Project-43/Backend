@@ -130,32 +130,8 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            var course = await _courseService.GetByIdAsync(courseId);
-            if (course == null)
-            {
-                return NotFound();
-            }
+            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, patchDocument);
 
-            var courseDto = await _courseMappingService.MapEntityToDto(course);
-
-            // apply patch
-            patchDocument.ApplyTo(
-                 courseDto,
-                 error =>
-                 {
-                     ModelState.AddModelError("JsonPatch", error.ErrorMessage);
-                 });
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            course = _courseMappingService.MapDtoToEntity(courseDto);
-
-            await _courseService.UpdateAsync(course);
-
-            return NoContent();
         }
         #endregion
 
