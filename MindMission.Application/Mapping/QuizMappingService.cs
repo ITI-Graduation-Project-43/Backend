@@ -23,6 +23,10 @@ namespace MindMission.Application.Mapping
                 LessonId = quiz.LessonId,
                 NoOfQuestions = quiz.NoOfQuestions
             };
+            foreach (var question in quiz.Questions)
+            {
+                quizDto.Questions.Add(question.QuestionText);
+            }
             return quizDto;
         }
     }
