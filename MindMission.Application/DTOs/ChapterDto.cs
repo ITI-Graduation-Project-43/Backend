@@ -9,7 +9,5 @@ namespace MindMission.Application.DTOs
         public string Title { get; set; } = string.Empty;
         public int NoOfLessons { get; set; }
         public int NoOfHours { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

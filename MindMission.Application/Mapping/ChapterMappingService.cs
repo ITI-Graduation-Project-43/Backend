@@ -13,9 +13,7 @@ namespace MindMission.Application.Mapping
                 CourseId = chapterDto.CourseId,
                 Title = chapterDto.Title,
                 NoOfLessons = chapterDto.NoOfLessons,
-                NoOfHours = chapterDto.NoOfHours,
-                CreatedAt = chapterDto.CreatedAt,
-                UpdatedAt = chapterDto.UpdatedAt
+                NoOfHours = chapterDto.NoOfHours
             };
         }
 
@@ -27,9 +25,7 @@ namespace MindMission.Application.Mapping
                 CourseId = chapter.CourseId,
                 Title = chapter.Title,
                 NoOfLessons = chapter.NoOfLessons,
-                NoOfHours = chapter.NoOfHours,
-                CreatedAt = chapter.CreatedAt,
-                UpdatedAt = chapter.UpdatedAt
+                NoOfHours = chapter.NoOfHours
             };
             return chapterDto;
         }

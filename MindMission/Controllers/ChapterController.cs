@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MindMission.API.Controllers.Base;
-using MindMission.Application.DTOs;
-using MindMission.Application.Mapping;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Domain.Models;
-
-namespace MindMission.API.Controllers
+﻿namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -41,10 +34,10 @@ namespace MindMission.API.Controllers
         }
 
 
-        [HttpPut("{ChapterId}")]
-        public async Task<ActionResult> UpdateChapter(int ChapterId, ChapterDto chapterDto)
+        [HttpPut("{chapterId}")]
+        public async Task<ActionResult> UpdateChapter(int chapterId, ChapterDto chapterDto)
         {
-            return await UpdateEntityResponse(_chapterService.GetByIdAsync, _chapterService.UpdateAsync, ChapterId, chapterDto, "Chapter");
+            return await UpdateEntityResponse(_chapterService.GetByIdAsync, _chapterService.UpdateAsync, chapterId, chapterDto, "Chapter");
         }
 
         [HttpDelete("{chapterId}")]

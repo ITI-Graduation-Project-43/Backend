@@ -12,7 +12,5 @@ namespace MindMission.Application.DTOs
         public string ChoiceC { get; set; } = string.Empty;
         public string ChoiceD { get; set; } = string.Empty;
         public string CorrectAnswer { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }
