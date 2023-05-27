@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuizController : BaseController<Quiz, QuizDto,int>
+    public class QuizController : BaseController<Quiz, QuizDto, int>
     {
         private readonly IQuizService _quizService;
         private readonly QuizMappingService _quizMappingService;
@@ -30,7 +30,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<QuizDto>> GetQuizById(int id)
         {
-            return await GetEntityResponse(() => _quizService.GetByIdAsync(id), "Quiz");
+            return await GetEntityResponse(() => _quizService.GetByIdAsync(id, q => q.Questions), "Quiz");
         }
 
 

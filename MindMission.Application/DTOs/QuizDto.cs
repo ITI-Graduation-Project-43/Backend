@@ -7,6 +7,7 @@ namespace MindMission.Application.DTOs
         public int Id { get; set; }
         public int LessonId { get; set; }
         public int NoOfQuestions { get; set; }
-        public ICollection<String> Questions { get; set; } = new List<String>();
+        //public ICollection<String> Questions { get; set; } = new List<String>();
+        public List<Dictionary<String, String>> Questions { get; set; } = new List<Dictionary<String, String>>();
     }
 }
