@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MindMission.API.EmailSettings;
-using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
@@ -13,7 +11,6 @@ using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
-using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
@@ -50,7 +47,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options=> options.SuppressModelSt
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
-
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
     options.EnableSensitiveDataLogging();
@@ -93,7 +89,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(Swagger =>
@@ -153,7 +148,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    //app.UseSwaggerUI();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
