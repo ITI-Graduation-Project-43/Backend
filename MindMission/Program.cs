@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MindMission.API.EmailSettings;
+using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
@@ -43,16 +45,12 @@ builder.Services.AddControllers();
 
 builder.Services.AddRazorPages();
 
-builder.Services.Configure<ApiBehaviorOptions>(options=> options.SuppressModelStateInvalidFilter = true);
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
-    options.EnableSensitiveDataLogging();
-    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-
-
 });
 
 //builder.Services.AddAuthorization();
@@ -60,12 +58,14 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+
+/*Discussion Configuration*/
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
 builder.Services.AddScoped<IDiscussionService, DiscussionService>();
+
+/*Category Configuration*/
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<CategoryMappingService, CategoryMappingService>();
-builder.Services.AddScoped<IMappingService<Category, CategoryDto>, CategoryMappingService>();
 
 /*Course Configuration*/
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -76,18 +76,37 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
-builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
-
-builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-builder.Services.AddScoped<IUserAccountService, UserAccountService>();
-builder.Services.AddScoped<UserAccountMappingService, UserAccountMappingService>();
-builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAccountMappingService>();
 
 /*User Configuration*/
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
+builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>();
+
+/*Identity Configuration*/
+builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>().AddDefaultTokenProviders().AddTokenProvider<DataProtectorTokenProvider<User>>("Default");
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 8;
+    //options.Password.RequireDigit = true;
+    //options.Password.RequireLowercase = true;
+    //options.Password.RequireNonAlphanumeric = true;
+    //options.Password.RequireUppercase = true;
+    //options.Password.RequiredUniqueChars = 1;
+
+});
+
+/*Mail Configuration*/
+builder.Services.AddTransient<IMailService, MailService>();
+
+/*Stripe Service Registration*/
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<ChargeService, ChargeService>();
+builder.Services.AddScoped<TokenService, TokenService>();
+builder.Services.AddScoped<CustomerService, CustomerService>();
+StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -148,6 +167,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+    //app.UseSwaggerUI();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
