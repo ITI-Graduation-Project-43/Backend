@@ -106,15 +106,5 @@ namespace MindMission.Application.Services
         {
             return await UserManager.ResetPassword(Email, Token, NewPassword);
         }
-
-        public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] IncludeProperties)
-        {
-            return await Context.GetAllAsync(IncludeProperties);
-        }
-
-        public async Task<User> GetByIdAsync(string id, params Expression<Func<User, object>>[] IncludeProperties)
-        {
-            return await Context.GetByIdAsync(id,IncludeProperties);
-        }
     }
 }
