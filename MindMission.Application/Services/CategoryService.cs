@@ -2,6 +2,7 @@
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -16,10 +17,17 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllAsync();
         }
-
+        public async Task<IEnumerable<Category>> GetAllAsync(params Expression<Func<Category, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
+        }
         public Task<Category> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
+        }
+        public Task<Category> GetByIdAsync(int id, params Expression<Func<Category, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task<Category> AddAsync(Category entity)
@@ -46,5 +54,7 @@ namespace MindMission.Application.Services
         {
             return _context.GetByParentIdAsync(parentId);
         }
+
+
     }
 }

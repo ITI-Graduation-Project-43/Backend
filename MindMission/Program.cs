@@ -13,6 +13,7 @@ using MindMission.Application.Mapping;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
@@ -49,8 +50,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options=> options.SuppressModelSt
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
+
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
+    options.EnableSensitiveDataLogging();
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+
 });
 
 //builder.Services.AddAuthorization();
@@ -58,14 +64,12 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
-
-/*Discussion Configuration*/
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
 builder.Services.AddScoped<IDiscussionService, DiscussionService>();
-
-/*Category Configuration*/
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<CategoryMappingService, CategoryMappingService>();
+builder.Services.AddScoped<IMappingService<Category, CategoryDto>, CategoryMappingService>();
 
 /*Course Configuration*/
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -76,38 +80,20 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
+builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
+
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<UserAccountMappingService, UserAccountMappingService>();
+builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAccountMappingService>();
 
 /*User Configuration*/
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>();
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>();
 
-/*Identity Configuration*/
-builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>().AddDefaultTokenProviders().AddTokenProvider<DataProtectorTokenProvider<User>>("Default");
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.User.RequireUniqueEmail = true;
-    options.Password.RequiredLength = 8;
-    //options.Password.RequireDigit = true;
-    //options.Password.RequireLowercase = true;
-    //options.Password.RequireNonAlphanumeric = true;
-    //options.Password.RequireUppercase = true;
-    //options.Password.RequiredUniqueChars = 1;
-
-});
-
-/*Mail Configuration*/
-builder.Services.AddTransient<IMailService, MailService>();
-
-/*Stripe Service Registration*/
-builder.Services.AddScoped<IStripeService, StripeService>();
-builder.Services.AddScoped<ChargeService, ChargeService>();
-builder.Services.AddScoped<TokenService, TokenService>();
-builder.Services.AddScoped<CustomerService, CustomerService>();
-StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
-
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(Swagger =>

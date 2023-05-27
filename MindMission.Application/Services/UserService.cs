@@ -8,6 +8,10 @@ using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace MindMission.Application.Services
@@ -101,6 +105,16 @@ namespace MindMission.Application.Services
         public async Task<IdentityResult> ResetPassword(string Email, string Token, string NewPassword)
         {
             return await UserManager.ResetPassword(Email, Token, NewPassword);
+        }
+
+        public async Task<IEnumerable<User>> GetAllAsync(params Expression<Func<User, object>>[] IncludeProperties)
+        {
+            return await Context.GetAllAsync(IncludeProperties);
+        }
+
+        public async Task<User> GetByIdAsync(string id, params Expression<Func<User, object>>[] IncludeProperties)
+        {
+            return await Context.GetByIdAsync(id,IncludeProperties);
         }
     }
 }

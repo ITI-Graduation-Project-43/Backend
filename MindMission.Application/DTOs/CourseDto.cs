@@ -1,13 +1,10 @@
-﻿using MindMission.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MindMission.Application.DTOs.Base;
+using MindMission.Domain.Enums;
+
 
 namespace MindMission.Application.DTOs
 {
-    public class CourseDto
+    public class CourseDto : IDtoWithId<int>
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

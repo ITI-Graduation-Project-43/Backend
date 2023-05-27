@@ -4,17 +4,18 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
+using Stripe;
 
 namespace MindMission.API.Controllers
 {
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : BaseController<Course, CourseDto>
+    public class CourseController : BaseController<Course, CourseDto, int>
     {
 
-        //TODO: refactor get functions
         private readonly ICourseService _courseService;
         private readonly CourseMappingService _courseMappingService;
         public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
@@ -29,13 +30,14 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses([FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetAllAsync();
-            if (courses == null) return NotFoundResponse("Courses");
-
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-
-            return Ok(response);
+            return await GetEntitiesResponseWithInclude(
+               _courseService.GetAllAsync,
+               pagination,
+               "Courses",
+               course => course.Instructor,
+               Course => Course.Category,
+               Course => Course.Chapters
+           );
         }
 
 
@@ -44,12 +46,8 @@ namespace MindMission.API.Controllers
         [HttpGet("category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetAllByCategoryAsync(categoryId);
-            if (courses == null) return NotFoundResponse("Courses");
+            return await GetEntitiesResponse(() => _courseService.GetAllByCategoryAsync(categoryId), pagination, "Courses");
 
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-            return Ok(response);
         }
 
         // GET: api/Course/{courseId}/related
@@ -57,12 +55,8 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/related")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRelatedCourses(int courseId, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetRelatedCoursesAsync(courseId);
-            if (courses == null) return NotFoundResponse("Courses");
+            return await GetEntitiesResponse(() => _courseService.GetRelatedCoursesAsync(courseId), pagination, "Courses");
 
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-            return Ok(response);
         }
 
         // GET: api/Course/instructor/{instructorId}
@@ -70,12 +64,7 @@ namespace MindMission.API.Controllers
         [HttpGet("instructor/{instructorId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetAllByInstructorAsync(instructorId);
-            if (courses == null) return NotFoundResponse("Courses");
-
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-            return Ok(response);
+            return await GetEntitiesResponse(() => _courseService.GetAllByInstructorAsync(instructorId), pagination, "Courses");
         }
 
         // GET: api/Course/top/{topNumber}
@@ -83,13 +72,7 @@ namespace MindMission.API.Controllers
         [HttpGet("top/{topNumber}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetTopRatedCourses(int topNumber, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetTopRatedCoursesAsync(topNumber);
-            if (courses == null) return NotFoundResponse("Courses");
-
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-
-            return Ok(response);
+            return await GetEntitiesResponse(() => _courseService.GetTopRatedCoursesAsync(topNumber), pagination, "Courses");
         }
 
         // GET: api/Course/recent/{recentNumber}
@@ -97,43 +80,28 @@ namespace MindMission.API.Controllers
         [HttpGet("recent/{recentNumber}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRecentCourses(int recentNumber, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetRecentCoursesAsync(recentNumber);
-            if (courses == null) return NotFoundResponse("Courses");
-
-            var courseDTOs = await MapEntitiesToDTOs(courses);
-            var response = CreateResponse(courseDTOs, pagination, "Courses");
-            return Ok(response);
+            return await GetEntitiesResponse(() => _courseService.GetRecentCoursesAsync(recentNumber), pagination, "Courses");
         }
 
         // GET: api/Course/{courseId}
         [HttpGet("{courseId}")]
         public async Task<ActionResult<CourseDto>> GetCourseById(int courseId)
         {
-            var course = await _courseService.GetByIdAsync(courseId);
-
-            if (course == null) return NotFoundResponse("Course");
-
-
-            var courseDto = await MapEntityToDTO(course);
-            var response = CreateResponse(courseDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "Course");
-
-            return Ok(response);
+            return await GetEntityResponseWithInclude(
+                    () => _courseService.GetByIdAsync(courseId,
+                        course => course.Instructor,
+                        Course => Course.Category,
+                        Course => Course.Chapters
+                    ),
+                    "Course"
+                );
         }
 
         // GET: api/Course/name/{name}
         [HttpGet("name/{name}")]
         public async Task<ActionResult<CourseDto>> GetCourseByName(string name)
         {
-
-            var course = await _courseService.GetByNameAsync(name);
-
-            if (course == null) return NotFoundResponse("Course");
-
-            var courseDto = await MapEntityToDTO(course);
-
-            var response = CreateResponse(courseDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "Course");
-            return Ok(response);
-
+            return await GetEntityResponse(() => _courseService.GetByNameAsync(name), "Course");
         }
 
         #endregion
@@ -144,13 +112,7 @@ namespace MindMission.API.Controllers
         [HttpPost]
         public async Task<ActionResult<CourseDto>> AddCourse([FromBody] CourseDto courseDTO)
         {
-
-            var course = _courseMappingService.MapDtoToEntity(courseDTO);
-            await _courseService.AddAsync(course);
-
-            var result = await _courseMappingService.MapEntityToDto(course);
-
-            return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
+            return await AddEntityResponse(_courseService.AddAsync, courseDTO, "Course", nameof(GetCourseById));
         }
 
         #endregion
@@ -160,44 +122,22 @@ namespace MindMission.API.Controllers
         [HttpDelete("{courseId}")]
         public async Task<IActionResult> DeleteCourse(int courseId)
         {
-            var course = await _courseService.GetByIdAsync(courseId);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            await _courseService.DeleteAsync(courseId);
-
-            return NoContent();
+            return await DeleteEntityResponse(_courseService.GetByIdAsync, _courseService.DeleteAsync, courseId);
         }
         #endregion
 
         #region Edit Patch/Put 
         // PUT: api/Course/{courseId}
-
         [HttpPut("{courseId}")]
         public async Task<ActionResult> UpdateCourse(int courseId, CourseDto courseDto)
         {
-            if (courseId != courseDto.Id)
-            {
-                return BadRequest();
-            }
-            var course = await _courseService.GetByIdAsync(courseId);
-            if (course == null)
-            {
-                return NotFound();
-            }
 
-            course = _courseMappingService.MapDtoToEntity(courseDto);
+            return await UpdateEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, courseDto, "Course");
 
-
-            await _courseService.UpdateAsync(course);
-
-            return NoContent();
         }
-        // PATCH: api/Course/{courseId}
 
+
+        // PATCH: api/Course/{courseId}
         [HttpPatch("{courseId}")]
         public async Task<ActionResult> PatchCourse(int courseId, [FromBody] JsonPatchDocument<CourseDto> patchDocument)
         {
@@ -206,32 +146,8 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            var course = await _courseService.GetByIdAsync(courseId);
-            if (course == null)
-            {
-                return NotFound();
-            }
+            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, patchDocument);
 
-            var courseDto = await _courseMappingService.MapEntityToDto(course);
-
-            // apply patch
-            patchDocument.ApplyTo(
-                 courseDto,
-                 error =>
-                 {
-                     ModelState.AddModelError("JsonPatch", error.ErrorMessage);
-                 });
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            course = _courseMappingService.MapDtoToEntity(courseDto);
-
-            await _courseService.UpdateAsync(course);
-
-            return NoContent();
         }
         #endregion
 

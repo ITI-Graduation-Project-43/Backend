@@ -2,6 +2,8 @@
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace MindMission.Application.Services
 {
@@ -16,12 +18,18 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllAsync();
         }
-
+        public async Task<IEnumerable<Course>> GetAllAsync(params Expression<Func<Course, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
+        }
         public Task<Course> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
         }
-
+        public Task<Course> GetByIdAsync(int id, params Expression<Func<Course, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
+        }
         public Task<Course> AddAsync(Course entity)
         {
             return _context.AddAsync(entity);
@@ -44,43 +52,36 @@ namespace MindMission.Application.Services
 
         public async Task<IEnumerable<Course>> GetAllByCategoryAsync(int categoryId)
         {
-            // Get all courses by category
-            var courses = await _context.GetAllAsync();
-            return courses.Where(c => c.CategoryId == categoryId);
+            return await _context.GetAllByCategoryAsync(categoryId);
+
         }
 
         public async Task<IEnumerable<Course>> GetRelatedCoursesAsync(int courseId)
         {
-            // Get the category of the course
-            var course = await _context.GetByIdAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
+            return await _context.GetRelatedCoursesAsync(courseId);
 
-            // Get all courses in the same category
-            var courses = await GetAllByCategoryAsync(course.CategoryId);
-
-            // Exclude the current course
-            return courses.Where(c => c.Id != courseId);
         }
 
         public async Task<IEnumerable<Course>> GetAllByInstructorAsync(string instructorId)
         {
-            // Get all courses by instructor
-            var courses = await _context.GetAllAsync();
-            return courses.Where(c => c.InstructorId == instructorId);
+            return await _context.GetAllByInstructorAsync(instructorId);
+
         }
 
         public async Task<IEnumerable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
-            // Get top rated courses
-            var courses = await _context.GetAllAsync();
-            return courses.OrderByDescending(c => c.AvgReview).Take(topNumber);
+            return await _context.GetTopRatedCoursesAsync(topNumber);
+
         }
 
         public async Task<IEnumerable<Course>> GetRecentCoursesAsync(int recentNumber)
         {
-            // Get recent courses
-            var courses = await _context.GetAllAsync();
-            return courses.OrderByDescending(c => c.CreatedAt).Take(recentNumber);
+            return await _context.GetRecentCoursesAsync(recentNumber);
+
         }
+
+
+
 
     }
 }

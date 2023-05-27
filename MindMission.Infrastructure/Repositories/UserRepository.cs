@@ -96,5 +96,6 @@ namespace MindMission.Infrastructure.Repositories
             }
             return IdentityResult.Failed();
         }
+
     }
 }

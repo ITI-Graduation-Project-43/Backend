@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
+using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -44,5 +44,14 @@ namespace MindMission.Application.Services
             return Context.DeleteAsync(id);
         }
 
+        public async Task<IEnumerable<Discussion>> GetAllAsync(params Expression<Func<Discussion, object>>[] IncludeProperties)
+        {
+            return await Context.GetAllAsync(IncludeProperties);
+        }
+
+        public Task<Discussion> GetByIdAsync(int id, params Expression<Func<Discussion, object>>[] IncludeProperties)
+        {
+            return Context.GetByIdAsync(id, IncludeProperties);
+        }
     }
 }
