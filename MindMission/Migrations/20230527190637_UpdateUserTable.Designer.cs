@@ -12,8 +12,8 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    [Migration("20230520150949_fixedCategoryType")]
-    partial class fixedCategoryType
+    [Migration("20230527190637_UpdateUserTable")]
+    partial class UpdateUserTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -343,7 +343,6 @@ namespace MindMission.API.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<int?>("ParentId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
@@ -354,6 +353,9 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -937,9 +939,9 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -950,10 +952,19 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("((1))");
 
                     b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeactivated")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -993,6 +1004,9 @@ namespace MindMission.API.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -1235,8 +1249,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Category", "Parent")
                         .WithMany("InverseParent")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__Categorie__Paren__7B5B524B");
 
                     b.Navigation("Parent");

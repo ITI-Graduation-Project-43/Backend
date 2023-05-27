@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
@@ -11,6 +13,8 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize]
     public class CategoryController : BaseController<Category, CategoryDto, int>
     {
         private readonly ICategoryService _categoryService;
