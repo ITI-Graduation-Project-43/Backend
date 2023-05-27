@@ -11,10 +11,5 @@ namespace MindMission.Infrastructure.Repositories
         {
 
         }
-
-        /*List<Quiz> IQuizRepository.GetQuizQuestionsAsync(int id)
-        {
-            return _context.Quizzes.Include(q => q.Questions).Where(q => q.Id == id).ToList();
-        }*/
     }
 }
