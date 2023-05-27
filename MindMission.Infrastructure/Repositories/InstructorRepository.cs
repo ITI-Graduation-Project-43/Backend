@@ -8,6 +8,7 @@ namespace MindMission.Infrastructure.Repositories
     {
         public InstructorRepository(MindMissionDbContext context) : base(context)
         {
+
         }
     }
 }

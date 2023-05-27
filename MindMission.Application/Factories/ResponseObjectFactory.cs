@@ -5,7 +5,7 @@ namespace MindMission.Application.Factories
 {
     public static class ResponseObjectFactory
     {
-        public static ResponseObject<T> CreateResponseObject<T>(bool success, string message, List<T> items, int pageNumber, int itemsPerPage)
+        public static ResponseObject<T> CreateResponseObject<T>(bool success, string message, List<T> items, int pageNumber = 1, int itemsPerPage = 1)
         {
             return new ResponseObject<T>
             {

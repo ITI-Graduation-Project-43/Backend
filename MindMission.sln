@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMission.API", "MindMission\MindMission.API.csproj", "{1F42E190-428D-455F-BE9E-2449F2B8EDA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMission.Domain", "MindMission.Domain\MindMission.Domain.csproj", "{ADE9B469-AD9A-4C8A-A7B5-0A74A37389F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMission.Domain", "MindMission.Domain\MindMission.Domain.csproj", "{ADE9B469-AD9A-4C8A-A7B5-0A74A37389F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMission.Infrastructure", "MindMission.Infrastructure\MindMission.Infrastructure.csproj", "{7A29CBF1-3E8C-4406-AB35-0FB897C15742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMission.Infrastructure", "MindMission.Infrastructure\MindMission.Infrastructure.csproj", "{7A29CBF1-3E8C-4406-AB35-0FB897C15742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindMission.Application", "MindMission.Application\MindMission.Application.csproj", "{DF23C0FD-935F-45D6-96A4-0278DDFDBAC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMission.Application", "MindMission.Application\MindMission.Application.csproj", "{DF23C0FD-935F-45D6-96A4-0278DDFDBAC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

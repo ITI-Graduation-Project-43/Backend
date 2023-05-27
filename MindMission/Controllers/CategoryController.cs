@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
@@ -11,6 +13,9 @@ namespace MindMission.API.Controllers
     // TODO: Refactor code and add Try catch block, comments
     [Route("api/[controller]")]
     [ApiController]
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

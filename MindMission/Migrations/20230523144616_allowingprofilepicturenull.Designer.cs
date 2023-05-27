@@ -12,8 +12,8 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    [Migration("20230520172155_CategoryNameToUnique")]
-    partial class CategoryNameToUnique
+    [Migration("20230523144616_allowingprofilepicturenull")]
+    partial class allowingprofilepicturenull
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -939,6 +939,7 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .IsUnicode(false)
                         .HasColumnType("varchar(256)");

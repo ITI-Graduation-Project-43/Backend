@@ -33,8 +33,11 @@ namespace MindMission.Infrastructure.Context
         {
         }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.AccountType).IsUnicode(false);
@@ -298,10 +301,18 @@ namespace MindMission.Infrastructure.Context
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.Property(e => e.IsBlocked).HasDefaultValue(false);
+
+                entity.Property(e => e.IsDeactivated).HasDefaultValue(false);
+
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+
+                entity.HasIndex(e => e.Email).IsUnique();
+
+                entity.Property(e => e.Email).IsRequired();
+
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Email).IsUnicode(false);
-
+                
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.PasswordHash).IsUnicode(false);
@@ -330,7 +341,7 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
-            });
+            }); 
 
             modelBuilder.Entity<WebsiteFeedback>(entity =>
             {
@@ -355,8 +366,6 @@ namespace MindMission.Infrastructure.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
             });
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }
