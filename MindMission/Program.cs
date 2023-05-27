@@ -66,6 +66,8 @@ builder.Services.AddScoped<IDiscussionService, DiscussionService>();
 /*Category Configuration*/
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<CategoryMappingService, CategoryMappingService>();
+builder.Services.AddScoped<IMappingService<Category, CategoryDto>, CategoryMappingService>();
 
 /*Course Configuration*/
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -76,6 +78,66 @@ builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingServ
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
+builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
+
+/*UserAccount Configuration*/
+builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<UserAccountMappingService, UserAccountMappingService>();
+builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAccountMappingService>();
+
+/*Wishlist Configuration*/
+builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<WishlistMappingService, WishlistMappingService>();
+builder.Services.AddScoped<IMappingService<Wishlist, WishlistDto>, WishlistMappingService>();
+
+/*Enrollment Configuration*/
+builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
+builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
+
+/*Admin Configuration*/
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
+builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
+
+/*Student Configuration*/
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
+builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
+
+/*Question Configuration*/
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<QuestionMappingService, QuestionMappingService>();
+builder.Services.AddScoped<IMappingService<Question, QuestionDto>, QuestionMappingService>();
+
+/*Quiz Configuration*/
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<QuizMappingService, QuizMappingService>();
+builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>();
+
+/*Chapter Configuration*/
+builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
+builder.Services.AddScoped<IChapterService, ChapterService>();
+builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
+builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
+
+/*Lesson Configuration*/
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
+
+/*Attachment Configuration*/
+builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 
 /*User Configuration*/
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -101,7 +163,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 /*Mail Configuration*/
 builder.Services.AddTransient<IMailService, MailService>();
 
-/*Stripe Service Registration*/
+/*Stripe Service Configuration*/
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<ChargeService, ChargeService>();
 builder.Services.AddScoped<TokenService, TokenService>();
