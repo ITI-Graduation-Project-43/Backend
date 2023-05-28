@@ -4,6 +4,8 @@ using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Domain.Models;
+using System.IO;
+using System.Net.Sockets;
 
 namespace MindMission.API.Controllers
 {
@@ -71,8 +73,8 @@ namespace MindMission.API.Controllers
             return BadRequest(ModelState);   
         }
 
-        [HttpPost("Download")]
-        public async Task<IActionResult> DownloadAttachment(int id)
+        [HttpPost("Server/Download/{id:int}")]
+        public async Task<IActionResult> DownloadAttachmentForServer(int id)
         {
             if (id > 0)
             {
@@ -104,6 +106,37 @@ namespace MindMission.API.Controllers
             return BadRequest(new
             {
                 Message = "Invalid Attachment Id"
+            });
+        }
+
+        [HttpGet("Client/Download/{id:int}")]
+        public async Task<IActionResult> DownloadAttachmentForClient(int id)
+        {
+            if (id > 0)
+            {
+                Attachment Attachment = await _attachmentService.GetAttachmentByIdAsync(id);
+                if (Attachment != null)
+                {
+                    try
+                    {
+                        //////
+                        //return File(file content in bytes -from database- , MIME type -generic- , filename) 
+                        //////
+                        return File(Attachment.FileData, "application/octet-stream", Attachment.FileName);
+                    }
+                    catch
+                    {
+                        return StatusCode(500, "Internal Server Error");
+                    }
+                }
+                return NotFound(new
+                {
+                    Message = "Non-Existing Attachment"
+                });
+            }
+            return BadRequest(new
+            {
+                Message = "Invalid Id"
             });
         }
     }
