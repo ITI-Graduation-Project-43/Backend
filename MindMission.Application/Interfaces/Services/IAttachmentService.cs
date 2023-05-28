@@ -13,7 +13,8 @@ namespace MindMission.Application.Interfaces.Services
     public interface IAttachmentService
     {
         public Task<Attachment> AddAttachmentAsync(Attachment attachment, IFormFile file, Lesson lesson);
-        public Task DownloadAttachmentAsync(int id);
-        public Task<Lesson> GetAttachmentLesson(int id);
+        public Task DownloadAttachmentAsync(Attachment attachment);
+        public Task<Lesson> GetAttachmentLessonByIdAsync(int id);
+        public Task<Attachment> GetAttachmentByIdAsync(int id);
     }
 }

@@ -23,53 +23,37 @@ namespace MindMission.API.Controllers
         }
 
         //////
-        //Adding Customer to stripe by checking card details
-        //////
-        private async Task<StripeCustomer> AddStripeCustomer(AddStripeCustomer customer)
-        {
-            StripeCustomer stripeCustomer = await _stripeService.AddStripeCustomerAsync(customer);
-            ReturnedCutomerId.CustomerId = stripeCustomer.CustomerId;
-            return stripeCustomer;        
-        }
-
-        //////
-        //Adding Charge to stripe by added customer Id
-        //////
-        private async Task<StripePayment> AddStripePayment(AddStripePayment payment)
-        {
-            StripePayment stripePayment = await _stripeService.AddStripePaymentAsync(payment);
-            return stripePayment;
-        }
-
-
-        //////
         //User API to return the Id of a success payment process  
         //////
         [HttpPost]
         public async Task<IActionResult> StripePayment(PaymentDto paymentDto)
         {
-            Course EnrolledCourse = await _stripeService.GetEnrolledCourse(paymentDto.CourseId);
-
-            if (EnrolledCourse != null)
+            if (ModelState.IsValid)
             {
-                try
-                {
-                    AddStripeCustomer customer = _paymentMappingService
-                        .MapDtoToAddStripeCustomer(paymentDto);
-                    StripeCustomer stripeCustomer = await AddStripeCustomer(customer);
+                Course EnrolledCourse = await _stripeService.GetEnrolledCourse(paymentDto.CourseId);
 
-                    AddStripePayment addedStripePayment = _paymentMappingService
-                        .MapDtoToAddStripePayment(stripeCustomer, paymentDto, EnrolledCourse.Price);
-
-                    return Ok(await AddStripePayment(addedStripePayment));
-                }
-                catch
+                if (EnrolledCourse != null)
                 {
-                    string ErrorMsg = "An unexpected error occured while processing your request";
-                    return StatusCode(500, ErrorMsg);
+                    try
+                    {
+                        AddStripeCustomer customer = _paymentMappingService
+                            .MapDtoToAddStripeCustomer(paymentDto);
+                        StripeCustomer stripeCustomer = await _stripeService.GetStripeCustomer(customer);
+
+                        AddStripePayment addedStripePayment = _paymentMappingService
+                            .MapDtoToAddStripePayment(stripeCustomer, paymentDto, EnrolledCourse.Price);
+
+                        return Ok(await _stripeService.GetStripePayment(addedStripePayment));
+                    }
+                    catch
+                    {
+                        return StatusCode(500, "Internal Server Error");
+                    }
                 }
+                return BadRequest("Non-Existed Course");
+
             }
-            return BadRequest("Non-Existed Course");
+            return BadRequest(ModelState);
         }
     }
 }

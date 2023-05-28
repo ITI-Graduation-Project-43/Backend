@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
-using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -25,38 +23,88 @@ namespace MindMission.API.Controllers
 
         [HttpPost("Upload")]
         public async Task<IActionResult> PostAttachment([FromForm] AttachmentDto attachmentDto)
-        {   
-            if (attachmentDto == null)
+        {
+            if (attachmentDto == null || attachmentDto.File.Length == 0)
             {
-                return BadRequest("Entered Attachment is required");
+                return BadRequest(new
+                {
+                    Message = "Entered Attachment is required"
+                });
+            }
+
+            if (Path.GetExtension(attachmentDto.File.FileName).ToUpper() != $".{attachmentDto.FileType}")
+            {
+                return BadRequest(new
+                {
+                    Message = $"upload '{attachmentDto.FileType}' files"
+                });
             }
 
             if (ModelState.IsValid)
             {
-                Lesson AttachmentLesson = await _attachmentService.GetAttachmentLesson(attachmentDto.LessonId);
+                Lesson AttachmentLesson = await _attachmentService.GetAttachmentLessonByIdAsync(attachmentDto.LessonId);
                 if (AttachmentLesson != null)
                 {
-                    Attachment Attachment = _attachmentMappingService.MappingDtoToAttachment(attachmentDto);
-                    return Ok(await _attachmentService.AddAttachmentAsync(Attachment, attachmentDto.File, AttachmentLesson));
-                }
+                    try
+                    {
+                        Attachment Attachment = _attachmentMappingService.MappingDtoToAttachment(attachmentDto);
+                        await _attachmentService.AddAttachmentAsync(Attachment, attachmentDto.File, AttachmentLesson);
+                        var FileDataDto = _attachmentMappingService.AttachmentToFileDetailsDto(Attachment);
 
-                return BadRequest("Non-Existed Lesson");
+                        var Response = ResponseObjectFactory
+                        .CreateResponseObject<FileDetailsDto>(true,
+                        $"'{attachmentDto.File.FileName}' uploaded Successfully",
+                        FileDataDto,
+                        1, 10);
+                        return Ok(Response);
+                    }
+                    catch
+                    {
+                        return StatusCode(500, "Internal Server Error");
+                    }
+                }
+                return BadRequest(new
+                {
+                    Message = "Non-Existing Lesson"
+                });
             }
-            return BadRequest(ModelState);
+            return BadRequest(ModelState);   
         }
 
         [HttpPost("Download")]
         public async Task<IActionResult> DownloadAttachment(int id)
         {
-            try
+            if (id > 0)
             {
-                await _attachmentService.DownloadAttachmentAsync(id);
-                return Ok("File download successfully!");
+                Attachment Attachment = await _attachmentService.GetAttachmentByIdAsync(id);
+                if (Attachment != null)
+                {
+                    try
+                    {
+                        await _attachmentService.DownloadAttachmentAsync(Attachment);
+                        var FileDataDto = _attachmentMappingService.AttachmentToFileDetailsDto(Attachment);
+
+                        var Response = ResponseObjectFactory
+                            .CreateResponseObject<FileDetailsDto>(true,
+                            $"'{Attachment.FileName}' downloaded Successfully",
+                            FileDataDto,
+                            1, 10);
+                        return Ok(Response);
+                    }
+                    catch
+                    {
+                        return StatusCode(500, "Internal Server Error");
+                    }
+                }
+                return BadRequest(new
+                {
+                    Message = "Non-Existing Attachment"
+                });
             }
-            catch
+            return BadRequest(new
             {
-                return StatusCode(500, "Internal Server Error");
-            }
+                Message = "Invalid Attachment Id"
+            });
         }
     }
 }

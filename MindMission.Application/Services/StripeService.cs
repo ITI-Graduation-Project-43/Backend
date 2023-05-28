@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
+using MindMission.Domain.Stripe.CustomValidationAttributes;
 using MindMission.Domain.Stripe.StripeModels;
 using Stripe;
 using System;
@@ -90,6 +91,25 @@ namespace MindMission.Application.Services
                 StripePayment.Currency,
                 StripePayment.Amount,
                 StripePayment.Id);
+        }
+
+        //////
+        //Adding Customer to stripe by checking card details
+        //////
+        public async Task<StripeCustomer> GetStripeCustomer(AddStripeCustomer customer)
+        {
+            StripeCustomer stripeCustomer = await AddStripeCustomerAsync(customer);
+            ReturnedCutomerId.CustomerId = stripeCustomer.CustomerId;
+            return stripeCustomer;
+        }
+
+        //////
+        //Adding Charge to stripe by added customer Id
+        //////
+        public async Task<StripePayment> GetStripePayment(AddStripePayment payment)
+        {
+            StripePayment stripePayment = await AddStripePaymentAsync(payment);
+            return stripePayment;
         }
 
 

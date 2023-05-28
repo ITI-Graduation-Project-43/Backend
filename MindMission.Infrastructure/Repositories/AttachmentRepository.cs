@@ -26,7 +26,7 @@ namespace MindMission.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Attachment?> GetAttachmentAsync(int id) => await _context.Attachments.FindAsync(id);
+        public async Task<Attachment?> GetAttachmentByIdAsync(int id) => await _context.Attachments.FindAsync(id);
 
     }
 }

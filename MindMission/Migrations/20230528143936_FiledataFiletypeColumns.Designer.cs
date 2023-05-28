@@ -12,8 +12,8 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    [Migration("20230524184753_addfiledataColumn")]
-    partial class addfiledataColumn
+    [Migration("20230528143936_FiledataFiletypeColumns")]
+    partial class FiledataFiletypeColumns
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -306,10 +306,9 @@ namespace MindMission.API.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("FileUrl")
+                    b.Property<string>("FileType")
                         .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
