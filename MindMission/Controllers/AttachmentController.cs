@@ -4,6 +4,8 @@ using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Domain.Models;
+using System.IO;
+using System.Net.Sockets;
 
 namespace MindMission.API.Controllers
 {
@@ -117,7 +119,10 @@ namespace MindMission.API.Controllers
                 {
                     try
                     {
-                        return File(Attachment.FileData, "application/pdf", Attachment.FileName);
+                        //////
+                        //return File(file content in bytes -from database- , MIME type -generic- , filename) 
+                        //////
+                        return File(Attachment.FileData, "application/octet-stream", Attachment.FileName);
                     }
                     catch
                     {
