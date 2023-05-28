@@ -13,10 +13,13 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task PostAttachmentAsync(Attachment Attachment)
+        public async Task PostAttachmentAsync(Lesson lesson, Attachment attachment)
         {
-            _context.Attachments.Add(Attachment);
+            lesson.Attachments.Add(attachment);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Attachment?> GetAttachmentByIdAsync(int id) => await _context.Attachments.FindAsync(id);
+
     }
 }

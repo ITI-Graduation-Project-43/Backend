@@ -11,6 +11,7 @@ namespace MindMission.Application.Interfaces.Repository
 {
     public interface IAttachmentRepository
     {
-        Task PostAttachmentAsync(Attachment Attachment);
+        Task PostAttachmentAsync(Lesson lesson, Attachment attachment);
+        public Task<Attachment?> GetAttachmentByIdAsync(int id);
     }
 }

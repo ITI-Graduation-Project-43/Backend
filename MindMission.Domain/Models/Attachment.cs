@@ -15,9 +15,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(255)]
         public string FileName { get; set; } = string.Empty;
-        [Required]
-        [StringLength(2048)]
-        public string FileUrl { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 

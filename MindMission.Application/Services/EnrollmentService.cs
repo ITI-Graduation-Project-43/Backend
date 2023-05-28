@@ -48,9 +48,9 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id);
         }
 
-        public Task<Enrollment> GetByIdAsync(int id, params Expression<Func<Enrollment, object>>[] IncludeProperties)
+        public async Task<Enrollment> GetByIdAsync(int id, params Expression<Func<Enrollment, object>>[] IncludeProperties)
         {
-            return _context.GetByIdAsync(id, IncludeProperties);
+            return await _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task UpdateAsync(Enrollment entity)
