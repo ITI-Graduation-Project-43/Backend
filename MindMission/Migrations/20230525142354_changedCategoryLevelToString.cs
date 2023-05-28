@@ -4,29 +4,25 @@
 
 namespace MindMission.API.Migrations
 {
-    public partial class fixedCategoryType : Migration
+    public partial class changedCategoryLevelToString : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Type",
                 table: "Categories",
-                type: "nvarchar(max)",
+                type: "nvarchar(40)",
                 nullable: false,
-                oldClrType: typeof(string),
-                oldType: "varchar(20)",
-                oldUnicode: false,
-                oldMaxLength: 20);
+                oldClrType: typeof(int),
+                oldType: "int");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
+            migrationBuilder.AlterColumn<int>(
                 name: "Type",
                 table: "Categories",
-                type: "varchar(20)",
-                unicode: false,
-                maxLength: 20,
+                type: "int",
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");

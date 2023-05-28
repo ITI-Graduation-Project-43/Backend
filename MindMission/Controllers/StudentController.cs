@@ -23,32 +23,19 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
         {
-            var Students = await _StudentService.GetAllAsync();
-            if (!Students.Any()) return NotFoundResponse("Students");
-            var StudentDTOs = await MapEntitiesToDTOs(Students);
-            var response = CreateResponse(StudentDTOs, pagination, "Students");
-            return Ok(response);
+            return await GetEntitiesResponse(() => _StudentService.GetAllAsync(), pagination, "Students");
         }
 
         [HttpGet("{StudentID}")]
         public async Task<ActionResult<InstructorDto>> GetById(string StudentID)
         {
-            var Student = await _StudentService.GetByIdAsync(StudentID);
-            if (Student is null) return NotFoundResponse("Student");
-            var StudentDto = await MapEntityToDTO(Student);
-            var response = CreateResponse(StudentDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "Student");
-            return Ok(response);
+            return await GetEntityResponse(() => _StudentService.GetByIdAsync(StudentID), "Student");
         }
 
         [HttpPatch("{StudnetId}")]
         public async Task<ActionResult> UpdateInstructor(string StudnetId, StudentDto StudentDto)
         {
-            if (StudnetId != StudentDto.Id) return BadRequest();
-            var Student = await _StudentService.GetByIdAsync(StudnetId);
-            if (Student is null) return NotFound();
-            Student = _StudentMappingService.MapDtoToEntity(StudentDto);
-            await _StudentService.UpdateAsync(Student);
-            return NoContent();
+            return await UpdateEntityResponse(_StudentService.GetByIdAsync, _StudentService.UpdateAsync, StudnetId, StudentDto, "Student");
         }
     }
 }

@@ -41,10 +41,10 @@ namespace MindMission.API.Controllers
         }
 
 
-        [HttpPut("{ChapterId}")]
-        public async Task<ActionResult> UpdateChapter(int ChapterId, ChapterDto chapterDto)
+        [HttpPut("{chapterId}")]
+        public async Task<ActionResult> UpdateChapter(int chapterId, ChapterDto chapterDto)
         {
-            return await UpdateEntityResponse(_chapterService.GetByIdAsync, _chapterService.UpdateAsync, ChapterId, chapterDto, "Chapter");
+            return await UpdateEntityResponse(_chapterService.GetByIdAsync, _chapterService.UpdateAsync, chapterId, chapterDto, "Chapter");
         }
 
         [HttpDelete("{chapterId}")]

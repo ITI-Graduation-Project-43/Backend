@@ -10,6 +10,7 @@ namespace MindMission.Infrastructure.Repositories
         private readonly MindMissionDbContext _context;
         public InstructorRepository(MindMissionDbContext context) : base(context)
         {
+
             _context = context;
 
         }

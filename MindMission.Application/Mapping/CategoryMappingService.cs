@@ -8,11 +8,9 @@ namespace MindMission.Application.Mapping
 {
     public class CategoryMappingService : IMappingService<Category, CategoryDto>
     {
-        private readonly ICategoryService _categoryService;
 
-        public CategoryMappingService(ICategoryService categoryService)
+        public CategoryMappingService()
         {
-            _categoryService = categoryService;
         }
 
         public async Task<CategoryDto> MapEntityToDto(Category category)
@@ -23,7 +21,6 @@ namespace MindMission.Application.Mapping
                 Name = category.Name,
                 Type = category.Type,
                 Approved = category.Approved,
-                CreatedAt = category.CreatedAt,
                 UpdatedAt = category.UpdatedAt,
                 ParentCategoryId = null,
                 ParentSubCategoryId = null,
@@ -61,7 +58,6 @@ namespace MindMission.Application.Mapping
                 Type = categoryDTO.Type,
                 ParentId = categoryDTO.ParentSubCategoryId ?? categoryDTO.ParentCategoryId,
                 Approved = categoryDTO.Approved,
-                CreatedAt = categoryDTO.CreatedAt,
                 UpdatedAt = categoryDTO.UpdatedAt
 
             };

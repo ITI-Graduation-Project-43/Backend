@@ -21,12 +21,37 @@ namespace MindMission.Infrastructure.Repositories
         {
             return await _dbSet.ToListAsync();
         }
-
+        public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
+        {
+            IQueryable<TClass> Query = _dbSet;
+            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
+            return await Query.ToListAsync();
+        }
         public async Task<TClass> GetByIdAsync(TDataType id)
         {
-            return await _dbSet.FindAsync(id);
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            var entity = await _dbSet.FindAsync(id);
+
+            return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
 
+        public async Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            IQueryable<TClass> Query = _dbSet;
+            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
+            var entity = await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
+            return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
+
+        }
         public async Task<TClass> AddAsync(TClass entity)
         {
             _dbSet.Add(entity);
@@ -46,18 +71,8 @@ namespace MindMission.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
-        {
-            IQueryable<TClass> Query = _dbSet;
-            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
-            return await Query.ToListAsync();
-        }
 
-        public async Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties)
-        {
-            IQueryable<TClass> Query = _dbSet;
-            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
-            return await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
-        }
+
+
     }
 }

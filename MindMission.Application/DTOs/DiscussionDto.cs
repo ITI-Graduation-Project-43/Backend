@@ -1,6 +1,6 @@
 ﻿namespace MindMission.Application.DTOs
 {
-    public class DiscussionDTO
+    public class DiscussionDto
     {
     }
 }

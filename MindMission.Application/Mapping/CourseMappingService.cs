@@ -48,22 +48,20 @@ namespace MindMission.Application.Mapping
             };
 
 
-            var instructor = await _instructorService.GetByIdAsync(course.InstructorId);
-            if (instructor != null)
+            if (course.Instructor != null)
             {
-                courseDTO.InstructorId = instructor.Id;
-                courseDTO.InstructorName = instructor.FirstName + " " + instructor.LastName;
-                courseDTO.InstructorBio = instructor.Bio;
-                courseDTO.InstructorProfilePicture = instructor.ProfilePicture;
-                courseDTO.InstructorTitle = instructor.Title;
-                courseDTO.InstructorDescription = instructor.Description;
-                courseDTO.InstructorNoOfCourses = instructor.Courses.Count;
-                courseDTO.InstructorNoOfStudents = instructor.NoOfStudents;
-                courseDTO.InstructorAvgRating = instructor.AvgRating;
-                courseDTO.InstructorNoOfRatings = instructor.NoOfRatings;
+                courseDTO.InstructorId = course.Instructor.Id;
+                courseDTO.InstructorName = course.Instructor.FirstName + " " + course.Instructor.LastName;
+                courseDTO.InstructorBio = course.Instructor.Bio;
+                courseDTO.InstructorProfilePicture = course.Instructor.ProfilePicture;
+                courseDTO.InstructorTitle = course.Instructor.Title;
+                courseDTO.InstructorDescription = course.Instructor.Description;
+                courseDTO.InstructorNoOfCourses = course.Instructor.Courses.Count;
+                courseDTO.InstructorNoOfStudents = course.Instructor.NoOfStudents;
+                courseDTO.InstructorAvgRating = course.Instructor.AvgRating;
+                courseDTO.InstructorNoOfRatings = course.Instructor.NoOfRatings;
             }
 
-            // Get additional information about the category
             if (course.Category != null)
             {
                 courseDTO.CategoryName = course.Category.Name;

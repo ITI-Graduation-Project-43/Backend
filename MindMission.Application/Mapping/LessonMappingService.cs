@@ -15,9 +15,7 @@ namespace MindMission.Application.Mapping
                 Description = lessonDto.Description,
                 Type = lessonDto.Description,
                 NoOfHours = lessonDto.NoOfHours,
-                IsFree = lessonDto.IsFree,
-                CreatedAt = lessonDto.CreatedAt,
-                UpdatedAt = lessonDto.UpdatedAt
+                IsFree = lessonDto.IsFree
             };
         }
 
@@ -31,9 +29,7 @@ namespace MindMission.Application.Mapping
                 Description = lesson.Description,
                 Type = lesson.Type,
                 NoOfHours = lesson.NoOfHours,
-                IsFree = lesson.IsFree,
-                CreatedAt = lesson.CreatedAt,
-                UpdatedAt = lesson.UpdatedAt
+                IsFree = lesson.IsFree
             };
             return lessonDto;
         }

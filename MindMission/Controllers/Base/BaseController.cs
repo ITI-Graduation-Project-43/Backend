@@ -6,11 +6,11 @@ using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Responses;
 using MindMission.Domain.Constants;
-
+using System.Linq.Expressions;
 
 namespace MindMission.API.Controllers.Base
 {
-    public abstract class BaseController<TEntity, TDto,Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
+    public abstract class BaseController<TEntity, TDto, Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
     {
         private readonly IMappingService<TEntity, TDto> _entityMappingService;
 
@@ -68,6 +68,20 @@ namespace MindMission.API.Controllers.Base
             return Ok(response);
         }
 
+        protected async Task<ActionResult> GetEntitiesResponseWithInclude(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+            var entities = await serviceMethod.Invoke(IncludeProperties);
+
+            if (entities == null)
+                return NotFoundResponse(entityName);
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var response = CreateResponse(entityDTOs, pagination, entityName);
+
+            return Ok(response);
+        }
+
+
         protected async Task<ActionResult> GetEntityResponse(Func<Task<TEntity>> serviceMethod, string entityName)
         {
             var entity = await serviceMethod.Invoke();
@@ -81,6 +95,18 @@ namespace MindMission.API.Controllers.Base
             return Ok(response);
         }
 
+        protected async Task<ActionResult> GetEntityResponseWithInclude(Func<Task<TEntity>> serviceMethod, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+            var entity = await serviceMethod.Invoke();
+
+            if (entity == null)
+                return NotFoundResponse(entityName);
+
+            var entityDto = await MapEntityToDTO(entity);
+            var response = CreateResponse(entityDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+
+            return Ok(response);
+        }
         protected async Task<ActionResult> DeleteEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<int, Task> serviceDeleteMethod, int id)
         {
             var entity = await serviceGetMethod.Invoke(id);
@@ -92,8 +118,8 @@ namespace MindMission.API.Controllers.Base
 
             return NoContent();
         }
-        #region MyRegion
-        protected async Task<ActionResult> AddEntityResponse(Func<TEntity, Task<TEntity>> serviceMethod, TDto dto, string entityName, string actionName)
+
+        protected async Task<ActionResult> AddEntityResponse(Func<TEntity, Task<TEntity>> serviceAddMethod, TDto dto, string entityName, string actionName)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +127,9 @@ namespace MindMission.API.Controllers.Base
             }
 
             var entity = MapDTOToEntity(dto);
-            var addedEntity = await serviceMethod.Invoke(entity);
+            //entity.CreatedAt = DateTime.Now;
+            //entity.UpdatedAt = DateTime.Now;
+            var addedEntity = await serviceAddMethod.Invoke(entity);
 
             var createdDto = await MapEntityToDTO(addedEntity);
 
@@ -128,7 +156,6 @@ namespace MindMission.API.Controllers.Base
             {
                 return BadRequest(ModelState);
             }
-
             entity = _entityMappingService.MapDtoToEntity(dto);
             await serviceUpdateMethod.Invoke(entity);
 
@@ -152,7 +179,6 @@ namespace MindMission.API.Controllers.Base
             }
 
             patchOperations(entity, dto);
-
             await serviceUpdateMethod.Invoke(entity);
 
             return NoContent();
@@ -168,10 +194,43 @@ namespace MindMission.API.Controllers.Base
                 if (entity == null)
                     return NotFound();
 
+                var originalDto = MapEntityToDTO(entity);
+                if (originalDto.Equals(dto))
+                {
+                    return Ok($"No changes were made to the {entityName}.");
+                }
+
                 entity = MapDTOToEntity(dto);
                 await serviceUpdateMethod.Invoke(entity);
 
-                return NoContent();
+                return Ok($"{entityName} updated successfully.");
+            }
+            else
+            {
+                return BadRequest($"{entityName} ID mismatch.");
+            }
+        }
+
+        //overload with string id for patch
+        protected async Task<ActionResult> UpdateEntityResponse(Func<string, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, string id, TDto dto, string entityName)
+        {
+            if (id.Equals(dto.Id))
+            {
+                var entity = await serviceGetMethod.Invoke(id);
+
+                if (entity == null)
+                    return NotFound();
+
+                var originalDto = MapEntityToDTO(entity);
+                if (originalDto.Equals(dto))
+                {
+                    return Ok($"No changes were made to the {entityName}.");
+                }
+
+                entity = MapDTOToEntity(dto);
+                await serviceUpdateMethod.Invoke(entity);
+
+                return Ok($"{entityName} updated successfully.");
             }
             else
             {
@@ -180,7 +239,6 @@ namespace MindMission.API.Controllers.Base
         }
 
 
-        #endregion
     }
 
 }

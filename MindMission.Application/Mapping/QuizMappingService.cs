@@ -11,9 +11,7 @@ namespace MindMission.Application.Mapping
             {
                 Id = quizDto.Id,
                 LessonId = quizDto.LessonId,
-                NoOfQuestions = quizDto.NoOfQuestions,
-                CreatedAt = quizDto.CreatedAt,
-                UpdatedAt = quizDto.UpdatedAt
+                NoOfQuestions = quizDto.NoOfQuestions
             };
         }
 
@@ -23,10 +21,12 @@ namespace MindMission.Application.Mapping
             {
                 Id = quiz.Id,
                 LessonId = quiz.LessonId,
-                NoOfQuestions = quiz.NoOfQuestions,
-                CreatedAt = quiz.CreatedAt,
-                UpdatedAt = quiz.UpdatedAt
+                NoOfQuestions = quiz.NoOfQuestions
             };
+            foreach (var question in quiz.Questions)
+            {
+                quizDto.Questions.Add(question.QuestionText);
+            }
             return quizDto;
         }
     }

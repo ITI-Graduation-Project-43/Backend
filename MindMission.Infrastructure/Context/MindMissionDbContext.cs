@@ -35,6 +35,7 @@ namespace MindMission.Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
             builder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.AccountType).IsUnicode(false);
@@ -100,10 +101,12 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Name).IsUnicode(false);
-
                 entity.Property(e => e.Type).HasConversion<string>();
+
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
@@ -117,6 +120,7 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Chapter>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Title).IsUnicode(false);
 
@@ -298,10 +302,18 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<User>(entity =>
             {
+                entity.Property(e => e.IsBlocked).HasDefaultValue(false);
+
+                entity.Property(e => e.IsDeactivated).HasDefaultValue(false);
+
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+
+                entity.HasIndex(e => e.Email).IsUnique();
+
+                entity.Property(e => e.Email).IsRequired();
+
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Email).IsUnicode(false);
-
+                
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.PasswordHash).IsUnicode(false);
@@ -330,7 +342,7 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
-            });
+            }); 
 
             builder.Entity<WebsiteFeedback>(entity =>
             {
@@ -355,8 +367,6 @@ namespace MindMission.Infrastructure.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
             });
-
-            base.OnModelCreating(builder);
         }
     }
 }

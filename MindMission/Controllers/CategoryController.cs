@@ -1,20 +1,21 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
-using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
-    // TODO: Refactor code and add Try catch block, comments
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : BaseController<Category, CategoryDto,int>
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize]
+    public class CategoryController : BaseController<Category, CategoryDto, int>
     {
         private readonly ICategoryService _categoryService;
         private readonly CategoryMappingService _categoryMappingService;
@@ -27,22 +28,31 @@ namespace MindMission.API.Controllers
         }
 
 
-
-
         #region Get
         // GET: api/Category
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_categoryService.GetAllAsync, pagination, "Categories");
+            return await GetEntitiesResponseWithInclude(
+                _categoryService.GetAllAsync,
+                pagination,
+                "Categories",
+                category => category.Parent,
+                category => category.Parent.Parent
+            );
         }
-
 
         // GET: api/Category/{categoryId}
         [HttpGet("{Id}")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int Id)
         {
-            return await GetEntityResponse(() => _categoryService.GetByIdAsync(Id), "Category");
+            return await GetEntityResponseWithInclude(
+                    () => _categoryService.GetByIdAsync(Id,
+                        category => category.Parent,
+                        category => category.Parent.Parent
+                    ),
+                    "Category"
+                );
         }
 
 
@@ -88,6 +98,7 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid parent subcategory.");
             }
+
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
 
@@ -120,7 +131,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid parent category.");
             }
-
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
 
@@ -139,7 +149,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("Invalid parent subcategory.");
             }
-
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
         #endregion
@@ -156,52 +165,25 @@ namespace MindMission.API.Controllers
         #region Edit Patch/Put 
 
         // PUT: api/Category/{categoryId}
-        [HttpPut("{categoryId}")]
-        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryDto categoryDTO)
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateCategory(int Id, [FromBody] CategoryDto categoryDTO)
         {
-            if (categoryId != categoryDTO.Id)
-            {
-                return BadRequest();
-            }
-
-            var category = await _categoryService.GetByIdAsync(categoryId);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            if (categoryDTO.Type != category.Type)
+            if (!IsValidCategoryType(categoryDTO.Type))
             {
                 return BadRequest("Invalid category type.");
             }
 
-            if (categoryDTO.Type == CategoryType.SubCategory && categoryDTO.ParentCategoryId != category.ParentId)
+            if (categoryDTO.Type == CategoryType.SubCategory && !await IsValidParentCategoryIdAsync(categoryDTO.ParentCategoryId))
             {
                 return BadRequest("Invalid parent category.");
             }
 
-            if (categoryDTO.Type == CategoryType.Topic && categoryDTO.ParentSubCategoryId != category.ParentId)
+            if (categoryDTO.Type == CategoryType.Topic && !await IsValidParentSubCategoryIdAsync(categoryDTO.ParentSubCategoryId))
             {
                 return BadRequest("Invalid parent subcategory.");
             }
-
-            category.Name = categoryDTO.Name;
-            category.Approved = categoryDTO.Approved;
-            category.UpdatedAt = DateTime.Now;
-
-            await _categoryService.UpdateAsync(category);
-
-            return NoContent();
-        }
-
-
-        // PUT: api/Category/{categoryId}
-        [HttpPut("hh/{categoryId}")]
-        public async Task<IActionResult> UpdateCategory2(int categoryId, [FromBody] CategoryDto categoryDTO)
-        {
-            return await UpdateEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, categoryId, categoryDTO, "Category");
-
+            categoryDTO.UpdatedAt = DateTime.Now;
+            return await UpdateEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, Id, categoryDTO, "Category");
         }
 
         // PATCH: api/Category/{categoryId}
@@ -212,105 +194,34 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest();
             }
-            var category = await _categoryService.GetByIdAsync(categoryId);
 
-            if (category == null)
+
+
+            return await PatchEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, categoryId, patchDocument, (entity, dto) =>
             {
-                return NotFound();
-            }
+                entity = _categoryMappingService.MapDtoToEntity(dto);
 
-            var categoryDTO = await MapCategoryToDTO(category);
-
-            patchDocument.ApplyTo(
-                categoryDTO,
-                error =>
+                if (dto.Type != entity.Type)
                 {
-                    ModelState.AddModelError("JsonPatch", error.ErrorMessage);
-                });
-
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (categoryDTO.Type != category.Type)
-            {
-                return BadRequest("Invalid category type.");
-            }
-
-            if (categoryDTO.Type == CategoryType.SubCategory && categoryDTO.ParentCategoryId != category.ParentId)
-            {
-                return BadRequest("Invalid parent category.");
-            }
-
-            if (categoryDTO.Type == CategoryType.Topic && categoryDTO.ParentSubCategoryId != category.ParentId)
-            {
-                return BadRequest("Invalid parent subcategory.");
-            }
-
-            category.Name = categoryDTO.Name;
-            category.Approved = categoryDTO.Approved;
-            category.UpdatedAt = DateTime.Now;
-
-            await _categoryService.UpdateAsync(category);
-
-            return NoContent();
+                    throw new ArgumentException("Invalid category type.");
+                }
+                if (dto.Type == CategoryType.SubCategory && dto.ParentCategoryId != entity.ParentId)
+                {
+                    throw new ArgumentException("Invalid parent category.");
+                }
+                if (dto.Type == CategoryType.Topic && dto.ParentSubCategoryId != entity.ParentId)
+                {
+                    throw new ArgumentException("Invalid parent subcategory.");
+                }
+                entity.Name = dto.Name;
+                entity.Approved = dto.Approved;
+                entity.UpdatedAt = DateTime.Now;
+            });
         }
         #endregion
 
         #region Helper Methods
 
-        private async Task<CategoryDto> MapCategoryToDTO(Category category)
-        {
-            var categoryDTO = new CategoryDto
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Type = category.Type,
-                Approved = category.Approved,
-                CreatedAt = category.CreatedAt,
-                UpdatedAt = category.UpdatedAt,
-                ParentCategoryId = null,
-                ParentSubCategoryId = null,
-                ParentCategoryName = null,
-                ParentSubCategoryName = null
-            };
-
-            if (category.Parent != null)
-            {
-                if (category.Parent.Type == CategoryType.Category)
-                {
-                    categoryDTO.ParentCategoryId = category.Parent.Id;
-                    categoryDTO.ParentCategoryName = category.Parent.Name;
-                }
-                else if (category.Parent.Type == CategoryType.SubCategory && category.Parent.Parent != null)
-                {
-                    var parentSubCategory = category.Parent.Parent;
-                    categoryDTO.ParentCategoryId = parentSubCategory.Id;
-                    categoryDTO.ParentSubCategoryId = category.Parent.Id;
-                    categoryDTO.ParentCategoryName = parentSubCategory.Name;
-                    categoryDTO.ParentSubCategoryName = category.Parent.Name;
-                }
-            }
-
-            return categoryDTO;
-
-        }
-
-        private static int? GetParentId(CategoryDto categoryDTO)
-        {
-            if (categoryDTO.Type == CategoryType.SubCategory)
-            {
-                return categoryDTO.ParentCategoryId;
-            }
-            else if (categoryDTO.Type == CategoryType.Topic)
-            {
-                return categoryDTO.ParentSubCategoryId;
-            }
-
-            return null;
-        }
 
         private static bool IsValidCategoryType(CategoryType type)
         { return type == CategoryType.Category || type == CategoryType.SubCategory || type == CategoryType.Topic; }

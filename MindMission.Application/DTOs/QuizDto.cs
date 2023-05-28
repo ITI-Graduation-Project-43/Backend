@@ -7,7 +7,6 @@ namespace MindMission.Application.DTOs
         public int Id { get; set; }
         public int LessonId { get; set; }
         public int NoOfQuestions { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public ICollection<String> Questions { get; set; } = new List<String>();
     }
 }

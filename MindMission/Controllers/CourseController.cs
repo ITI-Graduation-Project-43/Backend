@@ -4,6 +4,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 using Stripe;
 
@@ -12,7 +13,7 @@ namespace MindMission.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : BaseController<Course, CourseDto,int>
+    public class CourseController : BaseController<Course, CourseDto, int>
     {
 
         private readonly ICourseService _courseService;
@@ -29,7 +30,14 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_courseService.GetAllAsync, pagination, "Courses");
+            return await GetEntitiesResponseWithInclude(
+               _courseService.GetAllAsync,
+               pagination,
+               "Courses",
+               course => course.Instructor,
+               Course => Course.Category,
+               Course => Course.Chapters
+           );
         }
 
 
@@ -39,6 +47,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _courseService.GetAllByCategoryAsync(categoryId), pagination, "Courses");
+
         }
 
         // GET: api/Course/{courseId}/related
@@ -78,7 +87,14 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}")]
         public async Task<ActionResult<CourseDto>> GetCourseById(int courseId)
         {
-            return await GetEntityResponse(() => _courseService.GetByIdAsync(courseId), "Course");
+            return await GetEntityResponseWithInclude(
+                    () => _courseService.GetByIdAsync(courseId,
+                        course => course.Instructor,
+                        Course => Course.Category,
+                        Course => Course.Chapters
+                    ),
+                    "Course"
+                );
         }
 
         // GET: api/Course/name/{name}
@@ -130,32 +146,8 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            var course = await _courseService.GetByIdAsync(courseId);
-            if (course == null)
-            {
-                return NotFound();
-            }
+            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, patchDocument);
 
-            var courseDto = await _courseMappingService.MapEntityToDto(course);
-
-            // apply patch
-            patchDocument.ApplyTo(
-                 courseDto,
-                 error =>
-                 {
-                     ModelState.AddModelError("JsonPatch", error.ErrorMessage);
-                 });
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            course = _courseMappingService.MapDtoToEntity(courseDto);
-
-            await _courseService.UpdateAsync(course);
-
-            return NoContent();
         }
         #endregion
 

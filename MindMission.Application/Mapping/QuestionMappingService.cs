@@ -16,9 +16,7 @@ namespace MindMission.Application.Mapping
                 ChoiceB = questionDto.ChoiceB,
                 ChoiceC = questionDto.ChoiceC,
                 ChoiceD = questionDto.ChoiceD,
-                CorrectAnswer = questionDto.CorrectAnswer,
-                CreatedAt = questionDto.CreatedAt,
-                UpdatedAt = questionDto.UpdatedAt,
+                CorrectAnswer = questionDto.CorrectAnswer
             };
         }
 
@@ -33,9 +31,7 @@ namespace MindMission.Application.Mapping
                 ChoiceB = question.ChoiceB,
                 ChoiceC = question.ChoiceC,
                 ChoiceD = question.ChoiceD,
-                CorrectAnswer = question.CorrectAnswer,
-                CreatedAt = question.CreatedAt,
-                UpdatedAt = question.UpdatedAt,
+                CorrectAnswer = question.CorrectAnswer
             };
             return questionDto;
 
