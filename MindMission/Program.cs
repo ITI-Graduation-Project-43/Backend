@@ -139,6 +139,7 @@ builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingServ
 /*Attachment Configuration*/
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+builder.Services.AddScoped<IAttachmentMappingService, AttachmentMappingService>();
 
 /*User Configuration*/
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -224,6 +225,16 @@ builder.Services.AddCors(option =>
             builder.AllowAnyOrigin();
         });
 });
+
+
+
+// Stripe Service Registeration
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IPaymentMappingService, PaymentMappingService>();
+builder.Services.AddScoped<ChargeService, ChargeService>();
+builder.Services.AddScoped<TokenService, TokenService>();
+builder.Services.AddScoped<CustomerService, CustomerService>();
+StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
 var app = builder.Build();
 

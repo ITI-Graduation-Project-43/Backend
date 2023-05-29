@@ -13,8 +13,10 @@ namespace MindMission.Application.DTOs
     {
         [Required]
         public IFormFile File { get; set; }
+
         [Required]
         public FileType FileType { get; set; }
+
         [Required]
         public int LessonId { get; set; }
     }
