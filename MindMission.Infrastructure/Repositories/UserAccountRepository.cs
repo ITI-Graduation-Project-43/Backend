@@ -22,7 +22,6 @@ namespace MindMission.Infrastructure.Repositories
         List<UserAccount> IUserAccountRepository.GetUserAccountsAsync(string id)
         {
             return _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id).ToList();
-
         }
     }
 }

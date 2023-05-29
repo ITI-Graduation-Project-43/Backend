@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
+using Org.BouncyCastle.Bcpg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace MindMission.Application.Mapping
                 Title = entity.Title,
                 Description = entity.Description,
                 NoOfCources = entity.NoOfCourses,
-                AvgRating = (double)entity.AvgRating,
+                AvgRating = entity.AvgRating,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 NoOfStudents = entity.NoOfStudents,
@@ -60,7 +61,9 @@ namespace MindMission.Application.Mapping
             var UserAccounts =  _userAccountService.GetUserAccountsAsync(entity.Id);
             foreach (var account in UserAccounts)
             {
-                InstructorDTO.accounts.Add(account.Account.AccountType, account.AccountLink);
+                InstructorDTO.Accounts.Add(new Dictionary<string, string>
+                {
+                    {"ID",$"{account.Id}" }, { "UserID",account.UserId},{ "accountID",$"{account.AccountId}" },{ account.Account.AccountType,account.AccountLink} });
             }
             return InstructorDTO;
         }

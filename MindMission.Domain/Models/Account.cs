@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Enums;
 
 namespace MindMission.Domain.Models
 {
@@ -19,7 +20,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(15)]
         [Unicode(false)]
-        [EnumDataType(typeof(UserAccount))]
+        [EnumDataType(typeof(AccountType))]
         public string AccountType { get; set; }
 
         [InverseProperty(nameof(UserAccount.Account))]
