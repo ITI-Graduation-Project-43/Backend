@@ -110,7 +110,7 @@ namespace MindMission.API.Controllers
 
         [HttpPost]
         [Route("ForgetPassword")]
-        public async Task<IActionResult> ForgetPasswordAsync([FromBody][EmailAddress] string Email)
+        public async Task<IActionResult> ForgetPasswordAsync([EmailAddress] string Email)
         {
             if (Email != null)
             {

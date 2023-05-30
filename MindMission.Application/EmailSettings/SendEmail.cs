@@ -49,10 +49,12 @@ namespace MindMission.API.EmailSettings
                 using (SmtpClient MailClient = new SmtpClient())
                 {
                     MailClient.Connect(MailSettings.Server, MailSettings.Port, SecureSocketOptions.StartTls);
+                    MailClient.Timeout = 6000;
                     MailClient.Authenticate(MailSettings.UserName, MailSettings.Password);
                     MailClient.Send(EmailMessage);
                     MailClient.Disconnect(true);
                 }
+                Console.WriteLine("Tarek");
                 return true;
             }
             catch (Exception ex)
