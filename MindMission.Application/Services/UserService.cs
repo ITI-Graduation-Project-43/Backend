@@ -22,6 +22,8 @@ namespace MindMission.Application.Services
         private readonly IConfiguration Configuration;
         private readonly IMailService MailService;
 
+        public IStudentService StudentService { get; }
+
         public UserService()
         {
         }
@@ -33,19 +35,14 @@ namespace MindMission.Application.Services
             MailService = _MailService;
         }
 
-        public async Task<IdentityResult> Registration(User user)
+        public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
          {
-            var CreatedUser = await UserManager.Registration(user);
-            if (CreatedUser.Succeeded)
-            {
-                return IdentityResult.Success;
-            }
-            return CreatedUser;
+            return await UserManager.RegistrationAsync(user, FirstName, LasName);
         }
 
-        public async Task<SuccessLoginDto?> Login(string Email, string Password)
+        public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
-            var User = await UserManager.Login(Email, Password);
+            var User = await UserManager.LoginAsync(Email, Password);
 
             if(User != null)
             {
@@ -72,19 +69,19 @@ namespace MindMission.Application.Services
             return User;
         }
 
-        public async Task<IdentityResult> ChangeEmail(string OldEmail, string NewEmail, string Password)
+        public async Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password)
         {
-            return await UserManager.ChangeEmail(OldEmail, NewEmail, Password);
+            return await UserManager.ChangeEmailAsync(OldEmail, NewEmail, Password);
         }
 
-        public async Task<IdentityResult> ChangePassword(string Email, string CurrentPassword, string NewPassword)
+        public async Task<IdentityResult> ChangePasswordAsync(string Email, string CurrentPassword, string NewPassword)
         {
-            return await UserManager.ChangePassword(Email, CurrentPassword, NewPassword);
+            return await UserManager.ChangePasswordAsync(Email, CurrentPassword, NewPassword);
         }
 
-        public async Task<string?> ForgetPassword(string Email)
+        public async Task<string?> ForgetPasswordAsync(string Email)
         {
-            var Result = await UserManager.ForgetPassword(Email);
+            var Result = await UserManager.ForgetPasswordAsync(Email);
             if(Result != null)
             {
                 MailData mailData = new MailData()
@@ -102,9 +99,29 @@ namespace MindMission.Application.Services
             return Result;
         }
 
-        public async Task<IdentityResult> ResetPassword(string Email, string Token, string NewPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(string Email, string Token, string NewPassword)
         {
-            return await UserManager.ResetPassword(Email, Token, NewPassword);
+            return await UserManager.ResetPasswordAsync(Email, Token, NewPassword);
+        }
+
+        public async Task<bool> ValidateTokenAsync(string Email, string Token)
+        {
+            return await UserManager.ValidateTokenAsync(Email, Token);
+        }
+
+        public async Task<IdentityResult> DeactivateUserAsync(string Email, string Password)
+        {
+            return await UserManager.DeactivateUserAsync(Email, Password);
+        }
+
+        public async Task<IdentityResult> DeleteUserAsync(string Email, string Password)
+        {
+            return await UserManager.DeactivateUserAsync(Email, Password);
+        }
+
+        public async Task<IdentityResult> BlockUserAsync(string Email, bool Blocking)
+        {
+            return await UserManager.BlockUserAsync(Email, Blocking);
         }
     }
 }
