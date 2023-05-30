@@ -93,6 +93,7 @@ namespace MindMission.Application.Services
                 };
                 if(MailService.SendMail(mailData))
                 {
+                    Console.WriteLine("Hello");
                     return "If your email is found, you will receive a link to reset your password";
                 }
             }
