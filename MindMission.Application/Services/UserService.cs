@@ -22,6 +22,8 @@ namespace MindMission.Application.Services
         private readonly IConfiguration Configuration;
         private readonly IMailService MailService;
 
+        public IStudentService StudentService { get; }
+
         public UserService()
         {
         }
@@ -33,10 +35,9 @@ namespace MindMission.Application.Services
             MailService = _MailService;
         }
 
-        public async Task<IdentityResult> RegistrationAsync(User user)
+        public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
          {
-            return await UserManager.RegistrationAsync(user);
-
+            return await UserManager.RegistrationAsync(user, FirstName, LasName);
         }
 
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
@@ -106,6 +107,21 @@ namespace MindMission.Application.Services
         public async Task<bool> ValidateTokenAsync(string Email, string Token)
         {
             return await UserManager.ValidateTokenAsync(Email, Token);
+        }
+
+        public async Task<IdentityResult> DeactivateUserAsync(string Email, string Password)
+        {
+            return await UserManager.DeactivateUserAsync(Email, Password);
+        }
+
+        public async Task<IdentityResult> DeleteUserAsync(string Email, string Password)
+        {
+            return await UserManager.DeactivateUserAsync(Email, Password);
+        }
+
+        public async Task<IdentityResult> BlockUserAsync(string Email, bool Blocking)
+        {
+            return await UserManager.BlockUserAsync(Email, Blocking);
         }
     }
 }
