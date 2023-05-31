@@ -135,7 +135,7 @@ namespace MindMission.API.Controllers.Base
                 return NotFound(NotFoundResponse(entityName));
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
-            var response = CreateResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
         }
@@ -148,7 +148,7 @@ namespace MindMission.API.Controllers.Base
                 return NotFound(NotFoundResponse(entityName));
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
-            var response = CreateResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
         }
@@ -282,6 +282,8 @@ namespace MindMission.API.Controllers.Base
                 return BadRequest(IdMismatchResponse(entityName));
             }
         }
+
+        #endregion CRUD Functions
 
         //overload with string id for patch
         protected async Task<ActionResult> UpdateEntityResponse(Func<string, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, string id, TDto dto, string entityName)
