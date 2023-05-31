@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.DTOs;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
 using MindMission.Infrastructure.Context;
@@ -17,10 +18,11 @@ namespace MindMission.Infrastructure.Repositories
             _dbSet = _context.Set<TClass>();
         }
 
-        public async Task<IEnumerable<TClass>> GetAllAsync()
+        public async Task<IQueryable<TClass>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await Task.FromResult(_dbSet);
         }
+
         public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
         {
             IQueryable<TClass> Query = _dbSet;
@@ -70,9 +72,5 @@ namespace MindMission.Infrastructure.Repositories
             _dbSet.Remove(await GetByIdAsync(id));
             await _context.SaveChangesAsync();
         }
-
-
-
-
     }
 }

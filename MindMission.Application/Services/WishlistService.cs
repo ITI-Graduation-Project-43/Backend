@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -23,7 +24,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllAsync()
+        public Task<IQueryable<Wishlist>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
@@ -33,12 +34,12 @@ namespace MindMission.Application.Services
             return await _context.GetAllAsync(IncludeProperties);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllByCourseIdAsync(int courseId)
+        public Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId)
         {
             return _context.GetAllByCourseIdAsync(courseId);
         }
 
-        public Task<IEnumerable<Wishlist>> GetAllByStudentIdAsync(string studentId)
+        public Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId)
         {
             return _context.GetAllByStudentIdAsync(studentId);
         }

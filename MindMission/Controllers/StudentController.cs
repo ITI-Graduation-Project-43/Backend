@@ -21,9 +21,9 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _StudentService.GetAllAsync(), pagination, "Students");
+            return await GetEntitiesResponse(_StudentService.GetAllAsync, pagination, "Students");
         }
 
         [HttpGet("{StudentID}")]

@@ -55,14 +55,14 @@ namespace MindMission.API.Controllers.Base
             return response;
         }
 
-        protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
+        protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IQueryable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
-
             if (entities == null)
                 return NotFoundResponse(entityName);
 
-            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+            var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
             var response = CreateResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -75,7 +75,8 @@ namespace MindMission.API.Controllers.Base
             if (entities == null)
                 return NotFoundResponse(entityName);
 
-            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+            var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
             var response = CreateResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -238,6 +239,22 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
+
+        #region testPaging
+        //Test Pagination
+        protected async Task<ActionResult> GetEntitiesResponseTest(Func<PaginationDto, Task<IQueryable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
+        {
+            var entities = await serviceMethod.Invoke(pagination);
+
+            if (entities == null)
+                return NotFoundResponse(entityName);
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var response = CreateResponse(entityDTOs, pagination, entityName);
+
+            return Ok(response);
+        } 
+        #endregion
 
     }
 

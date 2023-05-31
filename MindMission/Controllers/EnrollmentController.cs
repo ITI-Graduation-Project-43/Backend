@@ -21,7 +21,7 @@ namespace MindMission.API.Controllers
         #region GET
         // GET: api/Enrollment
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_EnrollmentService.GetAllAsync, pagination, "Enrollments");
         }

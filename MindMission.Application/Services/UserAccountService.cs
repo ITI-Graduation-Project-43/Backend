@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System;
@@ -27,7 +28,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<UserAccount>> GetAllAsync()
+        public Task<IQueryable<UserAccount>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }

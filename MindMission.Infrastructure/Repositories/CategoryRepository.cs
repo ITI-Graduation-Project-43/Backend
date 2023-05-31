@@ -17,24 +17,28 @@ namespace MindMission.Infrastructure.Repositories
 
 
 
-        public async Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type)
+        public async Task<IQueryable<Category>> GetByTypeAsync(CategoryType type)
         {
-            return await _context.Categories
-                .Include(category => category.Parent)
-                .ThenInclude(parentCategory => parentCategory.Parent)
-                .Where(category => category.Type == type)
-                .ToListAsync();
+            var Query = await _context.Categories
+                        .Include(category => category.Parent)
+                        .ThenInclude(parentCategory => parentCategory.Parent)
+                        .Where(category => category.Type == type)
+                        .ToListAsync();
+
+            return Query.AsQueryable();
         }
 
 
 
-        public async Task<IEnumerable<Category>> GetByParentIdAsync(int parentId)
+        public async Task<IQueryable<Category>> GetByParentIdAsync(int parentId)
         {
-            return await _context.Categories
-                .Include(category => category.Parent)
-                .ThenInclude(parentCategory => parentCategory.Parent)
-                .Where(category => category.ParentId == parentId)
-                .ToListAsync();
+            var Query = await _context.Categories
+                        .Include(category => category.Parent)
+                        .ThenInclude(parentCategory => parentCategory.Parent)
+                        .Where(category => category.ParentId == parentId)
+                        .ToListAsync();
+
+            return Query.AsQueryable();
         }
 
     }

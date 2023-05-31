@@ -32,9 +32,9 @@ namespace MindMission.Infrastructure.Repositories
             return entity ?? throw new KeyNotFoundException($"No entity with name {name} found.");
         }
 
-        public async Task<IEnumerable<Course>> GetAllByCategoryAsync(int categoryId)
+        public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
         {
-            return await _context.Courses
+            return (IQueryable<Course>) await _context.Courses
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .Include(c => c.Category)
@@ -42,12 +42,12 @@ namespace MindMission.Infrastructure.Repositories
                          .ToListAsync();
         }
 
-        public async Task<IEnumerable<Course>> GetRelatedCoursesAsync(int courseId)
+        public async Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId)
         {
             var course = await _context.Courses.FindAsync(courseId);
             return course == null
                 ? throw new Exception($"Course with id {courseId} not found.")
-                : (IEnumerable<Course>)await _context.Courses
+                : (IQueryable<Course>)await _context.Courses
                              .Include(c => c.Instructor)
                              .Include(c => c.Chapters)
                              .Include(c => c.Category)
@@ -55,36 +55,42 @@ namespace MindMission.Infrastructure.Repositories
                              .ToListAsync();
         }
 
-        public async Task<IEnumerable<Course>> GetAllByInstructorAsync(string instructorId)
+        public async Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
         {
-            return await _context.Courses
+            var Query = await _context.Courses
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .Include(c => c.Category)
                          .Where(c => c.InstructorId == instructorId)
                          .ToListAsync();
+
+            return Query.AsQueryable();
         }
 
-        public async Task<IEnumerable<Course>> GetTopRatedCoursesAsync(int topNumber)
+        public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
-            return await _context.Courses
+            var Query = await _context.Courses
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .Include(c => c.Category)
                          .OrderByDescending(c => c.AvgReview)
                          .Take(topNumber)
                          .ToListAsync();
+
+            return Query.AsQueryable();
         }
 
-        public async Task<IEnumerable<Course>> GetRecentCoursesAsync(int recentNumber)
+        public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
         {
-            return await _context.Courses
+            var Query = await _context.Courses
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .Include(c => c.Category)
                          .OrderByDescending(c => c.CreatedAt)
                          .Take(recentNumber)
                          .ToListAsync();
+
+            return Query.AsQueryable();
         }
 
 
