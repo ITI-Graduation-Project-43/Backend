@@ -11,7 +11,9 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+
         public int LessonId { get; set; }
+
         [Required]
         [StringLength(255)]
         public string FileName { get; set; } = string.Empty;

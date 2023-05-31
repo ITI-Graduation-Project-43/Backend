@@ -1,7 +1,6 @@
 ﻿using MindMission.Application.DTOs.Base;
 using MindMission.Domain.Enums;
 
-
 namespace MindMission.Application.DTOs
 {
     public class CourseDto : IDtoWithId<int>

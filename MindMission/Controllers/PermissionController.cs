@@ -33,7 +33,7 @@ namespace MindMission.API.Controllers
                 });
             }
 
-            ResponseObject<PermissionDto> AllPermission = new();
+            ResponseObjectX<PermissionDto> AllPermission = new();
             AllPermission.ReturnedResponse(true, "All permissions", permissionDtos, 3, 10, permissionDtos.Count());
 
             return Ok(AllPermission);
@@ -51,7 +51,7 @@ namespace MindMission.API.Controllers
                 AdminIds = permission.AdminPermissions.Select(ap => ap.Id).ToList()
             };
 
-            ResponseObject<PermissionDto> OnePermission = new();
+            ResponseObjectX<PermissionDto> OnePermission = new();
             List<PermissionDto> permissions = new() { permissionDto };
             OnePermission.ReturnedResponse(true, "One permissions", permissions, 3, 10, permissions.Count());
 

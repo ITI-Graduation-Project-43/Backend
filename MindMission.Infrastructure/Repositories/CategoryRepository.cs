@@ -3,6 +3,7 @@ using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using MindMission.Infrastructure.Repositories.Base;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -15,8 +16,6 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-
-
         public async Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type)
         {
             return await _context.Categories
@@ -26,8 +25,6 @@ namespace MindMission.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-
-
         public async Task<IEnumerable<Category>> GetByParentIdAsync(int parentId)
         {
             return await _context.Categories
@@ -36,6 +33,5 @@ namespace MindMission.Infrastructure.Repositories
                 .Where(category => category.ParentId == parentId)
                 .ToListAsync();
         }
-
     }
 }

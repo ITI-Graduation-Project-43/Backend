@@ -1,32 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
-using MindMission.Domain.Models;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
-using System;
-using MindMission.Application.Interfaces.Services;
+using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InstructorController : BaseController<Instructor, InstructorDto,string>
+    public class InstructorController : BaseController<Instructor, InstructorDto, string>
     {
         private readonly IInstructorService _instructorService;
         private readonly InstructorMappingService _instructorMappingService;
-       /* private readonly IWebHostEnvironment _environment;*/
-
+        /* private readonly IWebHostEnvironment _environment;*/
 
         public InstructorController(InstructorMappingService instructorMappingService, IInstructorService instructorService) : base(instructorMappingService)
         {
             _instructorService = instructorService;
             _instructorMappingService = instructorMappingService;
-            
         }
+
         #region get
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
         {
@@ -39,7 +35,6 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(() => _instructorService.GetTopInstructorsAsync(), new PaginationDto { PageNumber = 1, PageSize = 10 }, "Top 10 Instructors");
         }
 
-
         [HttpGet("{instructorId}")]
         public async Task<ActionResult<InstructorDto>> GetById(string instructorId)
         {
@@ -49,20 +44,15 @@ namespace MindMission.API.Controllers
             var response = CreateResponse(instructorDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "instructor");
             return Ok(response);*/
             return await GetEntityResponse(() => _instructorService.GetByIdAsync(instructorId, i => i.Courses), "Instructor");
-
-
         }
-        #endregion
+
+        #endregion get
+
         [HttpPatch("{instructorId}")]
         public async Task<ActionResult> UpdateInstructor(string instructorId, InstructorDto instructorDto)
         {
             return await UpdateEntityResponse(_instructorService.GetByIdAsync, _instructorService.UpdateAsync, instructorId, instructorDto, "instructor");
         }
-
-
-
-
-
 
         /*  [HttpPost("UploadImage")]
           public async Task<ActionResult> UploadImage()
@@ -92,13 +82,10 @@ namespace MindMission.API.Controllers
                           await source.CopyToAsync(stream);
                           Results = true;
                       }
-
-
                   }
               }
               catch (Exception ex)
               {
-
               }
               return Ok(Results);
           }

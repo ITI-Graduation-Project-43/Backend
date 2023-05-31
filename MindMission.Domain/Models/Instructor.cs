@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -16,31 +14,39 @@ namespace MindMission.Domain.Models
             Courses = new HashSet<Course>();
             User = new User();
         }
+
         [Required]
         [Key]
         public string Id { get; set; } = string.Empty;
+
         [Required]
         [StringLength(50)]
         [Unicode(false)]
         public string FirstName { get; set; } = string.Empty;
+
         [Required]
         [StringLength(50)]
         [Unicode(false)]
         public string LastName { get; set; } = string.Empty;
+
         [StringLength(1000)]
         [Unicode(false)]
         public string Bio { get; set; } = string.Empty;
+
         [StringLength(500)]
         [Unicode(false)]
         [AllowNull]
         public string ProfilePicture { get; set; } = string.Empty;
+
         [Required]
         [StringLength(255)]
         [Unicode(false)]
         public string Title { get; set; } = string.Empty;
+
         [StringLength(2048)]
         [Unicode(false)]
         public string Description { get; set; } = string.Empty;
+
         public int NoOfCourses { get; set; }
         public int NoOfStudents { get; set; }
         public double? AvgRating { get; set; }
@@ -53,9 +59,9 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(CourseFeedback.Instructor))]
         public virtual ICollection<CourseFeedback> CourseFeedbacks { get; set; }
+
         [InverseProperty(nameof(Course.Instructor))]
         public virtual ICollection<Course> Courses { get; set; }
-
 
         [NotMapped]
         public string FullName => FirstName + " " + LastName;

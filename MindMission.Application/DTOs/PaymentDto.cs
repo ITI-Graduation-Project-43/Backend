@@ -1,12 +1,5 @@
-﻿using MindMission.Domain.Constants;
-using MindMission.Domain.Stripe.StripeModels;
-using System;
-using System.Collections.Generic;
+﻿using MindMission.Domain.Stripe.CustomValidationAttributes;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MindMission.Domain.Stripe.CustomValidationAttributes;
 
 namespace MindMission.Application.DTOs
 {

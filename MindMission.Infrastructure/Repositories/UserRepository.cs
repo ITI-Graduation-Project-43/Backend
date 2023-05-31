@@ -1,18 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Stripe;
-using System.Net;
-using System.Net.Mail;
-using System.Security.Policy;
 using System.Text;
-using System.Web;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -30,7 +22,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
         {
             var Result = await UserManager.CreateAsync(user, user.PasswordHash);
-            if(Result.Succeeded)
+            if (Result.Succeeded)
             {
                 var NewUser = await UserManager.FindByEmailAsync(user.Email);
                 Student Std = new Student();
@@ -38,8 +30,8 @@ namespace MindMission.Infrastructure.Repositories
                 Std.FirstName = FirstName;
                 Std.LastName = LasName;
                 var NewStudent = await StudentService.AddAsync(Std);
-                if(NewStudent != null) 
-                { 
+                if (NewStudent != null)
+                {
                     return IdentityResult.Success;
                 }
                 return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
@@ -52,7 +44,7 @@ namespace MindMission.Infrastructure.Repositories
             var User = await UserManager.FindByEmailAsync(Email);
             if (User != null)
             {
-                if(!User.IsBlocked)
+                if (!User.IsBlocked)
                 {
                     var Result = await UserManager.CheckPasswordAsync(User, Password);
                     if (Result)
@@ -60,7 +52,7 @@ namespace MindMission.Infrastructure.Repositories
                         User.IsActive = true;
                         User.IsDeactivated = false;
                         await UserManager.UpdateAsync(User);
-                        SuccessLoginDto SuccessDto = new SuccessLoginDto() {Id = User.Id, Email = User.Email};
+                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email };
                         return SuccessDto;
                     }
                 }
@@ -100,7 +92,7 @@ namespace MindMission.Infrastructure.Repositories
             if (User != null)
             {
                 var ResetToken = UserManager.GeneratePasswordResetTokenAsync(User);
-                if(ResetToken.IsCompleted)
+                if (ResetToken.IsCompleted)
                 {
                     var EncodingResetToken = Encoding.UTF8.GetBytes(ResetToken.Result);
                     var ValidEncodingResetToken = WebEncoders.Base64UrlEncode(EncodingResetToken); // To prevent special characters and make URL that will be generated valid
@@ -120,7 +112,7 @@ namespace MindMission.Infrastructure.Repositories
                 var Result = await UserManager.ResetPasswordAsync(User, ValidToken, NewPassword);
                 return Result;
             }
-            return IdentityResult.Failed(new IdentityError() { Code="Email Not Found", Description = "This email is not found"});
+            return IdentityResult.Failed(new IdentityError() { Code = "Email Not Found", Description = "This email is not found" });
         }
 
         public async Task<bool> ValidateTokenAsync(string Email, string Token)
@@ -141,7 +133,7 @@ namespace MindMission.Infrastructure.Repositories
             if (User != null)
             {
                 var Result = await UserManager.CheckPasswordAsync(User, Password);
-                if(Result)
+                if (Result)
                 {
                     User.IsDeactivated = true;
                     User.IsActive = false;
@@ -172,7 +164,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IdentityResult> BlockUserAsync(string Email, bool Blocking)
         {
             var User = await UserManager.FindByEmailAsync(Email);
-            if(User != null)
+            if (User != null)
             {
                 User.IsBlocked = Blocking;
                 return await UserManager.UpdateAsync(User);

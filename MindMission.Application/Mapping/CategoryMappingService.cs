@@ -1,14 +1,12 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-
 
 namespace MindMission.Application.Mapping
 {
     public class CategoryMappingService : IMappingService<Category, CategoryDto>
     {
-
         public CategoryMappingService()
         {
         }
@@ -45,7 +43,6 @@ namespace MindMission.Application.Mapping
                 }
             }
 
-
             return categoryDTO;
         }
 
@@ -59,13 +56,7 @@ namespace MindMission.Application.Mapping
                 ParentId = categoryDTO.ParentSubCategoryId ?? categoryDTO.ParentCategoryId,
                 Approved = categoryDTO.Approved,
                 UpdatedAt = categoryDTO.UpdatedAt
-
             };
         }
-
-
-
-
     }
-
 }

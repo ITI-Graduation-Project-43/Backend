@@ -1,21 +1,19 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
     public class InstructorMappingService : IMappingService<Instructor, InstructorDto>
     {
-        
         private readonly IUserAccountService _userAccountService;
-        public InstructorMappingService(IUserAccountService userAccountContext) {
-             _userAccountService = userAccountContext;
+
+        public InstructorMappingService(IUserAccountService userAccountContext)
+        {
+            _userAccountService = userAccountContext;
         }
+
         public Instructor MapDtoToEntity(InstructorDto instructorDto)
         {
             return new Instructor
@@ -57,7 +55,7 @@ namespace MindMission.Application.Mapping
             {
                 InstructorDTO.Courses.Add(new Dictionary<string, string> { { "title", course.Title }, { "description", course.ShortDescription }, { "NoOfStudents", $"{course.NoOfStudents}" }, { "Price", $"{course.Price}" } });
             }
-            var UserAccounts =  _userAccountService.GetUserAccountsAsync(entity.Id);
+            var UserAccounts = _userAccountService.GetUserAccountsAsync(entity.Id);
             foreach (var account in UserAccounts)
             {
                 InstructorDTO.accounts.Add(account.Account.AccountType, account.AccountLink);

@@ -1,6 +1,5 @@
 ﻿using MindMission.Application.Responses;
 
-
 namespace MindMission.Application.Factories
 {
     public static class ResponseObjectFactory

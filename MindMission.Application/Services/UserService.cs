@@ -8,10 +8,6 @@ using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 
 namespace MindMission.Application.Services
@@ -28,7 +24,7 @@ namespace MindMission.Application.Services
         {
         }
 
-        public UserService(IUserRepository _UserManager, IConfiguration _Configuration, IMailService _MailService) 
+        public UserService(IUserRepository _UserManager, IConfiguration _Configuration, IMailService _MailService)
         {
             UserManager = _UserManager;
             Configuration = _Configuration;
@@ -36,7 +32,7 @@ namespace MindMission.Application.Services
         }
 
         public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
-         {
+        {
             return await UserManager.RegistrationAsync(user, FirstName, LasName);
         }
 
@@ -44,9 +40,9 @@ namespace MindMission.Application.Services
         {
             var User = await UserManager.LoginAsync(Email, Password);
 
-            if(User != null)
+            if (User != null)
             {
-                List<Claim> Claims = new List<Claim>() 
+                List<Claim> Claims = new List<Claim>()
                 {
                     new Claim("Id", User.Id),
                     new Claim("Email", User.Email),
@@ -61,7 +57,6 @@ namespace MindMission.Application.Services
                     expires: DateTime.Now.AddDays(1),
                     signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"])), SecurityAlgorithms.HmacSha256)
                 );
-
 
                 var CreatedToken = new JwtSecurityTokenHandler().WriteToken(JwtSecurityToken);
                 User.Token = CreatedToken;
@@ -82,7 +77,7 @@ namespace MindMission.Application.Services
         public async Task<string?> ForgetPasswordAsync(string Email)
         {
             var Result = await UserManager.ForgetPasswordAsync(Email);
-            if(Result != null)
+            if (Result != null)
             {
                 MailData mailData = new MailData()
                 {
@@ -91,7 +86,7 @@ namespace MindMission.Application.Services
                     EmailSubject = "Reset Your Password",
                     EmailBody = $"Click to the following link to reset your password \n {Configuration["Server:URL"]}/ResetPassword?Email={Email}&Token={Result}",
                 };
-                if(MailService.SendMail(mailData))
+                if (MailService.SendMail(mailData))
                 {
                     Console.WriteLine("Hello");
                     return "If your email is found, you will receive a link to reset your password";
