@@ -9,6 +9,7 @@ namespace MindMission.Application.Services
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _context;
+
         public AdminService(IAdminRepository context)
         {
             _context = context;
@@ -21,7 +22,7 @@ namespace MindMission.Application.Services
 
         public Task<Admin> GetByIdAsync(int id, params Expression<Func<Admin, object>>[] IncludeProperties)
         {
-            return _context.GetByIdAsync(id,IncludeProperties);
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         Task<Admin> IRepository<Admin, int>.AddAsync(Admin entity)

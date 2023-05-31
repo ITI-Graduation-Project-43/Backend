@@ -1,13 +1,8 @@
 ﻿using MindMission.Application.DTOs.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs
 {
-    public class AdminDto :IDtoWithId<int>
+    public class AdminDto : IDtoWithId<int>
     {
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;

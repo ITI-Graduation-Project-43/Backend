@@ -9,10 +9,12 @@ namespace MindMission.Application.Services
     public class PermissionService : IPermissionService
     {
         private readonly IPermissionRepository _context;
+
         public PermissionService(IPermissionRepository context)
         {
             _context = context;
         }
+
         public Task<IQueryable<Permission>> GetAllAsync()
         {
             return _context.GetAllAsync();

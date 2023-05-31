@@ -2,22 +2,19 @@
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
     public class UserAccountService : IUserAccountService
     {
         private readonly IUserAccountRepository _context;
+
         public UserAccountService(IUserAccountRepository context)
         {
             _context = context;
         }
+
         public Task<UserAccount> AddAsync(UserAccount entity)
         {
             return _context.AddAsync(entity);

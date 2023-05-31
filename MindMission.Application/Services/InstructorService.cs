@@ -9,10 +9,12 @@ namespace MindMission.Application.Services
     public class InstructorService : IInstructorService
     {
         private readonly IInstructorRepository _context;
+
         public InstructorService(IInstructorRepository context)
         {
             _context = context;
         }
+
         public Task<IQueryable<Instructor>> GetAllAsync()
         {
             return _context.GetAllAsync();

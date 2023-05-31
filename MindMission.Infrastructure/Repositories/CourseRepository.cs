@@ -2,6 +2,7 @@
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using MindMission.Infrastructure.Repositories.Base;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -12,9 +13,7 @@ namespace MindMission.Infrastructure.Repositories
         public CourseRepository(MindMissionDbContext context) : base(context)
         {
             _context = context;
-
         }
-
 
         public async Task<Course> GetByNameAsync(string name)
         {
@@ -92,8 +91,5 @@ namespace MindMission.Infrastructure.Repositories
 
             return Query.AsQueryable();
         }
-
-
-
     }
 }

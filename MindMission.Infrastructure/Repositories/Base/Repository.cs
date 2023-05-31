@@ -5,7 +5,7 @@ using MindMission.Domain.Common;
 using MindMission.Infrastructure.Context;
 using System.Linq.Expressions;
 
-namespace MindMission.Infrastructure.Repositories
+namespace MindMission.Infrastructure.Repositories.Base
 {
     public class Repository<TClass, TDataType> : IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, new()
     {
@@ -29,6 +29,7 @@ namespace MindMission.Infrastructure.Repositories
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             return await Query.ToListAsync();
         }
+
         public async Task<TClass> GetByIdAsync(TDataType id)
         {
             if (id == null)
@@ -52,8 +53,8 @@ namespace MindMission.Infrastructure.Repositories
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             var entity = await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
-
         }
+
         public async Task<TClass> AddAsync(TClass entity)
         {
             _dbSet.Add(entity);

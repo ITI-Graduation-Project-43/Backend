@@ -103,7 +103,6 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
-
                 entity.Property(e => e.Name).IsUnicode(false);
                 entity.Property(e => e.Type).HasConversion<string>();
 
@@ -114,7 +113,6 @@ namespace MindMission.Infrastructure.Context
 
                 entity.Property(e => e.ParentId).IsRequired(false);
                 entity.HasIndex(e => e.Name).IsUnique();
-
             });
 
             builder.Entity<Chapter>(entity =>
@@ -313,11 +311,10 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Email).IsRequired();
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                
+
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.PasswordHash).IsUnicode(false);
-
             });
 
             builder.Entity<UserAccount>(entity =>
@@ -342,7 +339,7 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
-            }); 
+            });
 
             builder.Entity<WebsiteFeedback>(entity =>
             {

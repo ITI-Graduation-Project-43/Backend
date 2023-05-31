@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -18,11 +16,14 @@ namespace MindMission.Domain.Models
 
         [Key]
         public int Id { get; set; }
+
         public int CourseId { get; set; }
+
         [Required]
         [StringLength(100)]
         [Unicode(false)]
         public string Title { get; set; } = string.Empty;
+
         public int NoOfLessons { get; set; }
         public int NoOfHours { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -31,6 +32,7 @@ namespace MindMission.Domain.Models
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Chapters")]
         public virtual Course Course { get; set; }
+
         [InverseProperty(nameof(Lesson.Chapter))]
         public virtual ICollection<Lesson> Lessons { get; set; }
     }

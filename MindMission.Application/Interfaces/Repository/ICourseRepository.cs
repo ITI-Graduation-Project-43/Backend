@@ -1,4 +1,4 @@
-﻿using MindMission.Application.DTOs;
+using MindMission.Application.DTOs;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 

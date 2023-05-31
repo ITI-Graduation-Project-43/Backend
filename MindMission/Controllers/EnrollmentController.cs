@@ -9,16 +9,19 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EnrollmentController : BaseController<Enrollment,EnrollmentDto,int>
+    public class EnrollmentController : BaseController<Enrollment, EnrollmentDto, int>
     {
         private readonly IEnrollmentService _EnrollmentService;
         private readonly EnrollmentMappingService _EnrollmentMappingService;
+
         public EnrollmentController(IEnrollmentService EnrollmentService, EnrollmentMappingService EnrollmentMappingService) : base(EnrollmentMappingService)
         {
             _EnrollmentService = EnrollmentService ?? throw new ArgumentNullException(nameof(EnrollmentService));
             _EnrollmentMappingService = EnrollmentMappingService ?? throw new ArgumentNullException(nameof(EnrollmentMappingService));
         }
+
         #region GET
+
         // GET: api/Enrollment
         [HttpGet]
         public async Task<ActionResult<IQueryable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
@@ -48,9 +51,10 @@ namespace MindMission.API.Controllers
         {
             return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(EnrollmentId), "Enrollment");
         }
-        #endregion
 
-        #region Add 
+        #endregion GET
+
+        #region Add
 
         // POST: api/Enrollment
         [HttpPost]
@@ -59,24 +63,28 @@ namespace MindMission.API.Controllers
             return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
         }
 
-        #endregion
+        #endregion Add
 
         #region Delete
+
         // DELETE: api/Enrollment/{EnrollmentId}
         [HttpDelete("{EnrollmentId}")]
         public async Task<IActionResult> DeleteEnrollment(int EnrollmentId)
         {
             return await DeleteEntityResponse(_EnrollmentService.GetByIdAsync, _EnrollmentService.DeleteAsync, EnrollmentId);
         }
-        #endregion
 
-        #region Edit Put 
+        #endregion Delete
+
+        #region Edit Put
+
         // PUT: api/Enrollment/{EnrollmentId}
         [HttpPut("{EnrollmentId}")]
         public async Task<ActionResult> UpdateEnrollment(int EnrollmentId, EnrollmentDto EnrollmentDto)
         {
             return await UpdateEntityResponse(_EnrollmentService.GetByIdAsync, _EnrollmentService.UpdateAsync, EnrollmentId, EnrollmentDto, "Enrollment");
         }
-        #endregion
+
+        #endregion Edit Put
     }
 }

@@ -10,22 +10,27 @@ namespace MindMission.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _context;
+
         public CategoryService(ICategoryRepository context)
         {
             _context = context;
         }
+        
         public Task<IQueryable<Category>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
+
         public async Task<IEnumerable<Category>> GetAllAsync(params Expression<Func<Category, object>>[] IncludeProperties)
         {
             return await _context.GetAllAsync(IncludeProperties);
         }
+
         public Task<Category> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
         }
+
         public Task<Category> GetByIdAsync(int id, params Expression<Func<Category, object>>[] IncludeProperties)
         {
             return _context.GetByIdAsync(id, IncludeProperties);

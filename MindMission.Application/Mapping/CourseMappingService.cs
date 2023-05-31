@@ -1,8 +1,8 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-
 
 namespace MindMission.Application.Mapping
 {
@@ -46,7 +46,6 @@ namespace MindMission.Application.Mapping
                 UpdatedAt = course.UpdatedAt,
                 CategoryId = course.CategoryId
             };
-
 
             if (course.Instructor != null)
             {
@@ -109,8 +108,5 @@ namespace MindMission.Application.Mapping
                 InstructorId = courseDTO.InstructorId
             };
         }
-
-
     }
-
 }

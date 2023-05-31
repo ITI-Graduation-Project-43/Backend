@@ -9,6 +9,7 @@ namespace MindMission.Application.Services
     public class WishlistService : IWishlistService
     {
         private readonly IWishlistRepository _context;
+
         public WishlistService(IWishlistRepository context)
         {
             _context = context;
@@ -51,7 +52,7 @@ namespace MindMission.Application.Services
 
         public Task<Wishlist> GetByIdAsync(int id, params Expression<Func<Wishlist, object>>[] IncludeProperties)
         {
-            return _context.GetByIdAsync(id,IncludeProperties);
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task UpdateAsync(Wishlist entity)

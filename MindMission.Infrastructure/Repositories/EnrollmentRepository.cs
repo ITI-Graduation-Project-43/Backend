@@ -2,13 +2,15 @@
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using MindMission.Infrastructure.Repositories.Base;
 
 namespace MindMission.Infrastructure.Repositories
 {
-    public class EnrollmentRepository : Repository<Enrollment, int> , IEnrollmentRepository
+    public class EnrollmentRepository : Repository<Enrollment, int>, IEnrollmentRepository
     {
         private readonly MindMissionDbContext _context;
         private readonly DbSet<Enrollment> _dbSet;
+
         public EnrollmentRepository(MindMissionDbContext context) : base(context)
         {
             _context = context;

@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MindMission.Application.Interfaces.Services;
-using MindMission.Domain.Stripe.StripeModels;
-using MindMission.Domain.Stripe.CustomValidationAttributes;
 using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
-using System.Net;
 using MindMission.Domain.Models;
+using MindMission.Domain.Stripe.StripeModels;
 
 namespace MindMission.API.Controllers
 {
@@ -23,7 +21,7 @@ namespace MindMission.API.Controllers
         }
 
         //////
-        //User API to return the Id of a success payment process  
+        //User API to return the Id of a success payment process
         //////
         [HttpPost]
         public async Task<IActionResult> StripePayment(PaymentDto paymentDto)
@@ -51,7 +49,6 @@ namespace MindMission.API.Controllers
                     }
                 }
                 return BadRequest("Non-Existed Course");
-
             }
             return BadRequest(ModelState);
         }

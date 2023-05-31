@@ -2,46 +2,65 @@
 using Microsoft.AspNetCore.WebUtilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Net;
-using System.Net.Mail;
-using System.Security.Policy;
 using System.Text;
-using System.Web;
 
 namespace MindMission.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<User> UserManager;
+        private readonly IStudentService StudentService;
 
-        public UserRepository(UserManager<User> _UserManager)
+        public UserRepository(UserManager<User> _UserManager, IStudentService _StudentService)
         {
             UserManager = _UserManager;
+            StudentService = _StudentService;
         }
 
-        public async Task<IdentityResult> Registration(User user)
+        public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
         {
-            return await UserManager.CreateAsync(user, user.PasswordHash);
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash);
+            if (Result.Succeeded)
+            {
+                var NewUser = await UserManager.FindByEmailAsync(user.Email);
+                Student Std = new Student();
+                Std.Id = NewUser.Id;
+                Std.FirstName = FirstName;
+                Std.LastName = LasName;
+                var NewStudent = await StudentService.AddAsync(Std);
+                if (NewStudent != null)
+                {
+                    return IdentityResult.Success;
+                }
+                return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
+            }
+            return Result;
         }
 
-        public async Task<SuccessLoginDto?> Login(string Email, string Password)
+        public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
             var User = await UserManager.FindByEmailAsync(Email);
             if (User != null)
             {
-                var Result = await UserManager.CheckPasswordAsync(User, Password);
-                if (Result)
+                if (!User.IsBlocked)
                 {
-                    SuccessLoginDto SuccessDto = new SuccessLoginDto() {Id = User.Id, Email = User.Email};
-                    return SuccessDto;
+                    var Result = await UserManager.CheckPasswordAsync(User, Password);
+                    if (Result)
+                    {
+                        User.IsActive = true;
+                        User.IsDeactivated = false;
+                        await UserManager.UpdateAsync(User);
+                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email };
+                        return SuccessDto;
+                    }
                 }
             }
             return null;
-        }
+        } //No message at blocking
 
-        public async Task<IdentityResult> ChangeEmail(string OldEmail, string NewEmail, string Password)
+        public async Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password)
         {
             var User = await UserManager.FindByEmailAsync(OldEmail);
             if (User != null)
@@ -57,7 +76,7 @@ namespace MindMission.Infrastructure.Repositories
             return IdentityResult.Failed();
         }
 
-        public async Task<IdentityResult> ChangePassword(string Email, string CurrentPassword, string NewPassword)
+        public async Task<IdentityResult> ChangePasswordAsync(string Email, string CurrentPassword, string NewPassword)
         {
             var User = await UserManager.FindByEmailAsync(Email);
             if (User != null)
@@ -67,20 +86,23 @@ namespace MindMission.Infrastructure.Repositories
             return IdentityResult.Failed();
         }
 
-        public async Task<string?> ForgetPassword(string Email)
+        public async Task<string?> ForgetPasswordAsync(string Email)
         {
             var User = await UserManager.FindByEmailAsync(Email);
             if (User != null)
             {
-                string ResetToken = await UserManager.GeneratePasswordResetTokenAsync(User);
-                var EncodingResetToken = Encoding.UTF8.GetBytes(ResetToken);
-                var ValidEncodingResetToken = WebEncoders.Base64UrlEncode(EncodingResetToken); // To prevent special characters and make URL that will be generated valid
-                return ValidEncodingResetToken;
+                var ResetToken = UserManager.GeneratePasswordResetTokenAsync(User);
+                if (ResetToken.IsCompleted)
+                {
+                    var EncodingResetToken = Encoding.UTF8.GetBytes(ResetToken.Result);
+                    var ValidEncodingResetToken = WebEncoders.Base64UrlEncode(EncodingResetToken); // To prevent special characters and make URL that will be generated valid
+                    return ValidEncodingResetToken;
+                }
             }
             return null;
         }
 
-        public async Task<IdentityResult> ResetPassword(string Email, string Token, string NewPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(string Email, string Token, string NewPassword)
         {
             var User = await UserManager.FindByEmailAsync(Email);
             if (User != null)
@@ -88,14 +110,66 @@ namespace MindMission.Infrastructure.Repositories
                 var DecodingResetToken = WebEncoders.Base64UrlDecode(Token);
                 var ValidToken = Encoding.UTF8.GetString(DecodingResetToken);
                 var Result = await UserManager.ResetPasswordAsync(User, ValidToken, NewPassword);
-                if(Result.Succeeded)
-                {
-                    return Result;
-                }
                 return Result;
             }
-            return IdentityResult.Failed();
+            return IdentityResult.Failed(new IdentityError() { Code = "Email Not Found", Description = "This email is not found" });
         }
 
+        public async Task<bool> ValidateTokenAsync(string Email, string Token)
+        {
+            var User = await UserManager.FindByEmailAsync(Email);
+            if (User != null)
+            {
+                var DecodingResetToken = WebEncoders.Base64UrlDecode(Token);
+                var ValidToken = Encoding.UTF8.GetString(DecodingResetToken);
+                return await UserManager.VerifyUserTokenAsync(User, "Default", "ResetPassword", ValidToken);
+            }
+            return false;
+        }
+
+        public async Task<IdentityResult> DeactivateUserAsync(string Email, string Password)
+        {
+            var User = await UserManager.FindByEmailAsync(Email);
+            if (User != null)
+            {
+                var Result = await UserManager.CheckPasswordAsync(User, Password);
+                if (Result)
+                {
+                    User.IsDeactivated = true;
+                    User.IsActive = false;
+                    return await UserManager.UpdateAsync(User);
+                }
+            }
+            return IdentityResult.Failed(new IdentityError() { Code = "Access Field", Description = "Your email or password incorrect." });
+        }
+
+        public async Task<IdentityResult> DeleteUserAsync(string Email, string Password)
+        {
+            var User = await UserManager.FindByEmailAsync(Email);
+            if (User != null)
+            {
+                var Result = await UserManager.CheckPasswordAsync(User, Password);
+                if (Result)
+                {
+                    User.IsDeleted = true;
+                    User.Email = null;
+                    User.NormalizedEmail = null;
+                    User.EmailConfirmed = false;
+                    return await UserManager.UpdateAsync(User);
+                }
+            }
+            return IdentityResult.Failed(new IdentityError() { Code = "Access Field", Description = "Your email or password incorrect." });
+        }
+
+        public async Task<IdentityResult> BlockUserAsync(string Email, bool Blocking)
+        {
+            var User = await UserManager.FindByEmailAsync(Email);
+            if (User != null)
+            {
+                User.IsBlocked = Blocking;
+                return await UserManager.UpdateAsync(User);
+            }
+            return IdentityResult.Failed(new IdentityError() { Code = "This email is not found", Description = "This email is not found" });
+        }
     }
 }

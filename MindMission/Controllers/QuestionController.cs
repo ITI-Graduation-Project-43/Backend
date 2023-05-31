@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionController : BaseController<Question, QuestionDto,int>
+    public class QuestionController : BaseController<Question, QuestionDto, int>
     {
         private readonly IQuestionService _questionService;
         private readonly QuestionMappingService _questionMappingService;
@@ -33,13 +33,11 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _questionService.GetByIdAsync(id), "Question");
         }
 
-
         [HttpPost("question")]
         public async Task<ActionResult<QuestionDto>> AddQuestion([FromBody] QuestionDto questionDto)
         {
             return await AddEntityResponse(_questionService.AddAsync, questionDto, "Question", nameof(GetQuestionById));
         }
-
 
         [HttpPut("{questionId}")]
         public async Task<ActionResult> UpdateQuestion(int questionId, QuestionDto questionDto)
@@ -53,6 +51,4 @@ namespace MindMission.API.Controllers
             return await DeleteEntityResponse(_questionService.GetByIdAsync, _questionService.DeleteAsync, questionId);
         }
     }
-
-
 }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MindMission.Domain.Stripe.CustomValidationAttributes
 {
@@ -36,7 +31,6 @@ namespace MindMission.Domain.Stripe.CustomValidationAttributes
                     return ValidationResult.Success;
                 };
                 return new ValidationResult("Your card has been declined, try another one");
-
             }
             return new ValidationResult("Invalid Card Number");
         }
