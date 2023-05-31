@@ -61,6 +61,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IMappingService<Permission, PermissionDto>, PermissionMappingService>();
 
 /*Discussion Configuration*/
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();

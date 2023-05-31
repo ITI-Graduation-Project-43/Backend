@@ -21,7 +21,7 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var permissions = await _permissionService.GetAllAsync(permission => permission.AdminPermissions);
-            List<PermissionDto> permissionDtos = new List<PermissionDto>();
+            List<PermissionDto> permissionDtos = new();
             foreach (var item in permissions)
             {
                 permissionDtos.Add(new PermissionDto()
@@ -43,7 +43,7 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             Permission permission = await _permissionService.GetByIdAsync(id, permission => permission.AdminPermissions);
-            PermissionDto permissionDto = new PermissionDto()
+            PermissionDto permissionDto = new()
             {
                 Id = permission.Id,
                 Name = permission.Name,
