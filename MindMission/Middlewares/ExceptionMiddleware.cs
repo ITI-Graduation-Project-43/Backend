@@ -1,7 +1,5 @@
 ﻿using MindMission.Application.Factories;
 using MyOnionApi1.Application.Exceptions;
-using System.Net;
-using System.Text.Json;
 
 namespace MindMission.API.Middlewares
 {
@@ -71,6 +69,4 @@ namespace MindMission.API.Middlewares
             await context.Response.WriteAsJsonAsync(response);
         }
     }
-
-
 }

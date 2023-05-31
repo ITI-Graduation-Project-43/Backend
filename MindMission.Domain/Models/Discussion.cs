@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -17,13 +15,16 @@ namespace MindMission.Domain.Models
 
         [Key]
         public int Id { get; set; }
+
         public int LessonId { get; set; }
         public string UserId { get; set; }
         public int? ParentDiscussionId { get; set; }
+
         [Required]
         [StringLength(2048)]
         [Unicode(false)]
         public string Content { get; set; }
+
         public int Upvotes { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -34,9 +35,11 @@ namespace MindMission.Domain.Models
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Discussions")]
         public virtual Lesson Lesson { get; set; }
+
         [ForeignKey(nameof(ParentDiscussionId))]
         [InverseProperty(nameof(InverseParentDiscussion))]
         public virtual Discussion ParentDiscussion { get; set; }
+
         [InverseProperty(nameof(ParentDiscussion))]
         public virtual ICollection<Discussion> InverseParentDiscussion { get; set; }
     }

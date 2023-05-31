@@ -1,7 +1,6 @@
 ﻿using MindMission.Application.DTOs.Base;
 using MindMission.Domain.Enums;
 
-
 namespace MindMission.Application.DTOs
 {
     public class CategoryDto : IDtoWithId<int>, IEquatable<CategoryDto>
@@ -38,8 +37,5 @@ namespace MindMission.Application.DTOs
         {
             return HashCode.Combine(Id, Name);
         }
-
     }
-
-
 }

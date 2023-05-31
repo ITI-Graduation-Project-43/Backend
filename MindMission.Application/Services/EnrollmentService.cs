@@ -8,6 +8,7 @@ namespace MindMission.Application.Services
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IEnrollmentRepository _context;
+
         public EnrollmentService(IEnrollmentRepository context)
         {
             _context = context;

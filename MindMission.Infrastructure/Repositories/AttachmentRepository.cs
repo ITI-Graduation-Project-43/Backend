@@ -20,6 +20,5 @@ namespace MindMission.Infrastructure.Repositories
         }
 
         public async Task<Attachment?> GetAttachmentByIdAsync(int id) => await _context.Attachments.FindAsync(id);
-
     }
 }

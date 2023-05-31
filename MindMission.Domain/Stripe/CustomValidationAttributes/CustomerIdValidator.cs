@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Domain.Stripe.CustomValidationAttributes
 {
@@ -15,7 +10,7 @@ namespace MindMission.Domain.Stripe.CustomValidationAttributes
 
             if (CustomerId != null && CustomerId.Trim().Length > 0)
             {
-                if(CustomerId == ReturnedCutomerId.CustomerId)
+                if (CustomerId == ReturnedCutomerId.CustomerId)
                 {
                     return ValidationResult.Success;
                 }
@@ -29,5 +24,4 @@ namespace MindMission.Domain.Stripe.CustomValidationAttributes
     {
         public static string CustomerId = string.Empty;
     }
-
 }

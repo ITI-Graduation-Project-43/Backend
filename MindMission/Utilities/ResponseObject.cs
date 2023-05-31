@@ -18,6 +18,5 @@
             ItemsPerPage = _ItemsPerPage;
             TotalPages = _TotalPages;
         }
-
     }
 }

@@ -1,22 +1,19 @@
 ﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _context;
+
         public StudentService(IStudentRepository context)
         {
             _context = context;
         }
+
         public Task<Student> AddAsync(Student entity)
         {
             return _context.AddAsync(entity);

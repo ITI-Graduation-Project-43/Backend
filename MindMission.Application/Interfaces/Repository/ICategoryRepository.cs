@@ -6,7 +6,7 @@ namespace MindMission.Application.Repository_Interfaces
     public interface ICategoryRepository : IRepository<Category, int>
     {
         Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type);
-        Task<IEnumerable<Category>> GetByParentIdAsync(int parentId);
 
+        Task<IEnumerable<Category>> GetByParentIdAsync(int parentId);
     }
 }

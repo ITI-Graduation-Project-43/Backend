@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -12,7 +13,7 @@ namespace MindMission.Application.Mapping
 
         public User MapDtoToEntity(UserDto UserDto)
         {
-            return new User() {Email = UserDto.Email, PasswordHash = UserDto.Password};
+            return new User() { Email = UserDto.Email, PasswordHash = UserDto.Password };
         }
     }
 }

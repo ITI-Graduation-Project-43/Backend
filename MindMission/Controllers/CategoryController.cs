@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
@@ -13,13 +11,10 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    //[Authorize]
     public class CategoryController : BaseController<Category, CategoryDto, int>
     {
         private readonly ICategoryService _categoryService;
         private readonly CategoryMappingService _categoryMappingService;
-
 
         public CategoryController(ICategoryService categoryService, CategoryMappingService categoryMappingService) : base(categoryMappingService)
         {
@@ -27,8 +22,8 @@ namespace MindMission.API.Controllers
             _categoryMappingService = categoryMappingService ?? throw new ArgumentNullException(nameof(categoryMappingService));
         }
 
-
         #region Get
+
         // GET: api/Category
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] PaginationDto pagination)
@@ -55,7 +50,6 @@ namespace MindMission.API.Controllers
                 );
         }
 
-
         // GET: api/Category/Type/{type}
 
         [HttpGet("Type/{type}")]
@@ -64,7 +58,6 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(() => _categoryService.GetByTypeAsync(type), pagination, "Categories");
         }
 
-
         // GET: api/Category/Parent/{parentId}
 
         [HttpGet("Parent/{parentId}")]
@@ -72,11 +65,10 @@ namespace MindMission.API.Controllers
         {
             return await GetEntitiesResponse(() => _categoryService.GetByParentIdAsync(parentId), pagination, "Categories");
         }
-        #endregion
 
-        #region Add 
+        #endregion Get
 
-
+        #region Add
 
         // POST: api/Category
         [HttpPost]
@@ -101,8 +93,6 @@ namespace MindMission.API.Controllers
 
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
-
-
 
         // POST: api/Category
         [HttpPost("Category")]
@@ -151,18 +141,21 @@ namespace MindMission.API.Controllers
             }
             return await AddEntityResponse(_categoryService.AddAsync, categoryDTO, "Category", nameof(GetCategoryById));
         }
-        #endregion
+
+        #endregion Add
 
         #region Delete
+
         // DELETE: api/Category/{categoryId}
         [HttpDelete("{categoryId}")]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             return await DeleteEntityResponse(_categoryService.GetByIdAsync, _categoryService.DeleteAsync, categoryId);
         }
-        #endregion
 
-        #region Edit Patch/Put 
+        #endregion Delete
+
+        #region Edit Patch/Put
 
         // PUT: api/Category/{categoryId}
         [HttpPut("{Id}")]
@@ -195,8 +188,6 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-
-
             return await PatchEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, categoryId, patchDocument, (entity, dto) =>
             {
                 entity = _categoryMappingService.MapDtoToEntity(dto);
@@ -218,10 +209,10 @@ namespace MindMission.API.Controllers
                 entity.UpdatedAt = DateTime.Now;
             });
         }
-        #endregion
+
+        #endregion Edit Patch/Put
 
         #region Helper Methods
-
 
         private static bool IsValidCategoryType(CategoryType type)
         { return type == CategoryType.Category || type == CategoryType.SubCategory || type == CategoryType.Topic; }
@@ -247,6 +238,7 @@ namespace MindMission.API.Controllers
 
             return false;
         }
-        #endregion
+
+        #endregion Helper Methods
     }
 }

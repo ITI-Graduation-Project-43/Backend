@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using MindMission.Domain.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Application.DTOs
 {
     public class UserDto
     {
-
         [Required(ErrorMessage = "The FirstName is required")]
         [MinLength(3, ErrorMessage = "FirstName Should be 3 characters at least")]
         [MaxLength(10, ErrorMessage = "FirstName Should be 10 characters at Most")]
@@ -17,9 +14,8 @@ namespace MindMission.Application.DTOs
         [MaxLength(10, ErrorMessage = "LastName Should be 10 characters at Most")]
         public string LastName { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage ="The email is required")]
-        [EmailAddress(ErrorMessage ="Invalid email")]
+        [Required(ErrorMessage = "The email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "The password is required")]

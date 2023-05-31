@@ -11,6 +11,7 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
@@ -160,7 +161,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.Password.RequireNonAlphanumeric = true;
     //options.Password.RequireUppercase = true;
     //options.Password.RequiredUniqueChars = 1;
-
 });
 
 /*Mail Configuration*/
@@ -226,8 +226,6 @@ builder.Services.AddCors(option =>
             builder.AllowAnyOrigin();
         });
 });
-
-
 
 // Stripe Service Registeration
 builder.Services.AddScoped<IStripeService, StripeService>();

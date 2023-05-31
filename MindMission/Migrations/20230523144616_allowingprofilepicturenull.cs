@@ -15,7 +15,7 @@ namespace MindMission.API.Migrations
                 unicode: false,
                 maxLength: 256,
                 nullable: false,
-                defaultValue: "",
+                defaultValue: string.Empty,
                 oldClrType: typeof(string),
                 oldType: "varchar(256)",
                 oldUnicode: false,

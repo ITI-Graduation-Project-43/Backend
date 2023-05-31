@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Domain.Stripe.CustomValidationAttributes
 {
@@ -17,7 +12,6 @@ namespace MindMission.Domain.Stripe.CustomValidationAttributes
             {
                 return new ValidationResult("CVC is required");
             }
-
 
             if (int.TryParse(CVC, out int Cvc) && CVC.Length == 3)
             {

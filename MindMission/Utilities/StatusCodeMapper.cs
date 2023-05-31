@@ -1,11 +1,9 @@
 ﻿using MindMission.Domain.Constants;
 
-
 namespace MindMission.API.Utilities
 {
     public static class StatusCodeMapper
     {
-
         public static int GetStatusCode(string message)
         {
             switch (message)
@@ -50,6 +48,5 @@ namespace MindMission.API.Utilities
                     return StatusCodes.Status500InternalServerError;
             }
         }
-
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using MindMission.Domain.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,6 +32,7 @@ namespace MindMission.API.Utilities
                 }
                 return errors.Count > 0 ? IdentityResult.Failed(errors.ToArray()) : IdentityResult.Success;
             }
+
             private async Task ValidateEmail(UserManager<User> manager, User user, List<IdentityError> errors)
             {
                 var email = await manager.GetEmailAsync(user);

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MindMission.Domain.Constants
+﻿namespace MindMission.Domain.Constants
 {
     public static class ErrorMessages
     {
@@ -27,8 +21,4 @@ namespace MindMission.Domain.Constants
         public const string UpdatedSuccessfully = "{0} updated successfully.";
         public const string DeletedSuccessfully = "{0} deleted successfully.";
     }
-
-
-
-
 }
