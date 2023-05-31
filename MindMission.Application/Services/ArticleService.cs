@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
-    internal class ArticleService : IArticleService
+    public class ArticleService : IArticleService
     {
         private readonly IArticleRepository _context;
 

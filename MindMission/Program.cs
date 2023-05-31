@@ -108,6 +108,13 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
 
+/*Article Configuration*/
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<ArticleMappingService, ArticleMappingService>();
+builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
+
+
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
