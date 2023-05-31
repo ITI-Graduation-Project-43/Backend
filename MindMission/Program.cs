@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindMission.API.EmailSettings;
+using MindMission.API.Middlewares;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
@@ -236,6 +237,7 @@ builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<CustomerService, CustomerService>();
 StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
+builder.Services.AddTransient<ExceptionMiddleware>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -257,6 +259,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

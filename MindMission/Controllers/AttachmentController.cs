@@ -70,7 +70,7 @@ namespace MindMission.API.Controllers
                     Message = "Non-Existing Lesson"
                 });
             }
-            return BadRequest(ModelState);   
+            return BadRequest(ModelState);
         }
 
         [HttpPost("Server/Download/{id:int}")]

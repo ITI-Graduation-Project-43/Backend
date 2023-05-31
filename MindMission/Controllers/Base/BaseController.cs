@@ -7,6 +7,7 @@ using MindMission.Application.Mapping;
 using MindMission.Application.Responses;
 using MindMission.Domain.Constants;
 using System.Linq.Expressions;
+using MindMission.API.Utilities;
 
 namespace MindMission.API.Controllers.Base
 {
@@ -19,7 +20,7 @@ namespace MindMission.API.Controllers.Base
             _entityMappingService = entityMappingService;
         }
 
-
+        #region Mapping
         protected async Task<List<TDto>> MapEntitiesToDTOs(IEnumerable<TEntity> entities)
         {
             return (await Task.WhenAll(entities.Select(entity => _entityMappingService.MapEntityToDto(entity)))).ToList();
@@ -33,37 +34,112 @@ namespace MindMission.API.Controllers.Base
         {
             return _entityMappingService.MapDtoToEntity(dto);
         }
+        #endregion
+        #region Responses
 
-        protected ActionResult NotFoundResponse(string entityName)
-        {
-            return NotFound(string.Format(ErrorMessages.ResourceNotFound, entityName));
-        }
 
-        protected ResponseObject<TDto> CreateResponse(List<TDto> dtos, PaginationDto pagination, string entityType)
-        {
 
-            ResponseObject<TDto> response = ResponseObjectFactory.CreateResponseObject<TDto>(true, string.Format(SuccessMessages.RetrievedSuccessfully, entityType), dtos, pagination.PageNumber, pagination.PageSize);
-
-            return response;
-        }
-
-        protected ResponseObject<TDto> CreateResponse(TDto dtos, PaginationDto pagination, string entityType)
+        protected ResponseObject<TDto> GenerateResponse(bool success, string message, List<TDto> dtos = null, PaginationDto pagination = null)
         {
 
-            ResponseObject<TDto> response = ResponseObjectFactory.CreateResponseObject<TDto>(true, string.Format(SuccessMessages.RetrievedSuccessfully, entityType), new List<TDto> { dtos }, pagination.PageNumber, pagination.PageSize);
+            if (pagination != null)
+            {
+                return ResponseObjectFactory.CreateResponseObject<TDto>(success, message, dtos, pagination.PageNumber, pagination.PageSize);
+            }
 
-            return response;
+            return ResponseObjectFactory.CreateResponseObject<TDto>(success, message, dtos ?? new List<TDto>());
         }
 
+
+        protected ResponseObject<TDto> NotFoundResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.ResourceNotFound, entityName);
+            return GenerateResponse(false, message);
+        }
+
+
+        protected ResponseObject<TDto> BadRequestResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.BadRequest);
+        }
+
+        protected ResponseObject<TDto> UnauthorizedResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.UnauthorizedAccess);
+        }
+
+        protected ResponseObject<TDto> ForbiddenResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.ForbiddenAccess);
+        }
+
+        protected ResponseObject<TDto> ConflictResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.Conflict, entityName);
+            return GenerateResponse(false, message);
+        }
+
+        protected ResponseObject<TDto> ServerErrorResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.ServerError);
+        }
+
+        protected ResponseObject<TDto> InvalidDataResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.InvalidData);
+        }
+
+        protected ResponseObject<TDto> ValidationFailedResponse()
+        {
+            return GenerateResponse(false, ErrorMessages.ValidationFailed);
+        }
+        protected ResponseObject<TDto> NoChangesResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.NoChanges, entityName);
+
+            return GenerateResponse(false, message);
+        }
+
+
+        protected ResponseObject<TDto> IdMismatchResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.IdMismatch, entityName);
+
+            return GenerateResponse(false, message);
+        }
+
+        protected ResponseObject<TDto> RetrieveSuccessResponse(List<TDto> dtos, PaginationDto pagination, string entityType)
+        {
+            string message = string.Format(SuccessMessages.RetrievedSuccessfully, entityType);
+            return GenerateResponse(true, message, dtos, pagination);
+        }
+
+        protected ResponseObject<TDto> CreatedSuccessResponse(TDto dto, PaginationDto pagination, string entityType)
+        {
+            string message = string.Format(SuccessMessages.CreatedSuccessfully, entityType);
+            return GenerateResponse(true, message, new List<TDto> { dto }, pagination);
+        }
+
+        protected ResponseObject<TDto> UpdatedSuccessResponse(TDto dto, PaginationDto pagination, string entityType)
+        {
+            string message = string.Format(SuccessMessages.UpdatedSuccessfully, entityType);
+            return GenerateResponse(true, message, new List<TDto> { dto }, pagination);
+        }
+
+
+        #endregion
+
+        #region CRUD Functions
         protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
 
             if (entities == null)
-                return NotFoundResponse(entityName);
+                return NotFound(NotFoundResponse(entityName));
 
             var entityDTOs = await MapEntitiesToDTOs(entities);
-            var response = CreateResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
+
 
             return Ok(response);
         }
@@ -73,10 +149,10 @@ namespace MindMission.API.Controllers.Base
             var entities = await serviceMethod.Invoke(IncludeProperties);
 
             if (entities == null)
-                return NotFoundResponse(entityName);
+                return NotFound(NotFoundResponse(entityName));
 
             var entityDTOs = await MapEntitiesToDTOs(entities);
-            var response = CreateResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
         }
@@ -87,10 +163,11 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceMethod.Invoke();
 
             if (entity == null)
-                return NotFoundResponse(entityName);
+                return NotFound(NotFoundResponse(entityName));
 
             var entityDto = await MapEntityToDTO(entity);
-            var response = CreateResponse(entityDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+
 
             return Ok(response);
         }
@@ -100,10 +177,10 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceMethod.Invoke();
 
             if (entity == null)
-                return NotFoundResponse(entityName);
+                return NotFound(NotFoundResponse(entityName));
 
             var entityDto = await MapEntityToDTO(entity);
-            var response = CreateResponse(entityDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
 
             return Ok(response);
         }
@@ -112,7 +189,7 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceGetMethod.Invoke(id);
 
             if (entity == null)
-                return NotFound();
+                return NotFound(NotFoundResponse(entity.GetType().Name));
 
             await serviceDeleteMethod.Invoke(id);
 
@@ -123,20 +200,19 @@ namespace MindMission.API.Controllers.Base
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(InvalidDataResponse());
             }
 
             var entity = MapDTOToEntity(dto);
-            //entity.CreatedAt = DateTime.Now;
-            //entity.UpdatedAt = DateTime.Now;
+
             var addedEntity = await serviceAddMethod.Invoke(entity);
 
             var createdDto = await MapEntityToDTO(addedEntity);
 
             if (createdDto == null)
-                return NotFoundResponse(entityName);
+                return NotFound(NotFoundResponse(entityName));
 
-            var response = CreateResponse(createdDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+            var response = CreatedSuccessResponse(createdDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
 
             return CreatedAtAction(actionName, new { id = createdDto.Id }, response);
         }
@@ -146,7 +222,7 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound();
+                return NotFound(NotFoundResponse(entity.GetType().Name));
             }
 
             var dto = await MapEntityToDTO(entity);
@@ -154,7 +230,7 @@ namespace MindMission.API.Controllers.Base
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(InvalidDataResponse());
             }
             entity = _entityMappingService.MapDtoToEntity(dto);
             await serviceUpdateMethod.Invoke(entity);
@@ -167,7 +243,7 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound();
+                return NotFound(NotFoundResponse(entity.GetType().Name));
             }
 
             var dto = await MapEntityToDTO(entity);
@@ -175,7 +251,7 @@ namespace MindMission.API.Controllers.Base
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(InvalidDataResponse());
             }
 
             patchOperations(entity, dto);
@@ -192,22 +268,27 @@ namespace MindMission.API.Controllers.Base
                 var entity = await serviceGetMethod.Invoke(id);
 
                 if (entity == null)
-                    return NotFound();
+                    return NotFound(NotFoundResponse(entityName));
 
                 var originalDto = MapEntityToDTO(entity);
                 if (originalDto.Equals(dto))
                 {
-                    return Ok($"No changes were made to the {entityName}.");
+                    return Ok(NoChangesResponse(entityName));
+
                 }
 
                 entity = MapDTOToEntity(dto);
                 await serviceUpdateMethod.Invoke(entity);
 
-                return Ok($"{entityName} updated successfully.");
+                var response = UpdatedSuccessResponse(dto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+
+                return Ok(response);
+
             }
             else
             {
-                return BadRequest($"{entityName} ID mismatch.");
+                return BadRequest(IdMismatchResponse(entityName));
+
             }
         }
 
@@ -219,26 +300,31 @@ namespace MindMission.API.Controllers.Base
                 var entity = await serviceGetMethod.Invoke(id);
 
                 if (entity == null)
-                    return NotFound();
+                    return NotFound(NotFoundResponse(entityName));
 
                 var originalDto = MapEntityToDTO(entity);
                 if (originalDto.Equals(dto))
                 {
-                    return Ok($"No changes were made to the {entityName}.");
+                    return Ok(NoChangesResponse(entityName));
+
                 }
 
                 entity = MapDTOToEntity(dto);
                 await serviceUpdateMethod.Invoke(entity);
 
-                return Ok($"{entityName} updated successfully.");
+                var response = UpdatedSuccessResponse(dto, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+
+                return Ok(response);
+
             }
             else
             {
-                return BadRequest($"{entityName} ID mismatch.");
+                return BadRequest(IdMismatchResponse(entityName));
+
             }
         }
 
-
+        #endregion
     }
 
 }

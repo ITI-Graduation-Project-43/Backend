@@ -70,7 +70,8 @@ namespace MindMission.API.Controllers
                 }
                 return Unauthorized(ResponseObjectFactory.CreateResponseObject(false, "Login Failed, Your email or password incorrect", new List<SuccessLoginDto>()));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>())); }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+        }
 
         [HttpPost("Change/Email")]
         public async Task<IActionResult> ChangeEmailAsync(ChangeEmailDto ChangeEmailDto)
@@ -133,12 +134,12 @@ namespace MindMission.API.Controllers
                 if (ModelState.IsValid)
                 {
                     var Result = await UserService.ResetPasswordAsync(ResetPasswordDto.Email, ResetPasswordDto.Token, ResetPasswordDto.Password);
-                    if(Result.Succeeded)
+                    if (Result.Succeeded)
                     {
                         return Ok(ResponseObjectFactory.CreateResponseObject(true, "Password has been reset successfully", new List<string>()));
                     }
                     string Errors = string.Empty;
-                    foreach(var Error in Result.Errors)
+                    foreach (var Error in Result.Errors)
                     {
                         Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
                     }
@@ -155,12 +156,12 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> DeactivateUserAsync(LoginDto LoginDto)
         {
             var Result = await UserService.DeactivateUserAsync(LoginDto.Email, LoginDto.Password);
-            if(Result.Succeeded)
+            if (Result.Succeeded)
             {
                 return Ok(ResponseObjectFactory.CreateResponseObject(true, "Your Account is Deactivated successfully", new List<string>()));
             }
             string Errors = string.Empty;
-            foreach(var Error in Result.Errors)
+            foreach (var Error in Result.Errors)
             {
                 Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
             }
