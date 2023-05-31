@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
