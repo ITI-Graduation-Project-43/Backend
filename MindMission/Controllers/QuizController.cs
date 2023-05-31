@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuizDto>>> GetAllQuiz([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<QuizDto>>> GetAllQuiz([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_quizService.GetAllAsync, pagination, "Quiz");
         }

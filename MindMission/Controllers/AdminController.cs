@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
 
         // GET: api/Admin
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_adminService.GetAllAsync, pagination, "Admins");
         }

@@ -4,6 +4,6 @@ namespace MindMission.Application.Repository_Interfaces
 {
     public interface IInstructorRepository : IRepository<Instructor, string>
     {
-        public Task<IEnumerable<Instructor>> GetTopInstructorsAsync();
+        public Task<IQueryable<Instructor>> GetTopInstructorsAsync();
     }
 }

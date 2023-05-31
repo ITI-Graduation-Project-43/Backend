@@ -24,7 +24,7 @@ namespace MindMission.API.Controllers
         #region get
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _instructorService.GetAllAsync(), pagination, "Instructors");
         }
