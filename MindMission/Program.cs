@@ -63,6 +63,8 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 /*Discussion Configuration*/
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
 builder.Services.AddScoped<IDiscussionService, DiscussionService>();
+builder.Services.AddScoped<DiscussionMappingService, DiscussionMappingService>();
+builder.Services.AddScoped<IMappingService<Discussion, DiscussionDto>, DiscussionMappingService>();
 
 /*Category Configuration*/
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

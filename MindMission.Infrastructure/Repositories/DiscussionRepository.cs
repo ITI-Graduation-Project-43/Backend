@@ -18,10 +18,14 @@ namespace MindMission.Infrastructure.Repositories
             Context = _Context;
         }
 
-        public Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int id)
+        public async Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
-            IEnumerable <Discussion> result = Context.Discussions.Where(e => e.LessonId == id);
-            return (Task<IEnumerable<Discussion>>)result;
+            return await Context.Discussions.Include(d=>d.ParentDiscussion).Where(e => e.LessonId == lessonId).OrderByDescending(d=>d.CreatedAt).ToListAsync();  
+        }
+
+        public async Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
+        {
+            return await Context.Discussions.Include(d=>d.ParentDiscussion).Where(d=>d.ParentDiscussionId==parentId).OrderByDescending(d => d.CreatedAt).ToListAsync();
         }
     }
 }

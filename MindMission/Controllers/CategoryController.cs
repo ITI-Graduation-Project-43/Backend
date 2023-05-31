@@ -135,7 +135,7 @@ namespace MindMission.API.Controllers
         }
 
         // POST: api/Topic
-        [HttpPost("Topic")]
+        [HttpPost(template: "Topic")]
         public async Task<ActionResult<CategoryDto>> AddTopic([FromBody] CategoryDto categoryDTO)
         {
             if (categoryDTO.Type != CategoryType.Topic)
