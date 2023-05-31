@@ -239,23 +239,6 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
-
-        #region testPaging
-        //Test Pagination
-        protected async Task<ActionResult> GetEntitiesResponseTest(Func<PaginationDto, Task<IQueryable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
-        {
-            var entities = await serviceMethod.Invoke(pagination);
-
-            if (entities == null)
-                return NotFoundResponse(entityName);
-
-            var entityDTOs = await MapEntitiesToDTOs(entities);
-            var response = CreateResponse(entityDTOs, pagination, entityName);
-
-            return Ok(response);
-        } 
-        #endregion
-
     }
 
 }
