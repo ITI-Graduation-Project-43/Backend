@@ -35,7 +35,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        Task<IEnumerable<Article>> IRepository<Article, int>.GetAllAsync()
+        Task<IQueryable<Article>> IRepository<Article, int>.GetAllAsync()
         {
             return _context.GetAllAsync();
         }

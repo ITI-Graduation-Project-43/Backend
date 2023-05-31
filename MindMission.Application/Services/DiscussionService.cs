@@ -20,7 +20,7 @@ namespace MindMission.Application.Services
             return Context.GetAllAsync();
         }
 
-        public Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
+        public Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
             return Context.GetAllDiscussionByLessonIdAsync(lessonId);
         }
@@ -55,7 +55,7 @@ namespace MindMission.Application.Services
             return Context.GetByIdAsync(id, IncludeProperties);
         }
 
-        public async Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
+        public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
         {
             return await Context.GetAllDiscussionByParentIdAsync(parentId);
         }
