@@ -17,16 +17,16 @@ namespace MindMission.Infrastructure.Repositories
             _dbSet = _context.Set<Enrollment>();
         }
 
-        public async Task<IEnumerable<Enrollment>> GetAllByCourseIdAsync(int CourseId)
+        public async Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int CourseId)
         {
             var Enrollments = await _dbSet.Where(w => w.CourseId == CourseId).ToListAsync();
-            return Enrollments;
+            return Enrollments.AsQueryable();
         }
 
-        public async Task<IEnumerable<Enrollment>> GetAllByStudentIdAsync(string StudentId)
+        public async Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string StudentId)
         {
             var Enrollments = await _dbSet.Where(w => w.StudentId == StudentId).ToListAsync();
-            return Enrollments;
+            return Enrollments.AsQueryable();
         }
     }
 }

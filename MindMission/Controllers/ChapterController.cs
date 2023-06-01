@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_chapterService.GetAllAsync, pagination, "Chapter");
         }

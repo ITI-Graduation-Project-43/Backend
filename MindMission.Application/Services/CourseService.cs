@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -14,7 +15,7 @@ namespace MindMission.Application.Services
             _context = context;
         }
 
-        public Task<IEnumerable<Course>> GetAllAsync()
+        public Task<IQueryable<Course>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
@@ -54,27 +55,27 @@ namespace MindMission.Application.Services
             return await _context.GetByNameAsync(name);
         }
 
-        public async Task<IEnumerable<Course>> GetAllByCategoryAsync(int categoryId)
+        public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
         {
             return await _context.GetAllByCategoryAsync(categoryId);
         }
 
-        public async Task<IEnumerable<Course>> GetRelatedCoursesAsync(int courseId)
+        public async Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId)
         {
             return await _context.GetRelatedCoursesAsync(courseId);
         }
 
-        public async Task<IEnumerable<Course>> GetAllByInstructorAsync(string instructorId)
+        public async Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
         {
             return await _context.GetAllByInstructorAsync(instructorId);
         }
 
-        public async Task<IEnumerable<Course>> GetTopRatedCoursesAsync(int topNumber)
+        public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
             return await _context.GetTopRatedCoursesAsync(topNumber);
         }
 
-        public async Task<IEnumerable<Course>> GetRecentCoursesAsync(int recentNumber)
+        public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
         {
             return await _context.GetRecentCoursesAsync(recentNumber);
         }

@@ -128,14 +128,13 @@ namespace MindMission.API.Controllers.Base
 
         #region CRUD Functions
 
-        protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
+        protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IQueryable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
-
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
-
-            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+            var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -147,8 +146,8 @@ namespace MindMission.API.Controllers.Base
 
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
-
-            var entityDTOs = await MapEntitiesToDTOs(entities);
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+            var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -284,6 +283,8 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
+        #endregion CRUD Functions
+
         //overload with string id for patch
         protected async Task<ActionResult> UpdateEntityResponse(Func<string, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, string id, TDto dto, string entityName)
         {
@@ -313,6 +314,5 @@ namespace MindMission.API.Controllers.Base
             }
         }
 
-        #endregion CRUD Functions
     }
 }

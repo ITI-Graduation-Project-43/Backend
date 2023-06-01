@@ -36,7 +36,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        Task<IEnumerable<Admin>> IRepository<Admin, int>.GetAllAsync()
+        Task<IQueryable<Admin>> IRepository<Admin, int>.GetAllAsync()
         {
             return _context.GetAllAsync();
         }

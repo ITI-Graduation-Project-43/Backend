@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
@@ -14,10 +15,17 @@ namespace MindMission.Infrastructure.Repositories
             Context = _Context;
         }
 
-        public Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int id)
+        public async Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
-            IEnumerable<Discussion> result = Context.Discussions.Where(e => e.LessonId == id);
-            return (Task<IEnumerable<Discussion>>)result;
+            return (IQueryable<Discussion>) await Context.Discussions.Include(d=>d.ParentDiscussion).Where(e => e.LessonId == lessonId).OrderByDescending(d=>d.CreatedAt).ToListAsync();  
         }
+
+        public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
+        {
+            
+            return (IQueryable<Discussion>) await Context.Discussions.Include(d=>d.ParentDiscussion).Where(d=>d.ParentDiscussionId==parentId).OrderByDescending(d => d.CreatedAt).ToListAsync();
+        }
+
+       
     }
 }

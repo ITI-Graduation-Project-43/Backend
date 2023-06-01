@@ -2,6 +2,9 @@
 using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -18,6 +21,7 @@ namespace MindMission.Domain.Models
 
         public int LessonId { get; set; }
         public string UserId { get; set; }
+        [AllowNull]
         public int? ParentDiscussionId { get; set; }
 
         [Required]

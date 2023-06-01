@@ -24,7 +24,7 @@ namespace MindMission.API.Controllers
 
         // GET: api/Wishlist
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WishlistDto>>> GetAllWishlist([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<WishlistDto>>> GetAllWishlist([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_wishlistService.GetAllAsync, pagination, "Wishlists");
         }

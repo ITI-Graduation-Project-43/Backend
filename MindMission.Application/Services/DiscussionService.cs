@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -14,14 +15,14 @@ namespace MindMission.Application.Services
             Context = _Context;
         }
 
-        public Task<IEnumerable<Discussion>> GetAllAsync()
+        public Task<IQueryable<Discussion>> GetAllAsync()
         {
             return Context.GetAllAsync();
         }
 
-        public Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int id)
+        public Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
-            return Context.GetAllDiscussionByLessonIdAsync(id);
+            return Context.GetAllDiscussionByLessonIdAsync(lessonId);
         }
 
         public Task<Discussion> GetByIdAsync(int id)
@@ -53,5 +54,12 @@ namespace MindMission.Application.Services
         {
             return Context.GetByIdAsync(id, IncludeProperties);
         }
+
+        public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
+        {
+            return await Context.GetAllDiscussionByParentIdAsync(parentId);
+        }
+
+        
     }
 }
