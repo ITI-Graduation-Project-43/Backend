@@ -218,7 +218,7 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound(NotFoundResponse(entity.GetType().Name));
+                return NotFound(NotFoundResponse(entity?.GetType().Name));
             }
 
             var dto = await MapEntityToDTO(entity);
@@ -239,7 +239,7 @@ namespace MindMission.API.Controllers.Base
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound(NotFoundResponse(entity.GetType().Name));
+                return NotFound(NotFoundResponse(entity?.GetType().Name));
             }
 
             var dto = await MapEntityToDTO(entity);

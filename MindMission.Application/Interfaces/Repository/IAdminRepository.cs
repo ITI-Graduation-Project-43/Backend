@@ -1,8 +1,11 @@
-﻿using MindMission.Domain.Models;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using MindMission.Application.DTOs;
+using MindMission.Domain.Models;
 
 namespace MindMission.Application.Repository_Interfaces
 {
     public interface IAdminRepository : IRepository<Admin, int>
     {
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
@@ -68,5 +69,14 @@ namespace MindMission.API.Controllers
         }
 
         #endregion Edit Put
+
+        // PATCH: api/Admin/{AdminId}
+        [HttpPatch("{AdminId}")]
+        public async Task<ActionResult> PartiallyUpdateAdmin(int AdminId, [FromBody] JsonPatchDocument<AdminDto> patchDoc)
+        {
+
+            return await PatchEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, patchDoc);
+
+        }
     }
 }
