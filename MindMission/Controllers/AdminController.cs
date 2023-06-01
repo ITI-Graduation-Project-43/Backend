@@ -12,10 +12,11 @@ namespace MindMission.API.Controllers
     public class AdminController : BaseController<Admin, AdminDto, int>
     {
         private readonly IAdminService _adminService;
-
-        public AdminController(IAdminService adminService, AdminMappingService adminMappingService) : base(adminMappingService)
+        private readonly ILogger<AdminController> _logger;
+        public AdminController(IAdminService adminService, AdminMappingService adminMappingService, ILogger<AdminController> logger) : base(adminMappingService)
         {
             _adminService = adminService;
+            _logger = logger;
         }
 
         #region GET
@@ -24,6 +25,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
         {
+            _logger.LogInformation("Hi from action");
             return await GetEntitiesResponse(_adminService.GetAllAsync, pagination, "Admins");
         }
 

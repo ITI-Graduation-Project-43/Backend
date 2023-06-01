@@ -19,11 +19,25 @@ using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Json;
 using Stripe;
 using System.Text;
 
+
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
+
+#region serilog
+Log.Logger = new LoggerConfiguration()
+.ReadFrom.Configuration(builder.Configuration)
+.Enrich.FromLogContext()
+.CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
+
+#endregion
 
 builder.Services.AddAuthentication(options =>
 {
