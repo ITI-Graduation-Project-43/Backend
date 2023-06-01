@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
-using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
@@ -59,14 +58,14 @@ namespace MindMission.API.Controllers
         [HttpPost]
         public async Task<ActionResult> AddDiscussion([FromBody] DiscussionDto discussionDTO)
         {
-            return await AddEntityResponse(_discussionService.AddAsync, discussionDTO,"Discussion", nameof(GetDiscussionById));
+            return await AddEntityResponse(_discussionService.AddAsync, discussionDTO, "Discussion", nameof(GetDiscussionById));
         }
         #endregion
 
 
         #region Update
         [HttpPut("{Id}")]
-        public async Task<ActionResult>UpdateDiscussion(int Id, [FromBody] DiscussionDto discussionDTO)
+        public async Task<ActionResult> UpdateDiscussion(int Id, [FromBody] DiscussionDto discussionDTO)
         {
             return await UpdateEntityResponse(_discussionService.GetByIdAsync, _discussionService.UpdateAsync, Id, discussionDTO, "Disuccion");
         }

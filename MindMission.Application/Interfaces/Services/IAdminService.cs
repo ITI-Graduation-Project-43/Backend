@@ -1,6 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
-using MindMission.Domain.Models;
+﻿using MindMission.Application.Repository_Interfaces;
 
 namespace MindMission.Application.Interfaces.Services
 {

@@ -11,5 +11,7 @@ namespace MindMission.Application.DTOs
         public string Type { get; set; }
         public int NoOfHours { get; set; }
         public bool IsFree { get; set; }
+
+
     }
 }

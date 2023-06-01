@@ -20,8 +20,8 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string AccountLink { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(AccountId))]
         [InverseProperty("UserAccounts")]

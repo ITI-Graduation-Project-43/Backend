@@ -17,5 +17,7 @@ namespace MindMission.Application.DTOs
         public DateTime? UpdatedAt { get; set; }
 
         public Dictionary<string, string> accounts { get; set; } = new Dictionary<string, string>();
+
+
     }
 }

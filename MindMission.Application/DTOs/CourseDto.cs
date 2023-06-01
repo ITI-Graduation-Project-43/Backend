@@ -1,6 +1,7 @@
 ﻿using MindMission.Application.DTOs.Base;
 using MindMission.Domain.Enums;
 
+
 namespace MindMission.Application.DTOs
 {
     public class CourseDto : IDtoWithId<int>
@@ -45,5 +46,8 @@ namespace MindMission.Application.DTOs
         public double? InstructorAvgRating { get; set; }
         public int InstructorNoOfRatings { get; set; }
         public ICollection<string> ChapterNames { get; set; } = new List<string>();
+
+
+
     }
 }

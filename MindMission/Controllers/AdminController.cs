@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
+using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.Context;
 
 namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class AdminController : BaseController<Admin, AdminDto, int>
     {
         private readonly IAdminService _adminService;
@@ -20,21 +23,33 @@ namespace MindMission.API.Controllers
             _logger = logger;
         }
 
+
+
+
         #region GET
 
         // GET: api/Admin
         [HttpGet]
         public async Task<ActionResult<IQueryable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
         {
-            _logger.LogInformation("Hi from action");
-            return await GetEntitiesResponse(_adminService.GetAllAsync, pagination, "Admins");
+            return await GetEntitiesResponseWithInclude(
+                _adminService.GetAllAsync,
+                pagination,
+                "Admins",
+                admin => admin.AdminPermissions
+            );
         }
 
-        // GET: api/Admin/{AdminId}
-        [HttpGet("{AdminId}")]
-        public async Task<ActionResult<AdminDto>> GetAdminById(int AdminId)
+        // GET: api/Admin/{Id}
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<AdminDto>> GetAdminById(int Id)
         {
-            return await GetEntityResponse(() => _adminService.GetByIdAsync(AdminId), "Admin");
+            return await GetEntityResponseWithInclude(
+                    () => _adminService.GetByIdAsync(Id,
+                        admin => admin.AdminPermissions
+                    ),
+                    "Admin"
+                );
         }
 
         #endregion GET
@@ -70,15 +85,17 @@ namespace MindMission.API.Controllers
             return await UpdateEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, adminDto, "Admin");
         }
 
-        #endregion Edit Put
-
         // PATCH: api/Admin/{AdminId}
         [HttpPatch("{AdminId}")]
         public async Task<ActionResult> PartiallyUpdateAdmin(int AdminId, [FromBody] JsonPatchDocument<AdminDto> patchDoc)
         {
 
-            return await PatchEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, patchDoc);
+            return await PatchEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, "Admin", patchDoc);
 
         }
+
+        #endregion Edit Put
+
+
     }
 }

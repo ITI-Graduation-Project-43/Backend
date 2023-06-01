@@ -14,5 +14,6 @@ namespace MindMission.Application.DTOs
 
         [Required]
         public int LessonId { get; set; }
+
     }
 }

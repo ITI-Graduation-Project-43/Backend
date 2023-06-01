@@ -25,7 +25,7 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         public string FeedbackText { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("CourseFeedbacks")]

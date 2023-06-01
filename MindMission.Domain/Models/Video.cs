@@ -17,8 +17,8 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         public string VideoUrl { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Videos")]

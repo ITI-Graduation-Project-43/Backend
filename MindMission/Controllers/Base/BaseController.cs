@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.DTOs.Base;
 using MindMission.Application.Factories;
@@ -60,7 +61,10 @@ namespace MindMission.API.Controllers.Base
         {
             return GenerateResponse(false, ErrorMessages.BadRequest);
         }
-
+        protected ResponseObject<TDto> BadRequestResponse(string message)
+        {
+            return GenerateResponse(false, message);
+        }
         protected ResponseObject<TDto> UnauthorizedResponse()
         {
             return GenerateResponse(false, ErrorMessages.UnauthorizedAccess);
@@ -135,6 +139,7 @@ namespace MindMission.API.Controllers.Base
                 return NotFound(NotFoundResponse(entityName));
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
+
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -146,8 +151,11 @@ namespace MindMission.API.Controllers.Base
 
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
+
+
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
+
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
 
             return Ok(response);
@@ -161,6 +169,8 @@ namespace MindMission.API.Controllers.Base
                 return NotFound(NotFoundResponse(entityName));
 
             var entityDto = await MapEntityToDTO(entity);
+
+
             var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
 
             return Ok(response);
@@ -174,6 +184,8 @@ namespace MindMission.API.Controllers.Base
                 return NotFound(NotFoundResponse(entityName));
 
             var entityDto = await MapEntityToDTO(entity);
+
+
             var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
 
             return Ok(response);
@@ -212,15 +224,28 @@ namespace MindMission.API.Controllers.Base
             return CreatedAtAction(actionName, new { id = createdDto.Id }, response);
         }
 
-        protected async Task<ActionResult> PatchEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, int id, JsonPatchDocument<TDto> patchDocument)
+        protected async Task<ActionResult> PatchEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, int id, string entityName, JsonPatchDocument<TDto> patchDocument)
         {
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound(NotFoundResponse(entity?.GetType().Name));
+                return NotFound(NotFoundResponse(entityName));
             }
 
             var dto = await MapEntityToDTO(entity);
+            if (dto == null)
+            {
+                return BadRequest(BadRequestResponse("Dto cannot be null."));
+            }
+            if (patchDocument == null)
+            {
+                return BadRequest(BadRequestResponse("Patch document cannot be null."));
+
+            }
+
+
+
+
             patchDocument.ApplyTo(dto, error => ModelState.AddModelError("JsonPatch", error.ErrorMessage));
 
             if (!ModelState.IsValid)
@@ -230,15 +255,16 @@ namespace MindMission.API.Controllers.Base
             entity = _entityMappingService.MapDtoToEntity(dto);
             await serviceUpdateMethod.Invoke(entity);
 
+
             return NoContent();
         }
 
-        protected async Task<ActionResult> PatchEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, int id, JsonPatchDocument<TDto> patchDocument, Action<TEntity, TDto> patchOperations)
+        protected async Task<ActionResult> PatchEntityResponse(Func<int, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, int id, string entityName, JsonPatchDocument<TDto> patchDocument, Action<TEntity, TDto> patchOperations)
         {
             var entity = await serviceGetMethod.Invoke(id);
             if (entity == null)
             {
-                return NotFound(NotFoundResponse(entity?.GetType().Name));
+                return NotFound(NotFoundResponse(entityName));
             }
 
             var dto = await MapEntityToDTO(entity);
@@ -282,9 +308,6 @@ namespace MindMission.API.Controllers.Base
                 return BadRequest(IdMismatchResponse(entityName));
             }
         }
-
-        #endregion CRUD Functions
-
         //overload with string id for patch
         protected async Task<ActionResult> UpdateEntityResponse(Func<string, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceUpdateMethod, string id, TDto dto, string entityName)
         {
@@ -313,6 +336,9 @@ namespace MindMission.API.Controllers.Base
                 return BadRequest(IdMismatchResponse(entityName));
             }
         }
+
+        #endregion CRUD Functions
+
 
     }
 }

@@ -1,5 +1,4 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
@@ -7,15 +6,16 @@ namespace MindMission.Application.Mapping
 {
     public class AdminMappingService : IMappingService<Admin, AdminDto>
     {
-        private readonly IAdminService _adminService;
 
-        public AdminMappingService(IAdminService adminService)
+        public AdminMappingService()
         {
-            _adminService = adminService;
         }
 
         public async Task<AdminDto> MapEntityToDto(Admin admin)
         {
+            var permissions = admin.AdminPermissions.Select(ap => ap.PermissionId).ToList();
+
+
             return new AdminDto
             {
                 Id = admin.Id,
@@ -26,7 +26,8 @@ namespace MindMission.Application.Mapping
                 PasswordHash = admin.PasswordHash,
                 IsDeactivated = admin.IsDeactivated,
                 CreatedAt = admin.CreatedAt,
-                UpdatedAt = admin.UpdatedAt
+                UpdatedAt = admin.UpdatedAt,
+                AdminPermissions = permissions
             };
         }
 

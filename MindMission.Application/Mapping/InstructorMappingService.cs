@@ -29,7 +29,7 @@ namespace MindMission.Application.Mapping
                 NoOfStudents = instructorDto.NoOfStudents,
                 AvgRating = instructorDto.AvgRating,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = null
+                UpdatedAt = DateTime.Now,
             };
         }
 

@@ -18,8 +18,8 @@ namespace MindMission.Domain.Models
 
         public int LessonId { get; set; }
         public int NoOfQuestions { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Quizzes")]

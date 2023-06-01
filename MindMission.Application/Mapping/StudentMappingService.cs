@@ -26,7 +26,7 @@ namespace MindMission.Application.Mapping
                 NumCourses = dto.NumCourses,
                 NumWishlist = dto.NumWishlist,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = null
+                UpdatedAt = DateTime.Now
             };
         }
 

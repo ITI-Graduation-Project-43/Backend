@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
@@ -73,5 +74,8 @@ namespace MindMission.Infrastructure.Repositories.Base
             _dbSet.Remove(await GetByIdAsync(id));
             await _context.SaveChangesAsync();
         }
+
+
+
     }
 }

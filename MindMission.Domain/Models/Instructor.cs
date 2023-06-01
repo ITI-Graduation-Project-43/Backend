@@ -51,8 +51,8 @@ namespace MindMission.Domain.Models
         public int NoOfStudents { get; set; }
         public double? AvgRating { get; set; }
         public int NoOfRatings { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }
