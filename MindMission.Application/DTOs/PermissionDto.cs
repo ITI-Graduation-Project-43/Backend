@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.DTOs.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Application.DTOs
 {
-    public class PermissionDto
+    public class PermissionDto : IDtoWithId<int>
     {
         [Key]
         public int Id { get; set; }
@@ -17,6 +18,6 @@ namespace MindMission.Application.DTOs
         [Unicode(false)]
         public string Description { get; set; }
 
-        public List<int> AdminIds { get; set; }
+        public List<int> AdminIds { get; set; } = new List<int>();
     }
 }

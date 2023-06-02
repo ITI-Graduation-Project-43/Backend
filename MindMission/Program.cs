@@ -14,9 +14,9 @@ using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Application.Services_Classes;
-using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
@@ -67,7 +67,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
-  
+
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
@@ -89,6 +89,7 @@ builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<PermissionMappingService, PermissionMappingService>();
 builder.Services.AddScoped<IMappingService<Permission, PermissionDto>, PermissionMappingService>();
 
 /*Discussion Configuration*/

@@ -1,11 +1,6 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
@@ -27,10 +22,9 @@ namespace MindMission.Application.Mapping
             {
                 Id = permission.Id,
                 Name = permission.Name,
-                Description = permission.Description
+                Description = permission.Description,
+                AdminIds = permission.AdminPermissions.Select(x => x.Id).ToList()
             };
-
-
             return permissionDto;
         }
     }
