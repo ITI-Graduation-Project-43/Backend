@@ -1,11 +1,9 @@
 ﻿using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Models;
+using MindMission.Domain.Stripe.CustomValidationAttributes;
 using MindMission.Domain.Stripe.StripeModels;
 using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
@@ -14,13 +12,20 @@ namespace MindMission.Application.Services
         private readonly ChargeService _chargeService;
         private readonly CustomerService _customerService;
         private readonly TokenService _tokenService;
+        private readonly ICourseRepository _courseRepository;
 
         //////Injection of Stripe services to be used to implement the two methods
-        public StripeService(ChargeService chargeService, CustomerService customerService, TokenService tokenService)
+        public StripeService(
+            ChargeService chargeService,
+            CustomerService customerService,
+            TokenService tokenService,
+            ICourseRepository courseRepository
+            )
         {
             _chargeService = chargeService;
             _customerService = customerService;
             _tokenService = tokenService;
+            _courseRepository = courseRepository;
         }
 
         public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
@@ -41,7 +46,6 @@ namespace MindMission.Application.Services
             //////Create the token
             Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions, null);
 
-
             //////Configuration of Stripe Customer
             CustomerCreateOptions customerCreateOptions = new CustomerCreateOptions()
             {
@@ -59,7 +63,6 @@ namespace MindMission.Application.Services
 
         public async Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment)
         {
-
             //////Configuration of Stripe Payment
             ChargeCreateOptions chargeCreateOptions = new ChargeCreateOptions()
             {
@@ -82,5 +85,27 @@ namespace MindMission.Application.Services
                 StripePayment.Amount,
                 StripePayment.Id);
         }
+
+        //////
+        //Adding Customer to stripe by checking card details
+        //////
+        public async Task<StripeCustomer> GetStripeCustomer(AddStripeCustomer customer)
+        {
+            StripeCustomer stripeCustomer = await AddStripeCustomerAsync(customer);
+            ReturnedCutomerId.CustomerId = stripeCustomer.CustomerId;
+            return stripeCustomer;
+        }
+
+        //////
+        //Adding Charge to stripe by added customer Id
+        //////
+        public async Task<StripePayment> GetStripePayment(AddStripePayment payment)
+        {
+            StripePayment stripePayment = await AddStripePaymentAsync(payment);
+            return stripePayment;
+        }
+
+        //////Get Choosed Course to enroll in.
+        public async Task<Course> GetEnrolledCourse(int id) => await _courseRepository.GetByIdAsync(id);
     }
 }

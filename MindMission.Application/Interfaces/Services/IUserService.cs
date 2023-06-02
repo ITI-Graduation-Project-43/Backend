@@ -1,9 +1,8 @@
-﻿using MindMission.Application.Repository_Interfaces;
-using MindMission.Domain.Models;
+﻿using MindMission.Application.Interfaces.Repository;
 
 namespace MindMission.Application.Interfaces.Services
 {
-    public interface IUserService : IRepository<User, string>
+    public interface IUserService : IUserRepository
     {
     }
 }

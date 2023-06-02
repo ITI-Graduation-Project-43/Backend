@@ -1,5 +1,6 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 
@@ -9,11 +10,13 @@ namespace MindMission.Application.Mapping
     {
         private readonly ICourseService _CourseService;
         private readonly IStudentService _StudentService;
+
         public EnrollmentMappingService(ICourseService courseService, IStudentService studentService)
         {
             _CourseService = courseService;
             _StudentService = studentService;
         }
+
         public async Task<EnrollmentDto> MapEntityToDto(Enrollment Enrollment)
         {
             var EnrollmentDto = new EnrollmentDto
@@ -49,6 +52,5 @@ namespace MindMission.Application.Mapping
                 StudentId = EnrollmentDto.StudentId
             };
         }
-
     }
 }

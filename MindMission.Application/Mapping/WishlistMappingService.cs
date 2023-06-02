@@ -1,19 +1,22 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
 {
-    public class WishlistMappingService : IMappingService <Wishlist , WishlistDto>
+    public class WishlistMappingService : IMappingService<Wishlist, WishlistDto>
     {
         private readonly ICourseService _CourseService;
         private readonly IStudentService _StudentService;
+
         public WishlistMappingService(ICourseService courseService, IStudentService studentService)
         {
             _CourseService = courseService;
             _StudentService = studentService;
         }
+
         public async Task<WishlistDto> MapEntityToDto(Wishlist wishlist)
         {
             var wishlistDto = new WishlistDto
@@ -22,7 +25,7 @@ namespace MindMission.Application.Mapping
                 AddedDate = wishlist.AddedDate
             };
             var course = await _CourseService.GetByIdAsync(wishlist.CourseId);
-            if ( course != null)
+            if (course != null)
             {
                 wishlistDto.CourseId = course.Id;
                 wishlistDto.CourseTitle = course.Title;
@@ -48,6 +51,5 @@ namespace MindMission.Application.Mapping
                 StudentId = wishlistDto.StudentId
             };
         }
-
     }
 }

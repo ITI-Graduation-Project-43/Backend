@@ -1,10 +1,6 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
@@ -17,7 +13,6 @@ namespace MindMission.Application.Mapping
                 UserId = dto.UserId,
                 AccountId = dto.accountId,
                 AccountLink = dto.accountLink,
-                
             };
         }
 

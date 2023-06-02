@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
@@ -10,16 +9,17 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserAccountController : BaseController<UserAccount, UserAccountDto,int>
+    public class UserAccountController : BaseController<UserAccount, UserAccountDto, int>
     {
         private readonly IUserAccountService _context;
         private readonly UserAccountMappingService _UserAccountMappingService;
         private readonly IUserService _userService;
-        public UserAccountController(IUserAccountService context, IUserService userService, UserAccountMappingService userAccountMappingService ) : base(userAccountMappingService)
+
+        public UserAccountController(IUserAccountService context, IUserService userService, UserAccountMappingService userAccountMappingService) : base(userAccountMappingService)
         {
             _context = context;
             _userService = userService;
-            _UserAccountMappingService= userAccountMappingService;
+            _UserAccountMappingService = userAccountMappingService;
         }
 
         [HttpPost]
@@ -29,7 +29,5 @@ namespace MindMission.API.Controllers
             await _context.AddAsync(newAccount);
             return Ok(newAccount);
         }
-
-
     }
 }

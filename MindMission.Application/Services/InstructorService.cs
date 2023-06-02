@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -8,11 +9,13 @@ namespace MindMission.Application.Services
     public class InstructorService : IInstructorService
     {
         private readonly IInstructorRepository _context;
+
         public InstructorService(IInstructorRepository context)
         {
             _context = context;
         }
-        public Task<IEnumerable<Instructor>> GetAllAsync()
+
+        public Task<IQueryable<Instructor>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
@@ -42,7 +45,7 @@ namespace MindMission.Application.Services
             return await _context.GetAllAsync(IncludeProperties);
         }
 
-        public Task<IEnumerable<Instructor>> GetTopInstructorsAsync()
+        public Task<IQueryable<Instructor>> GetTopInstructorsAsync()
         {
             return _context.GetTopInstructorsAsync();
         }

@@ -1,21 +1,19 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
     public class StudentMappingService : IMappingService<Student, StudentDto>
     {
         private readonly IUserAccountService _userAccountService;
+
         public StudentMappingService(IUserAccountService context)
         {
             _userAccountService = context;
         }
+
         public Student MapDtoToEntity(StudentDto dto)
         {
             return new Student
@@ -23,12 +21,12 @@ namespace MindMission.Application.Mapping
                 Id = dto.Id,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                Bio=dto.Bio,
-                ProfilePicture=dto.ProfilePicture,
-                NumCourses=dto.NumCourses,
-                NumWishlist=dto.NumWishlist,
+                Bio = dto.Bio,
+                ProfilePicture = dto.ProfilePicture,
+                NumCourses = dto.NumCourses,
+                NumWishlist = dto.NumWishlist,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = null
+                UpdatedAt = DateTime.Now
             };
         }
 

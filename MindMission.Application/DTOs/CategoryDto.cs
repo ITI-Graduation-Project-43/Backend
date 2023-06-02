@@ -1,7 +1,6 @@
 ﻿using MindMission.Application.DTOs.Base;
 using MindMission.Domain.Enums;
 
-
 namespace MindMission.Application.DTOs
 {
     public class CategoryDto : IDtoWithId<int>, IEquatable<CategoryDto>
@@ -15,6 +14,7 @@ namespace MindMission.Application.DTOs
         public int? ParentSubCategoryId { get; set; } = null;
         public string? ParentCategoryName { get; set; } = null;
         public string? ParentSubCategoryName { get; set; } = null;
+
 
         public bool Equals(CategoryDto? other)
         {
@@ -38,8 +38,5 @@ namespace MindMission.Application.DTOs
         {
             return HashCode.Combine(Id, Name);
         }
-
     }
-
-
 }

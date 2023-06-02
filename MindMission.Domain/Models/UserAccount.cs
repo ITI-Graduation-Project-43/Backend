@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -13,14 +11,17 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string UserId { get; set; }
         public int AccountId { get; set; }
+
         [Required]
         [StringLength(2048)]
         [Unicode(false)]
         public string AccountLink { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(AccountId))]
         [InverseProperty("UserAccounts")]

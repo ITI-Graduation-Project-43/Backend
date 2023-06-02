@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -34,7 +35,6 @@ namespace MindMission.Application.Mapping
                 CorrectAnswer = question.CorrectAnswer
             };
             return questionDto;
-
         }
     }
 }

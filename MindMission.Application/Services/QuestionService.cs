@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -14,7 +15,7 @@ namespace MindMission.Application.Services_Classes
             _context = context;
         }
 
-        public Task<IEnumerable<Question>> GetAllAsync()
+        public Task<IQueryable<Question>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }

@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_chapterService.GetAllAsync, pagination, "Chapter");
         }
@@ -33,13 +33,11 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _chapterService.GetByIdAsync(id, c => c.Lessons), "Chapter");
         }
 
-
         [HttpPost("Chapter")]
         public async Task<ActionResult<ChapterDto>> AddChapter([FromBody] ChapterDto chapterDto)
         {
             return await AddEntityResponse(_chapterService.AddAsync, chapterDto, "Chapter", nameof(GetChapterById));
         }
-
 
         [HttpPut("{chapterId}")]
         public async Task<ActionResult> UpdateChapter(int chapterId, ChapterDto chapterDto)
@@ -53,6 +51,4 @@ namespace MindMission.API.Controllers
             return await DeleteEntityResponse(_chapterService.GetByIdAsync, _chapterService.DeleteAsync, chapterId);
         }
     }
-
-
 }

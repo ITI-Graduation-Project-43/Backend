@@ -1,12 +1,5 @@
-﻿using MindMission.Domain.Constants;
-using MindMission.Domain.Stripe.StripeModels;
-using System;
-using System.Collections.Generic;
+﻿using MindMission.Domain.Stripe.CustomValidationAttributes;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MindMission.Domain.Stripe.CustomValidationAttributes;
 
 namespace MindMission.Application.DTOs
 {
@@ -39,7 +32,7 @@ namespace MindMission.Application.DTOs
         [StringLength(100, ErrorMessage = "Description maximum length is 100 characters")]
         public string Description { get; set; } = string.Empty;
 
-        [Range(50, long.MaxValue, ErrorMessage = "Amount minimum value is 50")]
-        public string Amount { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Course Id is required")]
+        public int CourseId { get; set; }
     }
 }

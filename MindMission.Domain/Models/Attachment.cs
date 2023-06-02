@@ -11,15 +11,15 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+
         public int LessonId { get; set; }
+
         [Required]
         [StringLength(255)]
         public string FileName { get; set; } = string.Empty;
-        [Required]
-        [StringLength(2048)]
-        public string FileUrl { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [Required]
         public byte[] FileData { get; set; } = new byte[2048];
