@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MindMission.API.Utilities;
+using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 
@@ -8,54 +9,48 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PermissionController : ControllerBase
+    public class PermissionController : BaseController<Permission, PermissionDto, int>
     {
         private readonly IPermissionService _permissionService;
+        private readonly PermissionMappingService _permissionMappingService;
 
-        public PermissionController(IPermissionService permissionService)
+        public PermissionController(IPermissionService permissionService, PermissionMappingService permissionMappingService) :
+            base(permissionMappingService)
         {
-            _permissionService = permissionService;
+            _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
+            _permissionMappingService = permissionMappingService ?? throw new ArgumentNullException(nameof(permissionMappingService));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IQueryable<PermissionDto>>> GetAllPermissions([FromQuery] PaginationDto pagination)
         {
-            var permissions = await _permissionService.GetAllAsync(permission => permission.AdminPermissions);
-            List<PermissionDto> permissionDtos = new();
-            foreach (var item in permissions)
-            {
-                permissionDtos.Add(new PermissionDto()
-                {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Description = item.Description,
-                    AdminIds = item.AdminPermissions.Select(ap => ap.Id).ToList()
-                });
-            }
-
-            ResponseObjectX<PermissionDto> AllPermission = new();
-            AllPermission.ReturnedResponse(true, "All permissions", permissionDtos, 3, 10, permissionDtos.Count());
-
-            return Ok(AllPermission);
+            return await GetEntitiesResponse(_permissionService.GetAllAsync, pagination, "Permission");
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PermissionDto>> GetPermissionById(int id)
         {
-            Permission permission = await _permissionService.GetByIdAsync(id, permission => permission.AdminPermissions);
-            PermissionDto permissionDto = new()
-            {
-                Id = permission.Id,
-                Name = permission.Name,
-                Description = permission.Description,
-                AdminIds = permission.AdminPermissions.Select(ap => ap.Id).ToList()
-            };
-
-            ResponseObjectX<PermissionDto> OnePermission = new();
-            List<PermissionDto> permissions = new() { permissionDto };
-            OnePermission.ReturnedResponse(true, "One permissions", permissions, 3, 10, permissions.Count());
-
-            return Ok(permissionDto);
+            return await GetEntityResponse(() => _permissionService.GetByIdAsync(id, p => p.AdminPermissions), "Permission");
         }
+
+        [HttpPost("Permission")]
+        public async Task<ActionResult<PermissionDto>> AddPermission([FromBody] PermissionDto permissionDto)
+        {
+            return await AddEntityResponse(_permissionService.AddAsync, permissionDto, "Permission", nameof(GetPermissionById));
+        }
+
+        [HttpPut("{permissionId}")]
+        public async Task<ActionResult> UpdatePermission(int permissionId, PermissionDto permissionDto)
+        {
+            return await UpdateEntityResponse(_permissionService.GetByIdAsync, _permissionService.UpdateAsync, permissionId, permissionDto, "Permission");
+        }
+
+        [HttpDelete("{permissionId}")]
+        public async Task<IActionResult> DeletePermission(int permissionId)
+        {
+            return await DeleteEntityResponse(_permissionService.GetByIdAsync, _permissionService.DeleteAsync, permissionId);
+        }
+
+
     }
 }
