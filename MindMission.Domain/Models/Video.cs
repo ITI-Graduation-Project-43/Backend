@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 
@@ -13,6 +14,8 @@ namespace MindMission.Domain.Models
         [Key]
         public int Id { get; set; }
         public int LessonId { get; set; }
+        [NotMapped]
+        public IFormFile VideoFile { get; set; }
         [Required]
         [StringLength(2048)]
         public string VideoUrl { get; set; }
