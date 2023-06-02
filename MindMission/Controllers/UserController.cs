@@ -1,19 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using MindMission.API.Controllers.Base;
-using MindMission.API.EmailSettings;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
-using MindMission.Application.Mapping;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.DTOs;
 using MindMission.Domain.Models;
 using System.ComponentModel.DataAnnotations;
@@ -26,6 +16,7 @@ namespace MindMission.API.Controllers
     {
         private readonly IUserService UserService;
         private readonly IMappingService<User, UserDto> UserMappingService;
+
         public UserController(IUserService _UserService, IMappingService<User, UserDto> _UserMappingService)
         {
             UserService = _UserService;
@@ -70,7 +61,8 @@ namespace MindMission.API.Controllers
                 }
                 return Unauthorized(ResponseObjectFactory.CreateResponseObject(false, "Login Failed, Your email or password incorrect", new List<SuccessLoginDto>()));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>())); }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+        }
 
         [HttpPost("Change/Email")]
         public async Task<IActionResult> ChangeEmailAsync(ChangeEmailDto ChangeEmailDto)
@@ -88,7 +80,6 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
             }
-
         }
 
         [HttpPost("Change/Password")]
@@ -105,7 +96,6 @@ namespace MindMission.API.Controllers
             }
 
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
-
         }
 
         [HttpPost]
@@ -133,17 +123,16 @@ namespace MindMission.API.Controllers
                 if (ModelState.IsValid)
                 {
                     var Result = await UserService.ResetPasswordAsync(ResetPasswordDto.Email, ResetPasswordDto.Token, ResetPasswordDto.Password);
-                    if(Result.Succeeded)
+                    if (Result.Succeeded)
                     {
                         return Ok(ResponseObjectFactory.CreateResponseObject(true, "Password has been reset successfully", new List<string>()));
                     }
                     string Errors = string.Empty;
-                    foreach(var Error in Result.Errors)
+                    foreach (var Error in Result.Errors)
                     {
                         Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
                     }
                     return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<UserDto>()));
-
                 }
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
             }
@@ -155,12 +144,12 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> DeactivateUserAsync(LoginDto LoginDto)
         {
             var Result = await UserService.DeactivateUserAsync(LoginDto.Email, LoginDto.Password);
-            if(Result.Succeeded)
+            if (Result.Succeeded)
             {
                 return Ok(ResponseObjectFactory.CreateResponseObject(true, "Your Account is Deactivated successfully", new List<string>()));
             }
             string Errors = string.Empty;
-            foreach(var Error in Result.Errors)
+            foreach (var Error in Result.Errors)
             {
                 Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
             }
@@ -200,6 +189,5 @@ namespace MindMission.API.Controllers
         //    }
         //    return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
         //}
-
     }
 }

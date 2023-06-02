@@ -4,11 +4,6 @@ using MindMission.Domain.Models;
 using MindMission.Domain.Stripe.CustomValidationAttributes;
 using MindMission.Domain.Stripe.StripeModels;
 using Stripe;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
@@ -51,7 +46,6 @@ namespace MindMission.Application.Services
             //////Create the token
             Token StripeToken = await _tokenService.CreateAsync(tokenCreateOptions, null);
 
-
             //////Configuration of Stripe Customer
             CustomerCreateOptions customerCreateOptions = new CustomerCreateOptions()
             {
@@ -69,7 +63,6 @@ namespace MindMission.Application.Services
 
         public async Task<StripePayment> AddStripePaymentAsync(AddStripePayment payment)
         {
-
             //////Configuration of Stripe Payment
             ChargeCreateOptions chargeCreateOptions = new ChargeCreateOptions()
             {
@@ -111,7 +104,6 @@ namespace MindMission.Application.Services
             StripePayment stripePayment = await AddStripePaymentAsync(payment);
             return stripePayment;
         }
-
 
         //////Get Choosed Course to enroll in.
         public async Task<Course> GetEnrolledCourse(int id) => await _courseRepository.GetByIdAsync(id);

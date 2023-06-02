@@ -1,15 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
-using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
@@ -41,7 +34,7 @@ namespace MindMission.Application.Services
             var FileContent = new MemoryStream(attachment.FileData);
             var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "Downloaded Files", attachment.FileName);
 
-            using(var Stream = new FileStream(FilePath,FileMode.Create, FileAccess.Write))
+            using (var Stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
             {
                 await FileContent.CopyToAsync(Stream);
             }

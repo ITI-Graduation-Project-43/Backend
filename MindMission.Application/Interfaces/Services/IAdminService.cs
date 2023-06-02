@@ -4,5 +4,6 @@ namespace MindMission.Application.Interfaces.Services
 {
     public interface IAdminService : IAdminRepository
     {
+
     }
 }

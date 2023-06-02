@@ -6,23 +6,36 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindMission.API.EmailSettings;
+using MindMission.API.Middlewares;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Repository_Interfaces;
-using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Application.Services_Classes;
+using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
+using Serilog;
 using Stripe;
 using System.Text;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
+
+#region serilog
+Log.Logger = new LoggerConfiguration()
+.ReadFrom.Configuration(builder.Configuration)
+.Enrich.FromLogContext()
+.CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
+
+#endregion
 
 builder.Services.AddAuthentication(options =>
 {
@@ -43,7 +56,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
+;
 
 builder.Services.AddRazorPages();
 
@@ -53,7 +67,9 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
-    
+  
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 builder.Services.AddScoped(x =>
@@ -64,13 +80,22 @@ builder.Services.AddScoped(x =>
 });
 //builder.Services.AddAuthorization();
 
+/*Admin Configuration*/
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
+
+
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IMappingService<Permission, PermissionDto>, PermissionMappingService>();
 
 /*Discussion Configuration*/
 builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
 builder.Services.AddScoped<IDiscussionService, DiscussionService>();
+builder.Services.AddScoped<DiscussionMappingService, DiscussionMappingService>();
+builder.Services.AddScoped<IMappingService<Discussion, DiscussionDto>, DiscussionMappingService>();
 
 /*Category Configuration*/
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -108,11 +133,14 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
 builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
 
-/*Admin Configuration*/
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
-builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
+
+
+/*Article Configuration*/
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<ArticleMappingService, ArticleMappingService>();
+builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
+
 
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -167,7 +195,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.Password.RequireNonAlphanumeric = true;
     //options.Password.RequireUppercase = true;
     //options.Password.RequiredUniqueChars = 1;
-
 });
 
 /*Mail Configuration*/
@@ -234,8 +261,6 @@ builder.Services.AddCors(option =>
         });
 });
 
-
-
 // Stripe Service Registeration
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<IPaymentMappingService, PaymentMappingService>();
@@ -244,6 +269,7 @@ builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<CustomerService, CustomerService>();
 StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
+builder.Services.AddTransient<ExceptionMiddleware>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -264,7 +290,11 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+
+
 app.MapRazorPages();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

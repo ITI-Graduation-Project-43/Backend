@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.Infrastructure.Context
@@ -44,14 +46,14 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Admin>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Email).IsUnicode(false);
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
 
                 entity.Property(e => e.LastName).IsUnicode(false);
-
-                entity.Property(e => e.PasswordHash).IsUnicode(false);
 
                 entity.Property(e => e.ProfilePicture).IsUnicode(false);
             });
@@ -62,6 +64,7 @@ namespace MindMission.Infrastructure.Context
                     .HasName("PK__AdminPer__9F658B3A6B1E0167");
 
                 entity.Property(e => e.GrantedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Admin)
                     .WithMany(p => p.AdminPermissions)
@@ -79,6 +82,8 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Article>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Articles)
@@ -90,6 +95,8 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Attachment>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Attachments)
@@ -103,9 +110,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
-
                 entity.Property(e => e.Name).IsUnicode(false);
-                entity.Property(e => e.Type).HasConversion<string>();
+                entity.Property(e => e.Type).HasConversion(new EnumToStringConverter<CategoryType>());
 
                 entity.HasOne(d => d.Parent)
                     .WithMany(p => p.InverseParent)
@@ -114,8 +120,9 @@ namespace MindMission.Infrastructure.Context
 
                 entity.Property(e => e.ParentId).IsRequired(false);
                 entity.HasIndex(e => e.Name).IsUnique();
-
             });
+
+
 
             builder.Entity<Chapter>(entity =>
             {
@@ -134,6 +141,8 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Course>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Description).IsUnicode(false);
 
@@ -170,6 +179,7 @@ namespace MindMission.Infrastructure.Context
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
+
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.CourseFeedbacks)
                     .HasForeignKey(d => d.CourseId)
@@ -194,6 +204,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Content).IsUnicode(false);
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Discussions)
@@ -229,6 +241,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Bio).IsUnicode(false);
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Description).IsUnicode(false);
 
@@ -244,6 +258,8 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Lesson>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.Type).IsUnicode(false);
 
@@ -268,6 +284,8 @@ namespace MindMission.Infrastructure.Context
                     .IsFixedLength();
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Quiz)
                     .WithMany(p => p.Questions)
@@ -279,6 +297,8 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Quiz>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Quizzes)
@@ -292,6 +312,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Bio).IsUnicode(false);
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
 
@@ -313,11 +335,12 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.Email).IsRequired();
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
+
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.PasswordHash).IsUnicode(false);
-
             });
 
             builder.Entity<UserAccount>(entity =>
@@ -325,6 +348,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.AccountLink).IsUnicode(false);
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.UserAccounts)
@@ -336,13 +361,15 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Video>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Videos)
                     .HasForeignKey(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
-            }); 
+            });
 
             builder.Entity<WebsiteFeedback>(entity =>
             {

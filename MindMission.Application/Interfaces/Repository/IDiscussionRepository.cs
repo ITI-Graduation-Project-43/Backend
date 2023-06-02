@@ -1,10 +1,10 @@
 ﻿using MindMission.Domain.Models;
-using System.Formats.Asn1;
 
 namespace MindMission.Application.Repository_Interfaces
 {
-    public interface IDiscussionRepository: IRepository<Discussion, int>
+    public interface IDiscussionRepository : IRepository<Discussion, int>
     {
-        Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int id);
+        Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId);
+        Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId);
     }
 }

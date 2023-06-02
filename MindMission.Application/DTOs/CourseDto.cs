@@ -46,5 +46,8 @@ namespace MindMission.Application.DTOs
         public double? InstructorAvgRating { get; set; }
         public int InstructorNoOfRatings { get; set; }
         public ICollection<string> ChapterNames { get; set; } = new List<string>();
+
+
+
     }
 }

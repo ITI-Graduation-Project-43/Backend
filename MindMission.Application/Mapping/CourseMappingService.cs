@@ -1,18 +1,16 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-
 
 namespace MindMission.Application.Mapping
 {
     public class CourseMappingService : IMappingService<Course, CourseDto>
     {
-        private readonly IInstructorService _instructorService;
 
-        public CourseMappingService(IInstructorService instructorService)
+        public CourseMappingService()
         {
-            _instructorService = instructorService;
         }
 
         public async Task<CourseDto> MapEntityToDto(Course course)
@@ -46,7 +44,6 @@ namespace MindMission.Application.Mapping
                 UpdatedAt = course.UpdatedAt,
                 CategoryId = course.CategoryId
             };
-
 
             if (course.Instructor != null)
             {
@@ -104,13 +101,10 @@ namespace MindMission.Application.Mapping
                 Published = courseDTO.Published,
                 Approved = courseDTO.Approved,
                 CreatedAt = DateTime.Now,
-                UpdatedAt = null,
+                UpdatedAt = DateTime.Now,
                 CategoryId = courseDTO.CategoryId,
                 InstructorId = courseDTO.InstructorId
             };
         }
-
-
     }
-
 }
