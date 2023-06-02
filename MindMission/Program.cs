@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -66,12 +67,17 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
+  
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     options.LogTo(Console.WriteLine, LogLevel.Information);
-
-
 });
 
+builder.Services.AddScoped(x =>
+{
+    var configuration = x.GetRequiredService<IConfiguration>();
+    string connectionString = configuration["AzureStorage:ConnectionString"];
+    return new BlobServiceClient(connectionString);
+});
 //builder.Services.AddAuthorization();
 
 /*Admin Configuration*/
