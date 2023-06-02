@@ -33,17 +33,14 @@ namespace MindMission.API.Controllers
                 return BadRequest("No file was uploaded.");
             }
 
-            // Generate a unique filename for the uploaded video
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(videoFile.FileName);
 
-            // Upload the video to Azure Blob Storage
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
             using (Stream stream = videoFile.OpenReadStream())
             {
                 await blobClient.UploadAsync(stream, true);
             }
 
-            // Create a new Video object
             Video video = new Video
             {
                 VideoUrl = blobClient.Uri.ToString(),

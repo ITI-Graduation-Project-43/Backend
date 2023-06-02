@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -32,6 +33,9 @@ namespace MindMission.Domain.Models
         [StringLength(1000)]
         [Unicode(false)]
         public string Bio { get; set; } = string.Empty;
+        [NotMapped]
+        [AllowNull]
+        public IFormFile ProfilePictureFile { get; set; }
 
         [StringLength(500)]
         [Unicode(false)]
