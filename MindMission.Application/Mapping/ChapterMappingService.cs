@@ -28,6 +28,10 @@ namespace MindMission.Application.Mapping
                 NoOfLessons = chapter.NoOfLessons,
                 NoOfHours = chapter.NoOfHours
             };
+            foreach (var lesson in chapter.Lessons)
+            {
+                chapterDto.Lessons.Add(new Dictionary<string, string>() { { "Title", lesson.Title }, { "Description", lesson.Description }, { "NoOfHours", lesson.NoOfHours.ToString() } });
+            }
             return chapterDto;
         }
     }
