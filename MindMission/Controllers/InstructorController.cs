@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.Context;
 
 namespace MindMission.API.Controllers
 {
@@ -11,14 +15,24 @@ namespace MindMission.API.Controllers
     [ApiController]
     public class InstructorController : BaseController<Instructor, InstructorDto, string>
     {
+        private readonly MindMissionDbContext _context;
         private readonly IInstructorService _instructorService;
         private readonly InstructorMappingService _instructorMappingService;
         /* private readonly IWebHostEnvironment _environment;*/
+        private readonly BlobServiceClient blobServiceClient;
+        private readonly BlobContainerClient containerClient;
+        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public InstructorController(InstructorMappingService instructorMappingService, IInstructorService instructorService) : base(instructorMappingService)
+        public InstructorController(MindMissionDbContext context, InstructorMappingService instructorMappingService, IInstructorService instructorService, BlobServiceClient blobServiceClient, IConfiguration configuration, IWebHostEnvironment hostingEnvironment) : base(instructorMappingService)
         {
+            _context= context;
             _instructorService = instructorService;
             _instructorMappingService = instructorMappingService;
+            this.blobServiceClient = blobServiceClient;
+            this.hostingEnvironment = hostingEnvironment;
+
+            string containerName = configuration["AzureStorage:ContainerName2"];
+            containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         }
 
         #region get
@@ -95,5 +109,37 @@ namespace MindMission.API.Controllers
           {
               return this._environment.WebRootPath + "\\Upload\\instructor\\" + id;
           }*/
+
+        [HttpPost("UploadImage")]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string instructorId)
+        {
+            Instructor instructor = await _instructorService.GetByIdAsync(instructorId);
+            if (instructor == null)
+            {
+                return NotFound("Instructor not found.");
+            }
+            if (ProfilePictureFile == null || ProfilePictureFile.Length == 0)
+            {
+                return BadRequest("No file was uploaded.");
+            }
+            
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ProfilePictureFile.FileName);
+
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            using (Stream stream = ProfilePictureFile.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, true);
+            }
+
+            instructor.ProfilePicture = blobClient.Uri.ToString();
+
+            _context.Entry(instructor).Property(x => x.ProfilePicture).IsModified = true;
+
+            // Save the updated entity
+            await _context.SaveChangesAsync();
+
+            return Ok(instructor.ProfilePicture);   
+        }
+
     }
 }

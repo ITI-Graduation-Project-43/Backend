@@ -3,8 +3,6 @@ using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
@@ -30,8 +28,8 @@ namespace MindMission.Domain.Models
         public string Content { get; set; }
 
         public int Upvotes { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }

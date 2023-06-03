@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+
 
 namespace MindMission.Domain.Models
 {
@@ -13,12 +15,15 @@ namespace MindMission.Domain.Models
 
         public int LessonId { get; set; }
 
+        [NotMapped]
+        public IFormFile VideoFile { get; set; }
+        
         [Required]
         [StringLength(2048)]
         public string VideoUrl { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Videos")]

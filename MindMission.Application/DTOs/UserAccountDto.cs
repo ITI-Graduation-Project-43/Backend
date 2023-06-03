@@ -8,5 +8,7 @@ namespace MindMission.Application.DTOs
         public int accountId { get; set; }
         public string accountLink { get; set; } = string.Empty;
         public int Id { get; set; }
+
+
     }
 }

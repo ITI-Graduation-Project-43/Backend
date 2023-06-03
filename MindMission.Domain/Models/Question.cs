@@ -38,8 +38,8 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string CorrectAnswer { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(QuizId))]
         [InverseProperty("Questions")]

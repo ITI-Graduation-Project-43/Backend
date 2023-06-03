@@ -23,6 +23,6 @@ namespace MindMission.Domain.Models
         public User User { get; set; }
 
         public string FeedbackText { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

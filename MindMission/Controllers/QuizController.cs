@@ -30,7 +30,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<QuizDto>> GetQuizById(int id)
         {
-            return await GetEntityResponse(() => _quizService.GetByIdAsync(id), "Quiz");
+            return await GetEntityResponse(() => _quizService.GetByIdAsync(id, q => q.Questions), "Quiz");
         }
 
         [HttpPost("Quiz")]

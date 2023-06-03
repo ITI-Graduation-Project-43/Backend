@@ -13,5 +13,8 @@ namespace MindMission.Application.DTOs
         public string CourseImageUrl { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
         public string StudentName { get; set; } = string.Empty;
+
+
+
     }
 }

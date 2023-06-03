@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,8 @@ using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
 using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Json;
 using Stripe;
 using System.Text;
-
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +55,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
+;
 
 builder.Services.AddRazorPages();
 
@@ -67,13 +66,29 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
         b => b.MigrationsAssembly("MindMission.API"));
+
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
+builder.Services.AddScoped(x =>
+{
+    var configuration = x.GetRequiredService<IConfiguration>();
+    string connectionString = configuration["AzureStorage:ConnectionString"];
+    return new BlobServiceClient(connectionString);
+});
 //builder.Services.AddAuthorization();
+
+/*Admin Configuration*/
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
+
 
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<PermissionMappingService, PermissionMappingService>();
 builder.Services.AddScoped<IMappingService<Permission, PermissionDto>, PermissionMappingService>();
 
 /*Discussion Configuration*/
@@ -118,11 +133,7 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
 builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
 
-/*Admin Configuration*/
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
-builder.Services.AddScoped<IMappingService<Admin, AdminDto>, AdminMappingService>();
+
 
 /*Article Configuration*/
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
@@ -278,6 +289,8 @@ app.UseCors(TextCore);
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+
 
 app.MapRazorPages();
 

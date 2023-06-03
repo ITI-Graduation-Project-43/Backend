@@ -1,5 +1,4 @@
 ﻿using MindMission.Application.DTOs.Base;
-using System.Xml.Linq;
 
 namespace MindMission.Application.DTOs
 {
@@ -7,7 +6,7 @@ namespace MindMission.Application.DTOs
     {
         public int Id { get; set; }
         public int LessonId { get; set; }
-        public string UserId { get; set; }= string.Empty;
+        public string UserId { get; set; } = string.Empty;
         public int? ParentDiscussionId { get; set; } = null;
         public string Content { get; set; } = string.Empty;
         public int Upvotes { get; set; }
@@ -17,13 +16,15 @@ namespace MindMission.Application.DTOs
 
         public string ParentContent { get; set; } = string.Empty;
 
+
+
         public bool Equals(DiscussionDto? other)
         {
-            if(other is null) return false; 
-            return Id==other.Id && LessonId==other.LessonId && UserId==other.UserId && ParentDiscussionId==other.ParentDiscussionId && Content==other.Content && Upvotes==other.Upvotes;
+            if (other is null) return false;
+            return Id == other.Id && LessonId == other.LessonId && UserId == other.UserId && ParentDiscussionId == other.ParentDiscussionId && Content == other.Content && Upvotes == other.Upvotes;
         }
         public override bool Equals(object? obj)
-        { return Equals(obj as DiscussionDto);}
+        { return Equals(obj as DiscussionDto); }
         public override int GetHashCode()
         {
             return HashCode.Combine(Id, Content);

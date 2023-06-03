@@ -15,6 +15,7 @@ namespace MindMission.Application.DTOs
         public string? ParentCategoryName { get; set; } = null;
         public string? ParentSubCategoryName { get; set; } = null;
 
+
         public bool Equals(CategoryDto? other)
         {
             if (other == null)

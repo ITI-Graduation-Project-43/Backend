@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Admin : IEntity<int>
+    public partial class Admin : BaseEntity, IEntity<int>
     {
         public Admin()
         {
@@ -28,6 +28,7 @@ namespace MindMission.Domain.Models
         [Required]
         [StringLength(255)]
         [Unicode(false)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [StringLength(2048)]
@@ -36,12 +37,9 @@ namespace MindMission.Domain.Models
 
         [Required]
         [StringLength(2048)]
-        [Unicode(false)]
         public string PasswordHash { get; set; }
 
         public bool IsDeactivated { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
 
         [InverseProperty(nameof(AdminPermission.Admin))]
         public virtual ICollection<AdminPermission> AdminPermissions { get; set; }

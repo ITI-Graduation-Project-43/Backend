@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs.Base;
+using System.Text.Json.Serialization;
 
 namespace MindMission.Application.DTOs
 {
@@ -10,5 +11,6 @@ namespace MindMission.Application.DTOs
         public DateTime UpdatedAt { get; set; }
 
         public string LessonName { get; set; } = string.Empty;
+
     }
 }

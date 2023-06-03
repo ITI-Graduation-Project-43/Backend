@@ -27,7 +27,7 @@ namespace MindMission.Domain.Models
 
         public int? ParentId { get; set; }
         public bool Approved { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(ParentId))]

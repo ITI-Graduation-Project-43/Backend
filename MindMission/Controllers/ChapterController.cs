@@ -30,7 +30,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ChapterDto>> GetChapterById(int id)
         {
-            return await GetEntityResponse(() => _chapterService.GetByIdAsync(id), "Chapter");
+            return await GetEntityResponse(() => _chapterService.GetByIdAsync(id, c => c.Lessons), "Chapter");
         }
 
         [HttpPost("Chapter")]

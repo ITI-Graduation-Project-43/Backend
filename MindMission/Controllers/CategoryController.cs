@@ -188,7 +188,7 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            return await PatchEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, categoryId, patchDocument, (entity, dto) =>
+            return await PatchEntityResponse(_categoryService.GetByIdAsync, _categoryService.UpdateAsync, categoryId, "Category", patchDocument, (entity, dto) =>
             {
                 entity = _categoryMappingService.MapDtoToEntity(dto);
 

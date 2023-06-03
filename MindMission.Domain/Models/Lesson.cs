@@ -36,8 +36,8 @@ namespace MindMission.Domain.Models
 
         public int NoOfHours { get; set; }
         public bool IsFree { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(ChapterId))]
         [InverseProperty("Lessons")]

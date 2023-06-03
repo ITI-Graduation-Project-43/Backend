@@ -41,8 +41,8 @@ namespace MindMission.Domain.Models
 
         public int NumCourses { get; set; }
         public int NumWishlist { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }

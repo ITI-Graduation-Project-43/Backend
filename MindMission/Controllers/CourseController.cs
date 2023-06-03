@@ -140,7 +140,7 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, patchDocument);
+            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, "Course", patchDocument);
         }
 
         #endregion Edit Patch/Put

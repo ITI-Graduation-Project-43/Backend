@@ -106,7 +106,7 @@ namespace MindMission.Domain.Models
         public bool Published { get; set; } = false;
         public bool Approved { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(CategoryId))]
         [InverseProperty("Courses")]
