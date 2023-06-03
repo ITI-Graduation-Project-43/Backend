@@ -30,13 +30,12 @@ string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
 
 #region serilog
-Log.Logger = new LoggerConfiguration()
+var Logger = new LoggerConfiguration()
 .ReadFrom.Configuration(builder.Configuration)
 .Enrich.FromLogContext()
 .CreateLogger();
 builder.Logging.ClearProviders();
-builder.Logging.AddSerilog();
-
+builder.Logging.AddSerilog(Logger);
 #endregion
 
 builder.Services.AddAuthentication(options =>
