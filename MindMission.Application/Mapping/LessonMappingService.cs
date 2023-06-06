@@ -14,7 +14,7 @@ namespace MindMission.Application.Mapping
                 ChapterId = lessonDto.ChapterId,
                 Title = lessonDto.Title,
                 Description = lessonDto.Description,
-                Type = lessonDto.Description,
+                Type = lessonDto.Type,
                 NoOfHours = lessonDto.NoOfHours,
                 IsFree = lessonDto.IsFree
             };
