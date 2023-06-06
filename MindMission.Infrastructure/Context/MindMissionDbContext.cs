@@ -255,7 +255,7 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
-                entity.Property(e => e.Type).IsUnicode(false);
+                entity.Property(e => e.Type).HasConversion(new EnumToStringConverter<LessonType>());
 
                 entity.HasOne(d => d.Chapter)
                     .WithMany(p => p.Lessons)

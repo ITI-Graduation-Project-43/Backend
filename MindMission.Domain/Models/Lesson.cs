@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -30,9 +31,7 @@ namespace MindMission.Domain.Models
         public string Description { get; set; }
 
         [Required]
-        [StringLength(20)]
-        [Unicode(false)]
-        public string Type { get; set; }
+        public LessonType Type { get; set; }
 
         public int NoOfHours { get; set; }
         public bool IsFree { get; set; }

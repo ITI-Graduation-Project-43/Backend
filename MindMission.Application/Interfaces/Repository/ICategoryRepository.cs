@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Domain.Enums;
+﻿using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Repository_Interfaces

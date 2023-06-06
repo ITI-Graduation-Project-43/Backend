@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Domain.Common;
+﻿using MindMission.Domain.Common;
 using System.Linq.Expressions;
 
 namespace MindMission.Application.Repository_Interfaces
@@ -7,8 +6,12 @@ namespace MindMission.Application.Repository_Interfaces
     public interface IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, new()
     {
         Task<IQueryable<TClass>> GetAllAsync();
-        
+        Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, Object>>[] IncludeProperties);
+
+
         Task<TClass> GetByIdAsync(TDataType id);
+        Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, Object>>[] IncludeProperties);
+
 
         Task<TClass> AddAsync(TClass entity);
 
@@ -16,9 +19,5 @@ namespace MindMission.Application.Repository_Interfaces
 
         Task DeleteAsync(TDataType id);
 
-        //Overloading methods to be able to "include" navigation properties
-        Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, Object>>[] IncludeProperties);
-
-        Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, Object>>[] IncludeProperties);
     }
 }

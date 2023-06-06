@@ -14,9 +14,10 @@ namespace MindMission.Application.Mapping
                 ChapterId = lessonDto.ChapterId,
                 Title = lessonDto.Title,
                 Description = lessonDto.Description,
-                Type = lessonDto.Description,
+                Type = lessonDto.Type,
                 NoOfHours = lessonDto.NoOfHours,
-                IsFree = lessonDto.IsFree
+                IsFree = lessonDto.IsFree,
+
             };
         }
 
@@ -30,7 +31,10 @@ namespace MindMission.Application.Mapping
                 Description = lesson.Description,
                 Type = lesson.Type,
                 NoOfHours = lesson.NoOfHours,
-                IsFree = lesson.IsFree
+                IsFree = lesson.IsFree,
+                ChapterTitle = lesson.Chapter.Title,
+                CourseId = lesson.Chapter.Course.Id,
+                CourseName = lesson.Chapter.Course.Title
             };
             return lessonDto;
         }
