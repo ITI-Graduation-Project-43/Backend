@@ -32,9 +32,9 @@ namespace MindMission.Application.Mapping
                 Type = lesson.Type,
                 NoOfHours = lesson.NoOfHours,
                 IsFree = lesson.IsFree,
-                ChapterTitle = lesson.Chapter.Title,
-                CourseId = lesson.Chapter.Course.Id,
-                CourseName = lesson.Chapter.Course.Title
+                ChapterTitle = lesson?.Chapter?.Title ?? string.Empty,
+                CourseId = lesson?.Chapter?.Course?.Id ?? 0,
+                CourseName = lesson?.Chapter?.Course?.Title ?? string.Empty
             };
             return lessonDto;
         }
