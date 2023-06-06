@@ -33,7 +33,12 @@ namespace MindMission.API.Controllers
                "Courses",
                course => course.Instructor,
                Course => Course.Category,
-               Course => Course.Chapters
+               Course => Course.Chapters,
+               Course => Course.Category.Parent,
+               Course => Course.Category.Parent.Parent,
+               Course => Course.CourseRequirements,
+               Course => Course.LearningItems,
+               Course => Course.EnrollmentItems
            );
         }
 
@@ -85,7 +90,14 @@ namespace MindMission.API.Controllers
                     () => _courseService.GetByIdAsync(courseId,
                         course => course.Instructor,
                         Course => Course.Category,
-                        Course => Course.Chapters
+                        Course => Course.Chapters,
+                        Course => Course.Category.Parent,
+                        Course => Course.Category.Parent.Parent,
+                        Course => Course.CourseRequirements,
+                        Course => Course.LearningItems,
+                        Course => Course.EnrollmentItems
+
+
                     ),
                     "Course"
                 );

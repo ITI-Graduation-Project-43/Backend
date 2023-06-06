@@ -10,9 +10,6 @@ namespace MindMission.Application.DTOs
         public string Title { get; set; } = string.Empty;
         public string ShortDescription { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string WhatWillLearn { get; set; } = string.Empty;
-        public string Requirements { get; set; } = string.Empty;
-        public string WholsFor { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public Language Language { get; set; }
         public decimal Price { get; set; }
@@ -26,6 +23,8 @@ namespace MindMission.Application.DTOs
         public int NoOfVideos { get; set; }
         public int NoOfArticles { get; set; }
         public int NoOfAttachments { get; set; }
+        public int NoOfQuizes { get; set; }
+
         public int NoOfHours { get; set; }
         public bool Published { get; set; }
         public bool Approved { get; set; }
@@ -45,9 +44,36 @@ namespace MindMission.Application.DTOs
         public int InstructorNoOfStudents { get; set; }
         public double? InstructorAvgRating { get; set; }
         public int InstructorNoOfRatings { get; set; }
-        public ICollection<string> ChapterNames { get; set; } = new List<string>();
+        public ICollection<CourseChapterDto> Chapters { get; set; } = new List<CourseChapterDto>();
+
+        public IList<LearningItemDto> LearningItems { get; set; }
+        public IList<EnrollmentItemDto> EnrollmentItems { get; set; }
+        public IList<CourseRequirementDto> CourseRequirements { get; set; }
 
 
+    }
+    public class LearningItemDto
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
 
+    public class EnrollmentItemDto
+    {
+        public string Description { get; set; }
+    }
+
+    public class CourseRequirementDto
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
+
+
+    public class CourseChapterDto
+    {
+        public string Title { get; set; }
+        public int NoOfLessons { get; set; }
+        public int NoOfHours { get; set; }
     }
 }

@@ -152,15 +152,9 @@ namespace MindMission.Infrastructure.Context
 
                 entity.Property(e => e.Level).IsUnicode(false);
 
-                entity.Property(e => e.Requirements).IsUnicode(false);
-
                 entity.Property(e => e.ShortDescription).IsUnicode(false);
 
                 entity.Property(e => e.Title).IsUnicode(false);
-
-                entity.Property(e => e.WhatWillLearn).IsUnicode(false);
-
-                entity.Property(e => e.WholsFor).IsUnicode(false);
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Courses)

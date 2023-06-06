@@ -40,17 +40,7 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string Description { get; set; } = string.Empty;
 
-        [StringLength(2048)]
-        [Unicode(false)]
-        public string WhatWillLearn { get; set; } = string.Empty;
 
-        [StringLength(2048)]
-        [Unicode(false)]
-        public string Requirements { get; set; } = string.Empty;
-
-        [StringLength(2048)]
-        [Unicode(false)]
-        public string WholsFor { get; set; } = string.Empty;
 
         [StringLength(2048)]
         [Unicode(false)]
@@ -97,11 +87,16 @@ namespace MindMission.Domain.Models
         [Range(0, int.MaxValue, ErrorMessage = "Number of articles must be greater than or equal to 0.")]
         public int NoOfArticles { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = "Number of quizez must be greater than or equal to 0.")]
+        public int NoOfQuizes { get; set; }
+
         [Range(0, int.MaxValue, ErrorMessage = "Number of attachments must be greater than or equal to 0.")]
         public int NoOfAttachments { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Number of hours must be greater than or equal to 0.")]
         public int NoOfHours { get; set; }
+
+
 
         public bool Published { get; set; } = false;
         public bool Approved { get; set; } = false;
@@ -127,5 +122,41 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(Wishlist.Course))]
         public virtual ICollection<Wishlist> Wishlists { get; set; }
+
+
+        public ICollection<LearningItem> LearningItems { get; set; }
+        public ICollection<EnrollmentItem> EnrollmentItems { get; set; }
+        public ICollection<CourseRequirement> CourseRequirements { get; set; }
+    }
+
+
+
+    public class LearningItem
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int CourseId { get; set; }
+        public Course Course { get; set; }
+    }
+
+    public class EnrollmentItem
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public int CourseId { get; set; }
+        public Course Course { get; set; }
+    }
+
+    public class CourseRequirement
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int CourseId { get; set; }
+        public Course Course { get; set; }
     }
 }

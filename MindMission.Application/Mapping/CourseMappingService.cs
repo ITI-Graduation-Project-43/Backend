@@ -21,9 +21,6 @@ namespace MindMission.Application.Mapping
                 Title = course.Title,
                 ShortDescription = course.ShortDescription,
                 Description = course.Description,
-                WhatWillLearn = course.WhatWillLearn,
-                Requirements = course.Requirements,
-                WholsFor = course.WholsFor,
                 ImageUrl = course.ImageUrl,
                 Language = (Language)Enum.Parse(typeof(Language), course.Language),
                 Price = course.Price,
@@ -36,6 +33,7 @@ namespace MindMission.Application.Mapping
                 LessonCount = course.LessonCount,
                 NoOfVideos = course.NoOfVideos,
                 NoOfArticles = course.NoOfArticles,
+                NoOfQuizes = course.NoOfQuizes,
                 NoOfAttachments = course.NoOfAttachments,
                 NoOfHours = course.NoOfHours,
                 Published = course.Published,
@@ -59,16 +57,31 @@ namespace MindMission.Application.Mapping
                 courseDTO.InstructorNoOfRatings = course.Instructor.NoOfRatings;
             }
 
+
             if (course.Category != null)
             {
-                courseDTO.CategoryName = course.Category.Name;
+                courseDTO.TopicName = course.Category.Name;
+                if (course.Category.Parent != null)
+                {
+                    courseDTO.SubCategoryName = course.Category.Parent.Name;
+                    if (course.Category.Parent.Parent != null)
+                    {
+                        courseDTO.CategoryName = course.Category.Parent.Parent.Name;
+                    }
+                }
             }
 
-            // Map the chapter names
-            foreach (var chapter in course.Chapters)
+            // Map the chapters
+            courseDTO.Chapters = course.Chapters.Select(chapter => new CourseChapterDto
             {
-                courseDTO.ChapterNames.Add(chapter.Title);
-            }
+                Title = chapter.Title,
+                NoOfLessons = chapter.NoOfLessons,
+                NoOfHours = chapter.NoOfHours,
+            }).ToList();
+
+            courseDTO.LearningItems = course.LearningItems?.Select(i => new LearningItemDto { Title = i?.Title, Description = i?.Description }).ToList();
+            courseDTO.EnrollmentItems = course.EnrollmentItems?.Select(i => new EnrollmentItemDto { Description = i?.Description }).ToList();
+            courseDTO.CourseRequirements = course.CourseRequirements?.Select(r => new CourseRequirementDto { Title = r?.Title, Description = r?.Description }).ToList();
 
             return courseDTO;
         }
@@ -81,9 +94,6 @@ namespace MindMission.Application.Mapping
                 Title = courseDTO.Title,
                 ShortDescription = courseDTO.ShortDescription,
                 Description = courseDTO.Description,
-                WhatWillLearn = courseDTO.WhatWillLearn,
-                Requirements = courseDTO.Requirements,
-                WholsFor = courseDTO.WholsFor,
                 ImageUrl = courseDTO.ImageUrl,
                 Language = courseDTO.Language.ToString(),
                 Price = courseDTO.Price,
@@ -97,13 +107,17 @@ namespace MindMission.Application.Mapping
                 NoOfVideos = courseDTO.NoOfVideos,
                 NoOfArticles = courseDTO.NoOfArticles,
                 NoOfAttachments = courseDTO.NoOfAttachments,
+                NoOfQuizes = courseDTO.NoOfQuizes,
                 NoOfHours = courseDTO.NoOfHours,
                 Published = courseDTO.Published,
                 Approved = courseDTO.Approved,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 CategoryId = courseDTO.CategoryId,
-                InstructorId = courseDTO.InstructorId
+                InstructorId = courseDTO.InstructorId,
+                LearningItems = courseDTO.LearningItems?.Select(i => new LearningItem { Title = i.Title, Description = i.Description }).ToList(),
+                EnrollmentItems = courseDTO.EnrollmentItems?.Select(i => new EnrollmentItem { Description = i.Description }).ToList(),
+                CourseRequirements = courseDTO.CourseRequirements?.Select(r => new CourseRequirement { Title = r.Title, Description = r.Description }).ToList(),
             };
         }
     }
