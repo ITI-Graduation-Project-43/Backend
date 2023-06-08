@@ -66,6 +66,14 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(() => _courseService.GetAllByInstructorAsync(instructorId), pagination, "Courses");
         }
 
+        // GET: api/Course/instructorOtherCourses/{instructorId}
+
+        [HttpGet("{courseId}/instructor/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorOtherCourses(string instructorId, int courseId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _courseService.GetInstructorOtherCourses(instructorId, courseId), pagination, "Courses");
+        }
+
         // GET: api/Course/top/{topNumber}
 
         [HttpGet("top/{topNumber}")]

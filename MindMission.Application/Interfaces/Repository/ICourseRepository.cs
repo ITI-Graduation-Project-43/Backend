@@ -8,6 +8,7 @@ namespace MindMission.Application.Repository_Interfaces
         Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId);
         Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId);
         Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId);
+        Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId);
         Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber);
         Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber);
     }

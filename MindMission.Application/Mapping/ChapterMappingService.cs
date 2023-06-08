@@ -30,7 +30,16 @@ namespace MindMission.Application.Mapping
             };
             foreach (var lesson in chapter.Lessons)
             {
-                chapterDto.Lessons.Add(new Dictionary<string, string>() { { "Title", lesson.Title }, { "Description", lesson.Description }, { "NoOfHours", lesson.NoOfHours.ToString() } });
+                var lessonDto = new ChapterLessonDto
+                {
+                    Id = lesson.Id,
+                    Title = lesson.Title,
+                    Description = lesson.Description,
+                    Type = lesson.Type,
+                    NoOfHours = lesson.NoOfHours,
+                    IsFree = lesson.IsFree,
+                };
+                chapterDto.Lessons.Add(lessonDto);
             }
             return chapterDto;
         }

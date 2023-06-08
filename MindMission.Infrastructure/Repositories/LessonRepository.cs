@@ -19,35 +19,35 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Lesson>> GetByChapterIdAsync(int chapterId)
         {
-            var Query = await _context.Lessons
+            var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.ChapterId == chapterId)
                        .ToListAsync();
 
-            return Query.AsQueryable();
+            return lessons.AsQueryable();
         }
 
         public async Task<IQueryable<Lesson>> GetByCourseAndChapterIdAsync(int courseId, int chapterId)
         {
-            var Query = await _context.Lessons
+            var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.ChapterId == chapterId)
                        .ToListAsync();
 
-            return Query.AsQueryable();
+            return lessons.AsQueryable();
         }
 
         public async Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId)
         {
-            var Query = await _context.Lessons
+            var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.Chapter.CourseId == courseId)
                        .ToListAsync();
 
-            return Query.AsQueryable();
+            return lessons.AsQueryable();
         }
 
         public async Task<IQueryable<Lesson>> GetByTypeAsync(int courseId, LessonType type)

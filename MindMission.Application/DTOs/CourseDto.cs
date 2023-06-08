@@ -32,7 +32,11 @@ namespace MindMission.Application.DTOs
         public DateTime? UpdatedAt { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
+        public int SubCategoryId { get; set; }
+
         public string SubCategoryName { get; set; } = string.Empty;
+        public int TopicId { get; set; }
+
         public string TopicName { get; set; } = string.Empty;
         public string InstructorId { get; set; } = string.Empty;
         public string InstructorName { get; set; } = string.Empty;

@@ -45,7 +45,7 @@ namespace MindMission.Application.Mapping
             var UserAccounts = _userAccountService.GetUserAccountsAsync(entity.Id);
             foreach (var account in UserAccounts)
             {
-                StudentDTO.accounts.Add(account.Account.AccountType, account.AccountLink);
+                StudentDTO.accounts.Add(account?.Account?.AccountType, account?.AccountLink);
             }
             return StudentDTO;
         }

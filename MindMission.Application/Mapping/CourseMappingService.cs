@@ -39,7 +39,6 @@ namespace MindMission.Application.Mapping
                 Approved = course.Approved,
                 CreatedAt = course.CreatedAt,
                 UpdatedAt = course.UpdatedAt,
-                CategoryId = course.CategoryId
             };
 
             if (course.Instructor != null)
@@ -60,12 +59,16 @@ namespace MindMission.Application.Mapping
             if (course.Category != null)
             {
                 courseDTO.TopicName = course.Category.Name;
+                courseDTO.TopicId = course.Category.Id;
                 if (course.Category.Parent != null)
                 {
                     courseDTO.SubCategoryName = course.Category.Parent.Name;
+                    courseDTO.SubCategoryId = course.Category.Parent.Id;
+
                     if (course.Category.Parent.Parent != null)
                     {
                         courseDTO.CategoryName = course.Category.Parent.Parent.Name;
+                        courseDTO.CategoryId = course.Category.Parent.Parent.Id;
                     }
                 }
             }
@@ -112,7 +115,7 @@ namespace MindMission.Application.Mapping
                 Approved = courseDTO.Approved,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                CategoryId = courseDTO.CategoryId,
+                CategoryId = courseDTO.TopicId,
                 InstructorId = courseDTO.InstructorId,
                 LearningItems = courseDTO.LearningItems?.Select(i => new LearningItem { Title = i.Title, Description = i.Description }).ToList(),
                 EnrollmentItems = courseDTO.EnrollmentItems?.Select(i => new EnrollmentItem { Description = i.Description }).ToList(),

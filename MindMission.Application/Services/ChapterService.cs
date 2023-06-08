@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -49,5 +48,11 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.DeleteAsync(id);
         }
+
+        public Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId)
+        {
+            return _context.GetByCourseIdAsync(courseId);
+        }
+
     }
 }

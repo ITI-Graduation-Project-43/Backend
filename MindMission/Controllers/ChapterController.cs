@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -24,13 +25,29 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_chapterService.GetAllAsync, pagination, "Chapter");
+            return await GetEntitiesResponseWithInclude(
+                _chapterService.GetAllAsync,
+                pagination,
+                "Chapters",
+                chapter => chapter.Lessons
+            );
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ChapterDto>> GetChapterById(int id)
         {
-            return await GetEntityResponse(() => _chapterService.GetByIdAsync(id, c => c.Lessons), "Chapter");
+            return await GetEntityResponseWithInclude(
+                  () => _chapterService.GetByIdAsync(id,
+                    chapter => chapter.Lessons
+                  ),
+                  "Chapter"
+              );
+        }
+
+        [HttpGet("byCourse/{courseId}")]
+        public async Task<ActionResult<IQueryable<LessonDto>>> GetByCourseIdAsync(int courseId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _chapterService.GetByCourseIdAsync(courseId), pagination, "Chapters");
         }
 
         [HttpPost("Chapter")]

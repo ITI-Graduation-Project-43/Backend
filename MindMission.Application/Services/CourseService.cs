@@ -70,6 +70,11 @@ namespace MindMission.Application.Services
             return await _context.GetAllByInstructorAsync(instructorId);
         }
 
+        public async Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId)
+        {
+            return await _context.GetInstructorOtherCourses(instructorId, courseId);
+
+        }
         public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
             return await _context.GetTopRatedCoursesAsync(topNumber);
@@ -79,5 +84,7 @@ namespace MindMission.Application.Services
         {
             return await _context.GetRecentCoursesAsync(recentNumber);
         }
+
+
     }
 }
