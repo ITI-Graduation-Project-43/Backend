@@ -15,7 +15,7 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync(int topNumber)
+        public async Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber)
         {
             var topInstructors = await _context.Instructors
                                             .Include(ins => ins.Courses)

@@ -47,7 +47,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync(int topNumber)
+        public async Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber)
         {
             return await _context.GetTopRatedInstructorsAsync(topNumber);
         }
