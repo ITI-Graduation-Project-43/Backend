@@ -48,9 +48,9 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet("TopTenInstructors")]
-        public async Task<ActionResult<IEnumerable<InstructorDto>>> GetTopTenInstructors(int topNumber, [FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<InstructorDto>>> GetTopTenInstructors(int topNumber, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _instructorService.GetTopRatedInstructorsAsync(topNumber), new PaginationDto { PageNumber = 1, PageSize = 10 }, "Top 10 Instructors");
+            return await GetEntitiesResponse(() => _instructorService.GetTopRatedInstructorsAsync(topNumber), pagination, "Top {topNumber} Instructors");
         }
 
         [HttpGet("{instructorId}")]

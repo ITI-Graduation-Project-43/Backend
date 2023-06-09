@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
@@ -34,7 +35,18 @@ namespace MindMission.API.Controllers
         [HttpGet("{StudentID}")]
         public async Task<ActionResult<InstructorDto>> GetById(string StudentID)
         {
-            return await GetEntityResponse(() => _StudentService.GetByIdAsync(StudentID), "Student");
+            return await GetEntityResponseWithInclude(
+                    () => _StudentService.GetByIdAsync(StudentID,
+                        instructor => instructor.User),
+                     "Student");
+
+        }
+
+
+        [HttpGet("{courseId}/students")]
+        public async Task<ActionResult<IQueryable<StudentDto>>> GetRecentStudents(int recentNumber, int courseId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _StudentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), pagination, "Students");
         }
 
         [HttpPatch("{StudnetId}")]

@@ -19,7 +19,7 @@ namespace MindMission.Domain.Models
 
         public int CourseId { get; set; }
         public string StudentId { get; set; }
-        public DateTime EnrollmentDate { get; set; }
+        public DateTime EnrollmentDate { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Enrollments")]
