@@ -1,7 +1,6 @@
 ﻿using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
-using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
