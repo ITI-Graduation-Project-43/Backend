@@ -60,10 +60,19 @@ namespace MindMission.API.Controllers
 
         // GET: api/Category/Parent/{parentId}
 
-        [HttpGet("Parent/{parentId}")]
+        [HttpGet("ParentSubCategories/{parentId}")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesByParentId(int parentId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _categoryService.GetByParentIdAsync(parentId), pagination, "Categories");
+        }
+
+
+        // GET: api/Category/Parent/{parentId}
+
+        [HttpGet("Parent/{parentId}")]
+        public async Task<ActionResult<CategoryDto>> GetParentCategoryById(int parentId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntityResponse(() => _categoryService.GetParentCategoryById(parentId), "Categories");
         }
 
         #endregion Get

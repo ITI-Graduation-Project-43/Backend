@@ -7,5 +7,6 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IQueryable<Category>> GetByTypeAsync(CategoryType type);
         Task<IQueryable<Category>> GetByParentIdAsync(int parentId);
+        Task<Category> GetParentCategoryById(int parentId);
     }
 }

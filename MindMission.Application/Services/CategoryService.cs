@@ -60,5 +60,10 @@ namespace MindMission.Application.Services
         {
             return _context.GetByParentIdAsync(parentId);
         }
+
+        public Task<Category> GetParentCategoryById(int parentId)
+        {
+            return _context.GetParentCategoryById(parentId);
+        }
     }
 }

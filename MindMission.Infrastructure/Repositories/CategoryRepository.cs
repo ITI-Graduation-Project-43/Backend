@@ -37,5 +37,14 @@ namespace MindMission.Infrastructure.Repositories
 
             return Query.AsQueryable();
         }
+
+
+        public async Task<Category> GetParentCategoryById(int parentId)
+        {
+            return await _context.Categories
+                .Where(category => category.Type == 0)
+                .FirstOrDefaultAsync(category => category.Id == parentId)
+                ?? throw new KeyNotFoundException($"No entity with id {parentId} found."); ;
+        }
     }
 }
