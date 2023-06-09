@@ -9,22 +9,26 @@ namespace MindMission.Application.Mapping
     {
         private readonly IUserAccountService _userAccountService;
 
-        public StudentMappingService(IUserAccountService context)
+        public StudentMappingService(IUserAccountService userAccountService)
         {
-            _userAccountService = context;
+            _userAccountService = userAccountService ?? throw new ArgumentNullException(nameof(userAccountService));
         }
 
-        public Student MapDtoToEntity(StudentDto dto)
+        public Student MapDtoToEntity(StudentDto studentDto)
         {
+            if (studentDto == null)
+            {
+                throw new ArgumentNullException(nameof(studentDto));
+            }
             return new Student
             {
-                Id = dto.Id,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Bio = dto.Bio,
-                ProfilePicture = dto.ProfilePicture,
-                NumCourses = dto.NumCourses,
-                NumWishlist = dto.NumWishlist,
+                Id = studentDto.Id,
+                FirstName = studentDto.FirstName,
+                LastName = studentDto.LastName,
+                Bio = studentDto.Bio,
+                ProfilePicture = studentDto.ProfilePicture,
+                NumCourses = studentDto.NumCourses,
+                NumWishlist = studentDto.NumWishlist,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -32,7 +36,12 @@ namespace MindMission.Application.Mapping
 
         public async Task<StudentDto> MapEntityToDto(Student entity)
         {
-            var StudentDTO = new StudentDto()
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            var studentDto = new StudentDto
             {
                 Id = entity.Id,
                 FirstName = entity.FirstName,
@@ -40,14 +49,16 @@ namespace MindMission.Application.Mapping
                 Bio = entity.Bio,
                 ProfilePicture = entity.ProfilePicture,
                 NumCourses = entity.NumCourses,
-                NumWishlist = entity.NumWishlist,
+                NumWishlist = entity.NumWishlist
             };
-            var UserAccounts = _userAccountService.GetUserAccountsAsync(entity.Id);
-            foreach (var account in UserAccounts)
+
+            var userAccounts = await _userAccountService.GetUserAccountsAsync(entity.Id) ?? throw new ArgumentNullException(nameof(_userAccountService));
+            foreach (var account in userAccounts)
             {
-                StudentDTO.accounts.Add(account?.Account?.AccountType, account?.AccountLink);
+                studentDto.accounts.Add(account.Account.AccountType, account.AccountLink);
             }
-            return StudentDTO;
+
+            return studentDto;
         }
     }
 }

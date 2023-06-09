@@ -31,6 +31,8 @@ namespace MindMission.Domain.Models
         public string Description { get; set; }
 
         [Required]
+        [StringLength(50)]
+        [Unicode(false)]
         public LessonType Type { get; set; }
 
         public int NoOfHours { get; set; }

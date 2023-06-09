@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
-using MindMission.Application.Mapping;
+﻿using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;

@@ -1,5 +1,4 @@
 ﻿using MindMission.Application.DTOs.Base;
-using System.Text.Json.Serialization;
 
 namespace MindMission.Application.DTOs
 {

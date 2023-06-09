@@ -15,29 +15,32 @@ namespace MindMission.Domain.Models
             CourseFeedbacks = new HashSet<CourseFeedback>();
             Enrollments = new HashSet<Enrollment>();
             Wishlists = new HashSet<Wishlist>();
+            User = new User();
         }
 
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
         [Unicode(false)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
         [Unicode(false)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [StringLength(1000)]
         [Unicode(false)]
-        public string Bio { get; set; }
+
+        public string Bio { get; set; } = string.Empty;
 
         [StringLength(500)]
         [Unicode(false)]
         [AllowNull]
-        public string ProfilePicture { get; set; }
+
+        public string? ProfilePicture { get; set; } = string.Empty;
 
         public int NumCourses { get; set; }
         public int NumWishlist { get; set; }

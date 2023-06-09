@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Repository;
+﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -45,9 +44,9 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id, IncludeProperties);
         }
 
-        public List<UserAccount> GetUserAccountsAsync(string id)
+        public async Task<IQueryable<UserAccount>> GetUserAccountsAsync(string id)
         {
-            return _context.GetUserAccountsAsync(id);
+            return await _context.GetUserAccountsAsync(id);
         }
 
         public Task UpdateAsync(UserAccount entity)

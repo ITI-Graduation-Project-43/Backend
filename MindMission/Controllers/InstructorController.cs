@@ -25,7 +25,7 @@ namespace MindMission.API.Controllers
 
         public InstructorController(MindMissionDbContext context, InstructorMappingService instructorMappingService, IInstructorService instructorService, BlobServiceClient blobServiceClient, IConfiguration configuration, IWebHostEnvironment hostingEnvironment) : base(instructorMappingService)
         {
-            _context= context;
+            _context = context;
             _instructorService = instructorService;
             _instructorMappingService = instructorMappingService;
             this.blobServiceClient = blobServiceClient;
@@ -122,7 +122,7 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest("No file was uploaded.");
             }
-            
+
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ProfilePictureFile.FileName);
 
             BlobClient blobClient = containerClient.GetBlobClient(fileName);
@@ -138,7 +138,7 @@ namespace MindMission.API.Controllers
             // Save the updated entity
             await _context.SaveChangesAsync();
 
-            return Ok(instructor.ProfilePicture);   
+            return Ok(instructor.ProfilePicture);
         }
 
     }

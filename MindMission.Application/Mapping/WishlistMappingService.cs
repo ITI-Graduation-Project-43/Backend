@@ -13,8 +13,8 @@ namespace MindMission.Application.Mapping
 
         public WishlistMappingService(ICourseService courseService, IStudentService studentService)
         {
-            _CourseService = courseService;
-            _StudentService = studentService;
+            _CourseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _StudentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
         }
 
         public async Task<WishlistDto> MapEntityToDto(Wishlist wishlist)

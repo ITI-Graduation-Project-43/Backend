@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.DTOs.Base;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Responses;
 using MindMission.Domain.Constants;
+using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
 namespace MindMission.API.Controllers.Base
@@ -24,7 +24,26 @@ namespace MindMission.API.Controllers.Base
 
         protected async Task<List<TDto>> MapEntitiesToDTOs(IEnumerable<TEntity> entities)
         {
-            return (await Task.WhenAll(entities.Select(entity => _entityMappingService.MapEntityToDto(entity)))).ToList();
+            var dtoResults = new List<TDto>();
+
+            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor))
+            {
+                // Run the mapping sequentially for Student and Instructor types.
+                foreach (var entity in entities)
+                {
+                    var dto = await _entityMappingService.MapEntityToDto(entity);
+                    dtoResults.Add(dto);
+                }
+            }
+            else
+            {
+                var dtoTasks = entities?.Select(async entity => await _entityMappingService.MapEntityToDto(entity));
+                var dtoResultsArray = await Task.WhenAll(dtoTasks);
+                dtoResults = dtoResultsArray.ToList();
+            }
+
+            return dtoResults;
+
         }
 
         protected async Task<TDto> MapEntityToDTO(TEntity entity)
@@ -135,9 +154,12 @@ namespace MindMission.API.Controllers.Base
         protected async Task<ActionResult> GetEntitiesResponse(Func<Task<IQueryable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
+
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
+
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
 
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
@@ -154,6 +176,7 @@ namespace MindMission.API.Controllers.Base
 
 
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
 
             var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);

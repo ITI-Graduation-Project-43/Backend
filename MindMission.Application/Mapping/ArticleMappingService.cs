@@ -1,5 +1,4 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
@@ -7,11 +6,9 @@ namespace MindMission.Application.Mapping
 {
     public class ArticleMappingService : IMappingService<Article, ArticleDto>
     {
-        private readonly IArticleService _articleService;
 
-        public ArticleMappingService(IArticleService articleService)
+        public ArticleMappingService()
         {
-            _articleService = articleService;
         }
 
         public async Task<ArticleDto> MapEntityToDto(Article article)
