@@ -47,11 +47,10 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IQueryable<Instructor>> GetTopInstructorsAsync()
+        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync(int topNumber)
         {
-            return _context.GetTopInstructorsAsync();
+            return await _context.GetTopRatedInstructorsAsync(topNumber);
         }
-
 
     }
 }

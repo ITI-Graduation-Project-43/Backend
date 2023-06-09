@@ -6,6 +6,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 
@@ -50,20 +51,20 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet("TopTenInstructors")]
-        public async Task<ActionResult<IEnumerable<InstructorDto>>> GetTopTenInstructors([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IEnumerable<InstructorDto>>> GetTopTenInstructors(int topNumber, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _instructorService.GetTopInstructorsAsync(), new PaginationDto { PageNumber = 1, PageSize = 10 }, "Top 10 Instructors");
+            return await GetEntitiesResponse(() => _instructorService.GetTopRatedInstructorsAsync(topNumber), new PaginationDto { PageNumber = 1, PageSize = 10 }, "Top 10 Instructors");
         }
 
         [HttpGet("{instructorId}")]
         public async Task<ActionResult<InstructorDto>> GetById(string instructorId)
         {
-            /*var instructor = await _instructorService.GetByIdAsync(instructorId, i => i.Courses);
-            if (instructor is null) return NotFoundResponse("instructor");
-            var instructorDto = await MapEntityToDTO(instructor);
-            var response = CreateResponse(instructorDto, new PaginationDto { PageNumber = 1, PageSize = 1 }, "instructor");
-            return Ok(response);*/
-            return await GetEntityResponse(() => _instructorService.GetByIdAsync(instructorId, i => i.Courses), "Instructor");
+            return await GetEntityResponseWithInclude(
+                    () => _instructorService.GetByIdAsync(instructorId,
+                        instructor => instructor.User,
+                        instructor => instructor.Courses),
+                     "Instructor");
+
         }
 
         #endregion get
@@ -74,47 +75,6 @@ namespace MindMission.API.Controllers
             return await UpdateEntityResponse(_instructorService.GetByIdAsync, _instructorService.UpdateAsync, instructorId, instructorDto, "instructor");
         }
 
-        /*  [HttpPost("UploadImage")]
-          public async Task<ActionResult> UploadImage()
-          {
-              bool Results = false;
-              try
-              {
-                  var _uploadedfiles = Request.Form.Files;
-                  foreach (IFormFile source in _uploadedfiles)
-                  {
-                      string Filename = source.FileName;
-                      string Filepath = GetFilePath(Filename);
-
-                      if (!System.IO.Directory.Exists(Filepath))
-                      {
-                          System.IO.Directory.CreateDirectory(Filepath);
-                      }
-
-                      string imagepath = Filepath + "\\image.png";
-
-                      if (System.IO.File.Exists(imagepath))
-                      {
-                          System.IO.File.Delete(imagepath);
-                      }
-                      using (FileStream stream = System.IO.File.Create(imagepath))
-                      {
-                          await source.CopyToAsync(stream);
-                          Results = true;
-                      }
-                  }
-              }
-              catch (Exception ex)
-              {
-              }
-              return Ok(Results);
-          }
-
-          [NonAction]
-          private string GetFilePath(string id)
-          {
-              return this._environment.WebRootPath + "\\Upload\\instructor\\" + id;
-          }*/
 
         [HttpPost("UploadImage")]
         public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string instructorId)

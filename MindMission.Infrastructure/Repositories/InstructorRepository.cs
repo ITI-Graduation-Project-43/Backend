@@ -15,13 +15,15 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync()
+        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync(int topNumber)
         {
             var topInstructors = await _context.Instructors
-           .OrderByDescending(i => i.NoOfRatings * i.AvgRating)
-           .Take(10)
-           .ToListAsync();
-         return topInstructors.AsQueryable();
+                                            .Include(ins => ins.Courses)
+                                           .OrderByDescending(i => i.NoOfRatings * i.AvgRating)
+                                           .Take(topNumber)
+                                           .ToListAsync();
+            return topInstructors.AsQueryable();
         }
+
     }
 }
