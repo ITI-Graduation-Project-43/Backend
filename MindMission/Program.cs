@@ -51,7 +51,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelS
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
-        b => b.MigrationsAssembly("MindMission.API"));
+        b => b.MigrationsAssembly("MindMission.Domain"));
 });
 
 //builder.Services.AddAuthorization();

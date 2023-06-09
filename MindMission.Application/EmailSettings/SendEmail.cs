@@ -19,23 +19,6 @@ namespace MindMission.API.EmailSettings
         {
             try
             {
-                /*var message = new MimeMessage();
-                //message.From.Add(new MailboxAddress("Sender Name", "tarekeslam33456@gmail.com"));
-                //message.To.Add(new MailboxAddress("Recipient Name", "tarekeslam159@gmail.com"));
-                //message.Subject = "Hello from MailKit";
-                //message.Body = new TextPart("plain")
-                //{
-                //    Text = "This is the email body."
-                //};
-
-                //using (var client = new SmtpClient())
-                //{
-                //    client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                //    client.Authenticate("mind.mission.site@gmail.com", "tfrcvhowdmewwujc");
-                //    client.Send(message);
-                //    client.Disconnect(true);
-                }*/
-
                 MimeMessage EmailMessage = new MimeMessage();
 
                 EmailMessage.From.Add(new MailboxAddress(MailSettings.SenderName, MailSettings.SenderEmail));
@@ -54,7 +37,6 @@ namespace MindMission.API.EmailSettings
                     MailClient.Send(EmailMessage);
                     MailClient.Disconnect(true);
                 }
-                Console.WriteLine("Tarek");
                 return true;
             }
             catch (Exception ex)

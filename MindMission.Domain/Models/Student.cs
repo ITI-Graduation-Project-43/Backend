@@ -34,7 +34,6 @@ namespace MindMission.Domain.Models
         public string Bio { get; set; }
         [StringLength(500)]
         [Unicode(false)]
-        [AllowNull]
         public string ProfilePicture { get; set; }
         public int NumCourses { get; set; }
         public int NumWishlist { get; set; }

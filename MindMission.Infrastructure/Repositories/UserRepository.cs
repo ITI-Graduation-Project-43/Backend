@@ -20,29 +20,60 @@ namespace MindMission.Infrastructure.Repositories
     {
         private readonly UserManager<User> UserManager;
         private readonly IStudentService StudentService;
-
         public UserRepository(UserManager<User> _UserManager, IStudentService _StudentService)
         {
             UserManager = _UserManager;
             StudentService = _StudentService;
         }
 
-        public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
+        public async Task<IdentityResult> RegistrationStudentAsync(User user, string _FirstName, string _LasName)
         {
-            var Result = await UserManager.CreateAsync(user, user.PasswordHash);
+            var Roles = new List<string>() { "Student" };
+            user.Id = Guid.NewGuid().ToString();
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash); // 1
             if(Result.Succeeded)
             {
-                var NewUser = await UserManager.FindByEmailAsync(user.Email);
-                Student Std = new Student();
-                Std.Id = NewUser.Id;
-                Std.FirstName = FirstName;
-                Std.LastName = LasName;
-                var NewStudent = await StudentService.AddAsync(Std);
-                if(NewStudent != null) 
-                { 
-                    return IdentityResult.Success;
+                var RoleResult = await UserManager.AddToRoleAsync(user, "Student"); // 2
+                if(RoleResult.Succeeded)
+                {
+                    var ResultOfAddingNewStudent = await StudentService.AddAsync(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LasName }); //3
+                    if(ResultOfAddingNewStudent != null) 
+                    { 
+                        return IdentityResult.Success;
+                    }
+                    await UserManager.RemoveFromRolesAsync(user, Roles);
+                    await UserManager.DeleteAsync(user);
+                    return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
                 }
-                return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
+                await UserManager.RemoveFromRolesAsync(user, Roles);
+                return RoleResult;
+                
+            }
+            return Result;
+        }
+
+        public async Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LasName)
+        {
+            var Roles = new List<string>() { "Student" };
+            user.Id = Guid.NewGuid().ToString();
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash); // 1
+            if (Result.Succeeded)
+            {
+                var RoleResult = await UserManager.AddToRoleAsync(user, "Student"); // 2
+                if (RoleResult.Succeeded)
+                {
+                    var ResultOfAddingNewStudent = await StudentService.AddAsync(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LasName }); //3
+                    if (ResultOfAddingNewStudent != null)
+                    {
+                        return IdentityResult.Success;
+                    }
+                    await UserManager.RemoveFromRolesAsync(user, Roles);
+                    await UserManager.DeleteAsync(user);
+                    return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
+                }
+                await UserManager.RemoveFromRolesAsync(user, Roles);
+                return RoleResult;
+
             }
             return Result;
         }

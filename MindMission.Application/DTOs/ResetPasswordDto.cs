@@ -16,7 +16,6 @@ namespace MindMission.Domain.DTOs
 
         [Required(ErrorMessage = "Required*")]
         [RegularExpression(@"^(?=.*[!@#$%^&*()])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$", ErrorMessage = "Password must contain upper, lower characters, numbers and special characters")]
-
         [MinLength(8, ErrorMessage ="Must be 8 characters at least")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
