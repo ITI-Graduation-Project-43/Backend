@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
 using MindMission.Infrastructure.Context;

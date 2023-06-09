@@ -303,7 +303,7 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Student>(entity =>
             {
-                entity.Property(e => e.Bio).IsUnicode(false);
+                entity.Property(e => e.Bio).IsUnicode(false).IsRequired(false);
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
@@ -313,7 +313,7 @@ namespace MindMission.Infrastructure.Context
 
                 entity.Property(e => e.LastName).IsUnicode(false);
 
-                entity.Property(e => e.ProfilePicture).IsUnicode(false);
+                entity.Property(e => e.ProfilePicture).IsUnicode(false).IsRequired(false);
             });
 
             builder.Entity<User>(entity =>

@@ -2,6 +2,7 @@
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -13,8 +14,8 @@ namespace MindMission.Application.Mapping
 
         public EnrollmentMappingService(ICourseService courseService, IStudentService studentService)
         {
-            _CourseService = courseService;
-            _StudentService = studentService;
+            _CourseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _StudentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
         }
 
         public async Task<EnrollmentDto> MapEntityToDto(Enrollment Enrollment)

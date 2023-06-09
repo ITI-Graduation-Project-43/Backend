@@ -19,10 +19,17 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllAsync();
         }
-
+        public async Task<IEnumerable<Instructor>> GetAllAsync(params Expression<Func<Instructor, object>>[] IncludeProperties)
+        {
+            return await _context.GetAllAsync(IncludeProperties);
+        }
         public Task<Instructor> GetByIdAsync(string id)
         {
             return _context.GetByIdAsync(id);
+        }
+        public Task<Instructor> GetByIdAsync(string id, params Expression<Func<Instructor, object>>[] IncludeProperties)
+        {
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public Task<Instructor> AddAsync(Instructor entity)
@@ -40,19 +47,10 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<Instructor>> GetAllAsync(params Expression<Func<Instructor, object>>[] IncludeProperties)
+        public async Task<IQueryable<Instructor>> GetTopInstructorsAsync(int topNumber)
         {
-            return await _context.GetAllAsync(IncludeProperties);
+            return await _context.GetTopRatedInstructorsAsync(topNumber);
         }
 
-        public Task<IQueryable<Instructor>> GetTopInstructorsAsync()
-        {
-            return _context.GetTopInstructorsAsync();
-        }
-
-        public Task<Instructor> GetByIdAsync(string id, params Expression<Func<Instructor, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
     }
 }

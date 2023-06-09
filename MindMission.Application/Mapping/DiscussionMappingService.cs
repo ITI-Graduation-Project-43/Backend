@@ -2,10 +2,7 @@
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
@@ -33,7 +30,7 @@ namespace MindMission.Application.Mapping
                 LessonId = entity.LessonId,
                 Content = entity.Content,
                 Upvotes = entity.Upvotes,
-                ParentDiscussionId = entity.ParentDiscussionId ,  
+                ParentDiscussionId = entity.ParentDiscussionId,
             };
             if (entity.ParentDiscussion != null)
             {

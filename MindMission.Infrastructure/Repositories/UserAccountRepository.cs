@@ -15,9 +15,11 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        List<UserAccount> IUserAccountRepository.GetUserAccountsAsync(string id)
+        public async Task<IQueryable<UserAccount>> GetUserAccountsAsync(string id)
         {
-            return _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id).ToList();
+            var userAccounts = await _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id).ToListAsync();
+            return userAccounts.AsQueryable();
         }
+
     }
 }

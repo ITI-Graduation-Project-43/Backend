@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -12,18 +13,22 @@ namespace MindMission.API.Controllers
     public class StudentController : BaseController<Student, StudentDto, string>
     {
         private readonly IStudentService _StudentService;
-        private readonly StudentMappingService _StudentMappingService;
 
-        public StudentController(IStudentService context, StudentMappingService Service) : base(Service)
+        public StudentController(IStudentService studentService, StudentMappingService studentMappingService) : base(studentMappingService)
         {
-            _StudentService = context;
-            _StudentMappingService = Service;
+            _StudentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
         }
 
         [HttpGet]
         public async Task<ActionResult<IQueryable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_StudentService.GetAllAsync, pagination, "Students");
+
+            return await GetEntitiesResponseWithInclude(
+              _StudentService.GetAllAsync,
+              pagination,
+              "Students",
+              student => student.User
+          );
         }
 
         [HttpGet("{StudentID}")]
@@ -37,5 +42,6 @@ namespace MindMission.API.Controllers
         {
             return await UpdateEntityResponse(_StudentService.GetByIdAsync, _StudentService.UpdateAsync, StudnetId, StudentDto, "Student");
         }
+
     }
 }

@@ -13,12 +13,10 @@ namespace MindMission.API.Controllers
     public class CourseController : BaseController<Course, CourseDto, int>
     {
         private readonly ICourseService _courseService;
-        private readonly CourseMappingService _courseMappingService;
 
         public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _courseMappingService = courseMappingService ?? throw new ArgumentNullException(nameof(courseMappingService));
         }
 
         #region Get
