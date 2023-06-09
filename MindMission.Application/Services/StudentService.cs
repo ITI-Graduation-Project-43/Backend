@@ -7,6 +7,7 @@ namespace MindMission.Application.Services
 {
     public class StudentService : IStudentService
     {
+
         private readonly IStudentRepository _context;
 
         public StudentService(IStudentRepository context)

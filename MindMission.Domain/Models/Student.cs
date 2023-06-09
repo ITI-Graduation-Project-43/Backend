@@ -39,7 +39,6 @@ namespace MindMission.Domain.Models
         [StringLength(500)]
         [Unicode(false)]
         [AllowNull]
-
         public string? ProfilePicture { get; set; } = string.Empty;
 
         public int NumCourses { get; set; }
