@@ -1,8 +1,5 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
-using MindMission.Domain.Models;
 using MindMission.Domain.Stripe.StripeModels;
-
 
 namespace MindMission.Application.Mapping
 {
@@ -30,7 +27,7 @@ namespace MindMission.Application.Mapping
                 dto.Email,
                 dto.Description,
                 "usd",
-                (long)CoursePrice*100);
+                (long)CoursePrice * 100);
 
             return Payment;
         }

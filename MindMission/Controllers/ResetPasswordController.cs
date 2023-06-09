@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.Application.Interfaces.Services;
-using MindMission.Application.Services;
-using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
@@ -21,7 +18,7 @@ namespace MindMission.API.Controllers
         {
             ViewBag.Email = Email;
             ViewBag.Token = Token;
-            if(await UserService.ValidateTokenAsync(Email, Token))
+            if (await UserService.ValidateTokenAsync(Email, Token))
             {
                 return View("ResetPassword");
             }

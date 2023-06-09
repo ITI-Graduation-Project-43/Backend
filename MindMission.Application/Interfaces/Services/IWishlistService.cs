@@ -4,6 +4,5 @@ namespace MindMission.Application.Service_Interfaces
 {
     public interface IWishlistService : IWishlistRepository
     {
-
     }
 }

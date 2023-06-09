@@ -9,7 +9,7 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuizController : BaseController<Quiz, QuizDto,int>
+    public class QuizController : BaseController<Quiz, QuizDto, int>
     {
         private readonly IQuizService _quizService;
         private readonly QuizMappingService _quizMappingService;
@@ -22,7 +22,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuizDto>>> GetAllQuiz([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<QuizDto>>> GetAllQuiz([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_quizService.GetAllAsync, pagination, "Quiz");
         }
@@ -30,16 +30,14 @@ namespace MindMission.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<QuizDto>> GetQuizById(int id)
         {
-            return await GetEntityResponse(() => _quizService.GetByIdAsync(id), "Quiz");
+            return await GetEntityResponse(() => _quizService.GetByIdAsync(id, q => q.Questions), "Quiz");
         }
-
 
         [HttpPost("Quiz")]
         public async Task<ActionResult<QuizDto>> AddQuiz([FromBody] QuizDto quizDto)
         {
             return await AddEntityResponse(_quizService.AddAsync, quizDto, "Quiz", nameof(GetQuizById));
         }
-
 
         [HttpPut("{quizId}")]
         public async Task<ActionResult> UpdateQuiz(int quizId, QuizDto quizDto)
@@ -53,6 +51,4 @@ namespace MindMission.API.Controllers
             return await DeleteEntityResponse(_quizService.GetByIdAsync, _quizService.DeleteAsync, quizId);
         }
     }
-
-
 }

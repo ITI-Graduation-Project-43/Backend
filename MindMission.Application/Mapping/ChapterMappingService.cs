@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -27,6 +28,19 @@ namespace MindMission.Application.Mapping
                 NoOfLessons = chapter.NoOfLessons,
                 NoOfHours = chapter.NoOfHours
             };
+            foreach (var lesson in chapter.Lessons)
+            {
+                var lessonDto = new ChapterLessonDto
+                {
+                    Id = lesson.Id,
+                    Title = lesson.Title,
+                    Description = lesson.Description,
+                    Type = lesson.Type,
+                    NoOfHours = lesson.NoOfHours,
+                    IsFree = lesson.IsFree,
+                };
+                chapterDto.Lessons.Add(lessonDto);
+            }
             return chapterDto;
         }
     }

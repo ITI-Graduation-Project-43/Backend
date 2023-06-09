@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
@@ -10,20 +9,21 @@ namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : BaseController<Student, StudentDto,string>
+    public class StudentController : BaseController<Student, StudentDto, string>
     {
         private readonly IStudentService _StudentService;
         private readonly StudentMappingService _StudentMappingService;
-        public StudentController(IStudentService context, StudentMappingService Service):base(Service)
+
+        public StudentController(IStudentService context, StudentMappingService Service) : base(Service)
         {
             _StudentService = context;
             _StudentMappingService = Service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult<IQueryable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _StudentService.GetAllAsync(), pagination, "Students");
+            return await GetEntitiesResponse(_StudentService.GetAllAsync, pagination, "Students");
         }
 
         [HttpGet("{StudentID}")]

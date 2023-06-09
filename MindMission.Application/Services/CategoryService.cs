@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -9,22 +10,27 @@ namespace MindMission.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _context;
+
         public CategoryService(ICategoryRepository context)
         {
             _context = context;
         }
-        public Task<IEnumerable<Category>> GetAllAsync()
+        
+        public Task<IQueryable<Category>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
+
         public async Task<IEnumerable<Category>> GetAllAsync(params Expression<Func<Category, object>>[] IncludeProperties)
         {
             return await _context.GetAllAsync(IncludeProperties);
         }
+
         public Task<Category> GetByIdAsync(int id)
         {
             return _context.GetByIdAsync(id);
         }
+
         public Task<Category> GetByIdAsync(int id, params Expression<Func<Category, object>>[] IncludeProperties)
         {
             return _context.GetByIdAsync(id, IncludeProperties);
@@ -45,16 +51,14 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Category>> GetByTypeAsync(CategoryType type)
+        public Task<IQueryable<Category>> GetByTypeAsync(CategoryType type)
         {
             return _context.GetByTypeAsync(type);
         }
 
-        public Task<IEnumerable<Category>> GetByParentIdAsync(int parentId)
+        public Task<IQueryable<Category>> GetByParentIdAsync(int parentId)
         {
             return _context.GetByParentIdAsync(parentId);
         }
-
-
     }
 }

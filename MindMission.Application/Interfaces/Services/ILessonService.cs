@@ -4,5 +4,6 @@ namespace MindMission.Application.Service_Interfaces
 {
     public interface ILessonService : ILessonRepository
     {
+
     }
 }

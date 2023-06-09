@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -25,7 +26,7 @@ namespace MindMission.Application.Mapping
             };
             foreach (var question in quiz.Questions)
             {
-                quizDto.Questions.Add(question.QuestionText);
+                quizDto.Questions.Add(new Dictionary<string, string> { { "QuestionText", question.QuestionText }, { "ChoiceB", question.ChoiceB }, { "ChoiceC", question.ChoiceC }, { "ChoiceD", question.ChoiceD }, { "CorrectAnswer", question.CorrectAnswer } });
             }
             return quizDto;
         }

@@ -1,26 +1,21 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
     public class AdminMappingService : IMappingService<Admin, AdminDto>
     {
-        private readonly IAdminService _adminService;
-        public AdminMappingService(IAdminService adminService)
+
+        public AdminMappingService()
         {
-            _adminService= adminService;
         }
-        public async Task <AdminDto> MapEntityToDto(Admin admin)
+
+        public async Task<AdminDto> MapEntityToDto(Admin admin)
         {
+            var permissions = admin.AdminPermissions.Select(ap => ap.PermissionId).ToList();
+
+
             return new AdminDto
             {
                 Id = admin.Id,
@@ -31,9 +26,11 @@ namespace MindMission.Application.Mapping
                 PasswordHash = admin.PasswordHash,
                 IsDeactivated = admin.IsDeactivated,
                 CreatedAt = admin.CreatedAt,
-                UpdatedAt = admin.UpdatedAt
+                UpdatedAt = admin.UpdatedAt,
+                AdminPermissions = permissions
             };
         }
+
         public Admin MapDtoToEntity(AdminDto dto)
         {
             return new Admin
@@ -49,6 +46,5 @@ namespace MindMission.Application.Mapping
                 UpdatedAt = dto.UpdatedAt
             };
         }
-
     }
 }

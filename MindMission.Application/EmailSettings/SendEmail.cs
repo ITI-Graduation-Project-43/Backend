@@ -1,15 +1,14 @@
-﻿using MailKit;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace MindMission.API.EmailSettings
 {
     public class MailService : IMailService
     {
         private readonly MailSettings MailSettings;
+
         public MailService(IOptions<MailSettings> _MailSettingsOptions)
         {
             MailSettings = _MailSettingsOptions.Value;

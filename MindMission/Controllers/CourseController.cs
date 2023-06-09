@@ -4,28 +4,25 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Models;
-using Stripe;
 
 namespace MindMission.API.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class CourseController : BaseController<Course, CourseDto, int>
     {
-
         private readonly ICourseService _courseService;
         private readonly CourseMappingService _courseMappingService;
+
         public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _courseMappingService = courseMappingService ?? throw new ArgumentNullException(nameof(courseMappingService));
         }
 
-
         #region Get
+
         // GET: api/Course
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses([FromQuery] PaginationDto pagination)
@@ -36,10 +33,14 @@ namespace MindMission.API.Controllers
                "Courses",
                course => course.Instructor,
                Course => Course.Category,
-               Course => Course.Chapters
+               Course => Course.Chapters,
+               Course => Course.Category.Parent,
+               Course => Course.Category.Parent.Parent,
+               Course => Course.CourseRequirements,
+               Course => Course.LearningItems,
+               Course => Course.EnrollmentItems
            );
         }
-
 
         // GET: api/Course/category/{categoryId}
 
@@ -47,7 +48,6 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _courseService.GetAllByCategoryAsync(categoryId), pagination, "Courses");
-
         }
 
         // GET: api/Course/{courseId}/related
@@ -56,7 +56,6 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRelatedCourses(int courseId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _courseService.GetRelatedCoursesAsync(courseId), pagination, "Courses");
-
         }
 
         // GET: api/Course/instructor/{instructorId}
@@ -65,6 +64,14 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _courseService.GetAllByInstructorAsync(instructorId), pagination, "Courses");
+        }
+
+        // GET: api/Course/instructorOtherCourses/{instructorId}
+
+        [HttpGet("{courseId}/instructor/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorOtherCourses(string instructorId, int courseId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _courseService.GetInstructorOtherCourses(instructorId, courseId), pagination, "Courses");
         }
 
         // GET: api/Course/top/{topNumber}
@@ -91,7 +98,14 @@ namespace MindMission.API.Controllers
                     () => _courseService.GetByIdAsync(courseId,
                         course => course.Instructor,
                         Course => Course.Category,
-                        Course => Course.Chapters
+                        Course => Course.Chapters,
+                        Course => Course.Category.Parent,
+                        Course => Course.Category.Parent.Parent,
+                        Course => Course.CourseRequirements,
+                        Course => Course.LearningItems,
+                        Course => Course.EnrollmentItems
+
+
                     ),
                     "Course"
                 );
@@ -104,9 +118,9 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _courseService.GetByNameAsync(name), "Course");
         }
 
-        #endregion
+        #endregion Get
 
-        #region Add 
+        #region Add
 
         // POST: api/Course
         [HttpPost]
@@ -115,27 +129,27 @@ namespace MindMission.API.Controllers
             return await AddEntityResponse(_courseService.AddAsync, courseDTO, "Course", nameof(GetCourseById));
         }
 
-        #endregion
+        #endregion Add
 
         #region Delete
+
         // DELETE: api/Course/{courseId}
         [HttpDelete("{courseId}")]
         public async Task<IActionResult> DeleteCourse(int courseId)
         {
             return await DeleteEntityResponse(_courseService.GetByIdAsync, _courseService.DeleteAsync, courseId);
         }
-        #endregion
 
-        #region Edit Patch/Put 
+        #endregion Delete
+
+        #region Edit Patch/Put
+
         // PUT: api/Course/{courseId}
         [HttpPut("{courseId}")]
         public async Task<ActionResult> UpdateCourse(int courseId, CourseDto courseDto)
         {
-
             return await UpdateEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, courseDto, "Course");
-
         }
-
 
         // PATCH: api/Course/{courseId}
         [HttpPatch("{courseId}")]
@@ -146,12 +160,9 @@ namespace MindMission.API.Controllers
                 return BadRequest();
             }
 
-            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, patchDocument);
-
+            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, "Course", patchDocument);
         }
-        #endregion
 
-
-
+        #endregion Edit Patch/Put
     }
 }

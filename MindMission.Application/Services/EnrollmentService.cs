@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -8,6 +9,7 @@ namespace MindMission.Application.Services
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IEnrollmentRepository _context;
+
         public EnrollmentService(IEnrollmentRepository context)
         {
             _context = context;
@@ -23,7 +25,7 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<Enrollment>> GetAllAsync()
+        public Task<IQueryable<Enrollment>> GetAllAsync()
         {
             return _context.GetAllAsync();
         }
@@ -33,12 +35,12 @@ namespace MindMission.Application.Services
             return await _context.GetAllAsync(IncludeProperties);
         }
 
-        public Task<IEnumerable<Enrollment>> GetAllByCourseIdAsync(int courseId)
+        public Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId)
         {
             return _context.GetAllByCourseIdAsync(courseId);
         }
 
-        public Task<IEnumerable<Enrollment>> GetAllByStudentIdAsync(string studentId)
+        public Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string studentId)
         {
             return _context.GetAllByStudentIdAsync(studentId);
         }
