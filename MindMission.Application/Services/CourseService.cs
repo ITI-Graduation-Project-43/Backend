@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -82,6 +83,21 @@ namespace MindMission.Application.Services
         public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
         {
             return await _context.GetRecentCoursesAsync(recentNumber);
+        }
+
+        public async Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber)
+        {
+            return await _context.GetCourseByIdWithStudentsAsync(courseId, studentsNumber);
+        }
+
+        public async Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber)
+        {
+            return await _context.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
+        }
+
+        public async Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber)
+        {
+            return await _context.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber);
         }
 
 

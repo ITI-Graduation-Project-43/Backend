@@ -1,10 +1,16 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Domain.Common;
+using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
+using System.Collections.Generic;
 
 namespace MindMission.API.Controllers
 {
@@ -86,6 +92,66 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRecentCourses(int recentNumber, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _courseService.GetRecentCoursesAsync(recentNumber), pagination, "Courses");
+        }
+
+        // GET: api/Course/{courseId}/related/{studentsNumber}
+
+        [HttpGet("{courseId}/related/{studentsNumber}")]
+        public async Task<ActionResult<IQueryable<CourseDto>>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
+
+            if (courses == null)
+            {
+                return NotFound(NotFoundResponse("Courses"));
+            }
+
+
+            var coursesList = courses.ToList();
+            if (coursesList.Count == 0)
+            {
+                return NotFound(NotFoundResponse("Courses"));
+            }
+            var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize);
+            return Ok(response);
+        }
+
+
+        [HttpGet("{courseId}/instructor/{instructorId}/{studentsNumber}")]
+        public async Task<ActionResult<IQueryable<StudentCourseDto>>> GetInstructorOtherCoursesWithStudentsAsync(string instructorId, int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
+        {
+            var courses = await _courseService.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber);
+
+            if (courses == null)
+            {
+                return NotFound(NotFoundResponse("Courses"));
+            }
+
+            var coursesList = courses.ToList();
+            if (coursesList.Count == 0)
+            {
+                return NotFound(NotFoundResponse("Courses"));
+            }
+            var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
+
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize);
+            return Ok(response);
+        }
+
+        [HttpGet("{courseId}/students/{studentsNumber}")]
+        public async Task<ActionResult<StudentCourseDto>> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber)
+        {
+            var course = await _courseService.GetCourseByIdWithStudentsAsync(courseId, studentsNumber);
+
+            if (course == null)
+            {
+                return NotFound(NotFoundResponse("Course"));
+            }
+
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Course"), new List<StudentCourseDto>() { course });
+            return Ok(response);
         }
 
         // GET: api/Course/{courseId}

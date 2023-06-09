@@ -43,7 +43,7 @@ namespace MindMission.API.Controllers
         }
 
 
-        [HttpGet("{courseId}/students")]
+        [HttpGet("{courseId}/students/{recentNumber}")]
         public async Task<ActionResult<IQueryable<StudentDto>>> GetRecentStudents(int recentNumber, int courseId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _StudentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), pagination, "Students");
