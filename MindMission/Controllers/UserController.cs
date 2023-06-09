@@ -23,12 +23,12 @@ namespace MindMission.API.Controllers
             UserMappingService = _UserMappingService;
         }
 
-        [HttpPost("Register")]
+        [HttpPost("Register/Student")]
         public async Task<IActionResult> RegistrationAsync(UserDto UserDto)
         {
             if (ModelState.IsValid)
             {
-                var Result = await UserService.RegistrationAsync(UserMappingService.MapDtoToEntity(UserDto), UserDto.FirstName, UserDto.LastName);
+                var Result = await UserService.RegistrationStudentAsync(UserMappingService.MapDtoToEntity(UserDto), UserDto.FirstName, UserDto.LastName);
                 if (Result.Succeeded)
                 {
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));
@@ -100,7 +100,7 @@ namespace MindMission.API.Controllers
 
         [HttpPost]
         [Route("ForgetPassword")]
-        public async Task<IActionResult> ForgetPasswordAsync([EmailAddress] string Email)
+        public async Task<IActionResult> ForgetPasswordAsync([FromBody] [EmailAddress] string Email)
         {
             if (Email != null)
             {
