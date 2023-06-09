@@ -31,9 +31,9 @@ namespace MindMission.Application.Services
             MailService = _MailService;
         }
 
-        public async Task<IdentityResult> RegistrationAsync(User user, string FirstName, string LasName)
-        {
-            return await UserManager.RegistrationAsync(user, FirstName, LasName);
+        public async Task<IdentityResult> RegistrationStudentAsync(User user, string FirstName, string LasName)
+         {
+            return await UserManager.RegistrationStudentAsync(user, FirstName, LasName);
         }
 
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
@@ -88,11 +88,10 @@ namespace MindMission.Application.Services
                 };
                 if (MailService.SendMail(mailData))
                 {
-                    Console.WriteLine("Hello");
                     return "If your email is found, you will receive a link to reset your password";
                 }
             }
-            return Result;
+            return "If your email is found, you will receive a link to reset your password";
         }
 
         public async Task<IdentityResult> ResetPasswordAsync(string Email, string Token, string NewPassword)
