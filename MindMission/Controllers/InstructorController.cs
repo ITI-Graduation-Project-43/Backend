@@ -40,7 +40,13 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _instructorService.GetAllAsync(), pagination, "Instructors");
+            return await GetEntitiesResponseWithInclude(
+             _instructorService.GetAllAsync,
+             pagination,
+             "Instructors",
+             instructor => instructor.User,
+             Instructor => Instructor.Courses
+         );
         }
 
         [HttpGet("TopTenInstructors")]
