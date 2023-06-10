@@ -56,7 +56,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers().AddNewtonsoftJson();
-;
 
 builder.Services.AddRazorPages();
 
@@ -77,13 +76,11 @@ builder.Services.AddScoped(x =>
     string connectionString = configuration["AzureStorage:ConnectionString"];
     return new BlobServiceClient(connectionString);
 });
-//builder.Services.AddAuthorization();
 
 /*Admin Configuration*/
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
-
 
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
@@ -133,14 +130,11 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
 builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
 
-
-
 /*Article Configuration*/
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<ArticleMappingService, ArticleMappingService>();
 builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
-
 
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -207,6 +201,11 @@ builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<CustomerService, CustomerService>();
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
 
+/*CourseFeedback Configuration*/
+builder.Services.AddScoped<ICourseFeedbackRepository, CourseFeedbackRepository>();
+builder.Services.AddScoped<ICourseFeedbackService, CourseFeedbackService>();
+builder.Services.AddScoped<IMappingService<CourseFeedback, CourseFeedbackDto>, CourseFeedbackMappingService>();
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(Swagger =>
@@ -261,7 +260,7 @@ builder.Services.AddCors(option =>
         });
 });
 
-// Stripe Service Registeration
+// Stripe Service Registration
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<IPaymentMappingService, PaymentMappingService>();
 builder.Services.AddScoped<ChargeService, ChargeService>();
@@ -270,6 +269,7 @@ builder.Services.AddScoped<CustomerService, CustomerService>();
 StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
 
 builder.Services.AddTransient<ExceptionMiddleware>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -289,8 +289,6 @@ app.UseCors(TextCore);
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-
 
 app.MapRazorPages();
 
