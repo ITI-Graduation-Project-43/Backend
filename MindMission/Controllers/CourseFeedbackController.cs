@@ -25,13 +25,14 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet("Course/{id:int}")]
-        public async Task<IActionResult> GetFeedbackByCourseId([FromRoute] int id)
+        public async Task<IActionResult> GetFeedbackByCourseId([FromRoute] int id, [FromQuery] PaginationDto pagination)
         {
             var Result = await CourseFeedbackService.GetFeedbackByCourseId(id);
             var CourseFeedbacks = Result.ToList();
             if (CourseFeedbacks.Count > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks for this course", CourseFeedbackMappingService.SendMapEntityToDtoWithCourse(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
+                var courseFeedbakItems = CourseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks for this course", CourseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), 1, CourseFeedbacks.Count));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this course", new List<CourseFeedbackWithCourseDto>()));
         }
@@ -49,7 +50,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet("InstructorCourse")]
-        public async Task<IActionResult> GetFeedbackByCourseIdAndInstructorId([FromQuery]string InstructorId, [FromQuery]int CourseId)
+        public async Task<IActionResult> GetFeedbackByCourseIdAndInstructorId([FromQuery] string InstructorId, [FromQuery] int CourseId)
         {
             var Result = await CourseFeedbackService.GetFeedbackByCourseIdAndInstructorId(CourseId, InstructorId);
             var CourseFeedbacks = Result.ToList();
@@ -88,7 +89,7 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> AddCourseFeedback(AddCourseFeedbackDto CourseFeedbackDto)
         {
             var CourseFeedbackList = new List<AddCourseFeedbackDto>();
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var Result = await CourseFeedbackService.AddCourseFeedback(CourseFeedbackMappingService.MapDtoToEntity(CourseFeedbackDto));
                 if (Result != null)
