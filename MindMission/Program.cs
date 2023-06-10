@@ -204,7 +204,7 @@ StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
 /*CourseFeedback Configuration*/
 builder.Services.AddScoped<ICourseFeedbackRepository, CourseFeedbackRepository>();
 builder.Services.AddScoped<ICourseFeedbackService, CourseFeedbackService>();
-builder.Services.AddScoped<IMappingService<CourseFeedback, CourseFeedbackDto>, CourseFeedbackMappingService>();
+builder.Services.AddScoped<CourseFeedbackMappingService, CourseFeedbackMappingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.DTOs
 {
-    public class CourseFeedbackDto
+    public class AddCourseFeedbackDto
     {
         [Required(ErrorMessage = "Required*")]
         public int CourseId { get; set; }

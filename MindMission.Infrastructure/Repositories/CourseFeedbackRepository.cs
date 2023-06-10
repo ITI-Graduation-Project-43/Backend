@@ -22,31 +22,31 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseId(int CourseId)
         {
-            var CourseFeedbacks = await Context.CourseFeedbacks.Where(e => e.CourseId == CourseId).ToListAsync();
+            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Course).Where(e => e.CourseId == CourseId).ToListAsync();
             return CourseFeedbacks.AsQueryable();
         }
 
         public async Task<IQueryable<CourseFeedback>> GetFeedbackByInstructorId(string InstructorId)
         {
-            var CourseFeedbacks = await Context.CourseFeedbacks.Where(e => e.InstructorId == InstructorId).ToListAsync();
+            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Instructor).Where(e => e.InstructorId == InstructorId).ToListAsync();
             return CourseFeedbacks.AsQueryable();
         }
 
         public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseIdAndInstructorId(int CourseId, string InstructorId)
         {
-            var CourseFeedbacks = await Context.CourseFeedbacks.Where(e => e.CourseId == CourseId && e.InstructorId == InstructorId).ToListAsync();
+            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Instructor).Include(e => e.Course).Where(e => e.CourseId == CourseId && e.InstructorId == InstructorId).ToListAsync();
             return CourseFeedbacks.AsQueryable();
         }
        
         public async Task<IQueryable<CourseFeedback>> GetTopCoursesRating(int NumberOfCourses)
         {
-            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Course).OrderByDescending(e => e.CourseRating).Take(NumberOfCourses).ToListAsync();
+            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Course).OrderByDescending(e => e.CourseRating).Take(NumberOfCourses).ToListAsync();
             return CourseFeedbacks.AsQueryable();
         }
 
         public async Task<IQueryable<CourseFeedback>> GetTopInstructorsRating(int NumberOfInstructors)
         {
-            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Instructor).OrderByDescending(e => e.InstructorRating).Take(NumberOfInstructors).ToListAsync();
+            var CourseFeedbacks = await Context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Instructor).OrderByDescending(e => e.InstructorRating).Take(NumberOfInstructors).ToListAsync();
             return CourseFeedbacks.AsQueryable();
         }
 
