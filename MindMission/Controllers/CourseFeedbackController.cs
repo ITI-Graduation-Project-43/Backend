@@ -4,6 +4,7 @@ using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Repositories;
@@ -15,9 +16,9 @@ namespace MindMission.API.Controllers
     public class CourseFeedbackController : ControllerBase
     {
         private readonly ICourseFeedbackService CourseFeedbackService;
-        private readonly IMappingService<CourseFeedback, CourseFeedbackDto> CourseFeedbackMappingService;
+        private readonly CourseFeedbackMappingService CourseFeedbackMappingService;
 
-        public CourseFeedbackController(ICourseFeedbackService _CourseFeedbackService, IMappingService<CourseFeedback, CourseFeedbackDto> _CourseFeedbackMappingService)
+        public CourseFeedbackController(ICourseFeedbackService _CourseFeedbackService, CourseFeedbackMappingService _CourseFeedbackMappingService)
         {
             CourseFeedbackService = _CourseFeedbackService;
             CourseFeedbackMappingService = _CourseFeedbackMappingService;
@@ -30,9 +31,9 @@ namespace MindMission.API.Controllers
             var CourseFeedbacks = Result.ToList();
             if (CourseFeedbacks.Count > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks", CourseFeedbacks, 1, CourseFeedbacks.Count));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks for this course", CourseFeedbackMappingService.SendMapEntityToDtoWithCourse(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this course", CourseFeedbacks));
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this course", new List<CourseFeedbackWithCourseDto>()));
         }
 
         [HttpGet("Instructor/{id:Guid}")]
@@ -42,9 +43,21 @@ namespace MindMission.API.Controllers
             var CourseFeedbacks = Result.ToList();
             if (CourseFeedbacks.Count > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks", CourseFeedbacks, 1, CourseFeedbacks.Count));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks for this instructor", CourseFeedbackMappingService.SendMapEntityToDtoWithInstructor(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this instructors", CourseFeedbacks));
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this instructor", new List<CourseFeedbackWithInstructorDto>()));
+        }
+
+        [HttpGet("InstructorCourse")]
+        public async Task<IActionResult> GetFeedbackByCourseIdAndInstructorId([FromQuery]string InstructorId, [FromQuery]int CourseId)
+        {
+            var Result = await CourseFeedbackService.GetFeedbackByCourseIdAndInstructorId(CourseId, InstructorId);
+            var CourseFeedbacks = Result.ToList();
+            if (CourseFeedbacks.Count > 0)
+            {
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "All feedbacks for this instructor in this course", CourseFeedbackMappingService.SendMapEntityToDtoWithCourse(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No feedbacks for this instructor in this course", new List<CourseFeedbackWithCourseDto>()));
         }
 
         [HttpGet("Course")]
@@ -54,9 +67,9 @@ namespace MindMission.API.Controllers
             var CourseFeedbacks = Result.ToList();
             if (CourseFeedbacks.Count > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The Top {NumberOfCourses} Courses", CourseFeedbacks, 1, CourseFeedbacks.Count));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfCourses} courses", CourseFeedbackMappingService.SendMapEntityToDtoWithCourse(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No Courses", CourseFeedbacks));
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No Courses", new List<CourseFeedbackWithCourseDto>()));
         }
 
         [HttpGet("Instructor")]
@@ -66,15 +79,15 @@ namespace MindMission.API.Controllers
             var CourseFeedbacks = Result.ToList();
             if (CourseFeedbacks.Count > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The Top {NumberOfInstructors} Instructors", CourseFeedbacks, 1, CourseFeedbacks.Count));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfInstructors} instructors", CourseFeedbackMappingService.SendMapEntityToDtoWithInstructor(CourseFeedbacks).Result.ToList(), 1, CourseFeedbacks.Count));
             }
-            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No instructors", CourseFeedbacks));
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No instructors", new List<CourseFeedbackWithInstructorDto>()));
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> AddCourseFeedback(CourseFeedbackDto CourseFeedbackDto)
+        public async Task<IActionResult> AddCourseFeedback(AddCourseFeedbackDto CourseFeedbackDto)
         {
-            var CourseFeedbackList = new List<CourseFeedbackDto>();
+            var CourseFeedbackList = new List<AddCourseFeedbackDto>();
             if(ModelState.IsValid)
             {
                 var Result = await CourseFeedbackService.AddCourseFeedback(CourseFeedbackMappingService.MapDtoToEntity(CourseFeedbackDto));
@@ -83,9 +96,6 @@ namespace MindMission.API.Controllers
                     CourseFeedbackList.Add(CourseFeedbackMappingService.MapEntityToDto(Result).Result);
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "The feedback is added successfully", CourseFeedbackList));
                 }
-                Console.WriteLine("*******************************************************************");
-                Console.WriteLine(Result);
-                Console.WriteLine("*******************************************************************");
 
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Result.ToString(), CourseFeedbackList));
             }
