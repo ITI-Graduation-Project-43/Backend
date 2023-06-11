@@ -9,6 +9,7 @@ namespace MindMission.Application.DTOs
     public class CourseFeedbackWithInstructorDto
     {
         public int CourseId { get; set; }
+        public string CourseName { get; set; } = string.Empty;
         public string StudentName { get; set; } = string.Empty;
         public string StudentImage { get; set; } = string.Empty;
         public string InstructorName { get; set; } = string.Empty;
