@@ -65,6 +65,7 @@ namespace MindMission.Application.Mapping
                 Result.Add(new CourseFeedbackWithInstructorDto()
                 {
                     CourseId = courseFeedback.CourseId,
+                    CourseName = courseFeedback.Course.Title,
                     StudentName = courseFeedback.Student.FirstName + " " + courseFeedback.Student.LastName,
                     StudentImage = courseFeedback.Student.ProfilePicture,
                     InstructorName = courseFeedback.Instructor.FirstName + " " + courseFeedback.Instructor.LastName,
