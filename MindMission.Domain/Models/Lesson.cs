@@ -35,7 +35,7 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public LessonType Type { get; set; }
 
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
         public bool IsFree { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;

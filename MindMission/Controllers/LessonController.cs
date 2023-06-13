@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using Stripe;
 
 namespace MindMission.API.Controllers
 {
@@ -32,7 +35,64 @@ namespace MindMission.API.Controllers
             );
         }
 
+
         [HttpGet("{id}")]
+        public async Task<ActionResult<CustomLessonDto>> GetLesson(int id)
+        {
+            var lesson = await _lessonService.GetByLessonIdAsync(id);
+
+            if (lesson == null)
+            {
+                return NotFound(NotFoundResponse("Lesson"));
+            }
+
+            var lessonDto = new CustomLessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                Description = lesson.Description,
+                Type = lesson.Type
+            };
+
+            switch (lesson.Type)
+            {
+                case LessonType.Article:
+                    lessonDto.Article = new CustomArticleDto
+                    {
+                        Id = lesson.Articles.First().Id,
+                        Content = lesson.Articles.First().Content
+                    };
+                    break;
+                case LessonType.Quiz:
+                    lessonDto.Quiz = new CustomQuizDto
+                    {
+                        Id = lesson.Quizzes.First().Id,
+                        Questions = lesson.Quizzes.First().Questions.Select(q => new CustomQuestionDto
+                        {
+                            Id = q.Id,
+                            QuestionText = q.QuestionText,
+                            ChoiceA = q.ChoiceA,
+                            ChoiceB = q.ChoiceB,
+                            ChoiceC = q.ChoiceC,
+                            ChoiceD = q.ChoiceD,
+                            CorrectAnswer = q.CorrectAnswer
+                        }).ToList()
+                    };
+                    break;
+                case LessonType.Video:
+                    lessonDto.Video = new CustomVideoDto
+                    {
+                        Id = lesson.Videos.First().Id,
+                        VideoUrl = lesson.Videos.First().VideoUrl
+                    };
+                    break;
+            }
+
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Lesson"), new List<CustomLessonDto> { lessonDto });
+            return Ok(response);
+        }
+
+        [HttpGet("byId/{id}")]
         public async Task<ActionResult<LessonDto>> GetLessonById(int id)
         {
             return await GetEntityResponseWithInclude(
