@@ -132,7 +132,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                            .OrderByDescending(c =>  c.AvgReview)
+                            .OrderByDescending(c => c.AvgReview)
                             .Take(topNumber)
                             .ToListAsync();
 

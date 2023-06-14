@@ -78,6 +78,6 @@ namespace MindMission.Application.DTOs
     {
         public string Title { get; set; }
         public int NoOfLessons { get; set; }
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
     }
 }

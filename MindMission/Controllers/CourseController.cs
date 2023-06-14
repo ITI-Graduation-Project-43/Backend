@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Domain.Common;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
-using System.Collections.Generic;
 
 namespace MindMission.API.Controllers
 {
