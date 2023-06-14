@@ -48,7 +48,6 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
-
                 entity.Property(e => e.Email).IsUnicode(false);
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
