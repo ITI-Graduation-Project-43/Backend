@@ -25,7 +25,7 @@ namespace MindMission.Domain.Models
         public string Title { get; set; } = string.Empty;
 
         public int NoOfLessons { get; set; }
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 

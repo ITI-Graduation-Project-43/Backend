@@ -79,5 +79,10 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.GetByTypeAsync(courseId, type);
         }
+
+        public Task<Lesson> GetByLessonIdAsync(int lessonId)
+        {
+            return _context.GetByLessonIdAsync(lessonId);
+        }
     }
 }

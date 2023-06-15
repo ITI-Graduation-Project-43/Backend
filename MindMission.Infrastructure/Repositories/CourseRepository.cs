@@ -121,7 +121,6 @@ namespace MindMission.Infrastructure.Repositories
             return courses.AsQueryable();
         }
 
-
         public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
             var courses = await _context.Courses
@@ -133,7 +132,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                            .OrderByDescending(c => c.NoOfReviews * c.AvgReview)
+                            .OrderByDescending(c => c.AvgReview)
                             .Take(topNumber)
                             .ToListAsync();
 
@@ -235,6 +234,7 @@ namespace MindMission.Infrastructure.Repositories
 
             return relatedCourses.AsQueryable();
         }
+
         public async Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber)
         {
             var instructorCourses = await _context.Courses

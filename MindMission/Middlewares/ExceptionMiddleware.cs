@@ -26,7 +26,7 @@ namespace MindMission.API.Middlewares
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
-        {
+         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
