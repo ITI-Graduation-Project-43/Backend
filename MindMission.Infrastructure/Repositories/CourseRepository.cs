@@ -306,3 +306,4 @@ namespace MindMission.Infrastructure.Repositories
                 .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
         }
     }
+}
