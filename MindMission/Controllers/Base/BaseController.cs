@@ -26,7 +26,7 @@ namespace MindMission.API.Controllers.Base
         {
             var dtoResults = new List<TDto>();
 
-            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor))
+            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Enrollment) || typeof(TEntity) == typeof(Wishlist))
             {
                 // Run the mapping sequentially for Student and Instructor types.
                 foreach (var entity in entities)

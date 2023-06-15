@@ -6,4 +6,9 @@
 
         TEntity MapDtoToEntity(TDto dto);
     }
+
+    public interface IMapDtoToEntityService<TEntity, TDto> where TEntity : class where TDto : class
+    {
+        TEntity MapDtoToEntity(TDto dto);
+    }
 }

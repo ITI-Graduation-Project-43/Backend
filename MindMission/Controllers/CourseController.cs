@@ -4,6 +4,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Post;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
@@ -15,10 +16,12 @@ namespace MindMission.API.Controllers
     public class CourseController : BaseController<Course, CourseDto, int>
     {
         private readonly ICourseService _courseService;
+        private readonly PostCourseMappingService _postCourseMappingService;
 
-        public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
+        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, PostCourseMappingService postCourseMappingService) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _postCourseMappingService = postCourseMappingService ?? throw new ArgumentNullException(nameof(postCourseMappingService));
         }
 
         #region Get

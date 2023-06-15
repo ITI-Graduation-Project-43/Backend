@@ -17,6 +17,7 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
+
         public async Task<Course> GetByNameAsync(string name)
         {
             if (name == null)
@@ -272,6 +273,29 @@ namespace MindMission.Infrastructure.Repositories
 
             return instructorCourses.AsQueryable();
         }
+        public async Task<Course> AddCourseAsync(Course course)
+        {
+            _context.Courses.Add(course);
 
+            foreach (var learningItem in course.LearningItems)
+            {
+                _context.Entry(learningItem).State = EntityState.Added;
+            }
+            foreach (var enrollmentItem in course.EnrollmentItems)
+            {
+                _context.Entry(enrollmentItem).State = EntityState.Added;
+            }
+            if (course.CourseRequirements != null)
+            {
+                foreach (var requirement in course.CourseRequirements)
+                {
+                    _context.Entry(requirement).State = EntityState.Added;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return course;
+        }
     }
 }
