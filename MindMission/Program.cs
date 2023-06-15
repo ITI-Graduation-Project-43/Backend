@@ -28,14 +28,28 @@ string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
 
 #region serilog
-var Logger = new LoggerConfiguration()
-.ReadFrom.Configuration(builder.Configuration)
-.Enrich.FromLogContext()
-.CreateLogger();
+var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Logger);
 #endregion
 
+
+builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddRazorPages();
+
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+
+builder.Services.AddDbContext<MindMissionDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
+        b => b.MigrationsAssembly("MindMission.API"));
+
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
+});
+
+/*JWT Configuration*/
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // To authenticate using token instead of cookie
@@ -55,21 +69,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson();
-
-builder.Services.AddRazorPages();
-
-builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
-
-builder.Services.AddDbContext<MindMissionDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
-        b => b.MigrationsAssembly("MindMission.API"));
-
-    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    options.LogTo(Console.WriteLine, LogLevel.Information);
-});
-
+/*Azure Configuration*/
 builder.Services.AddScoped(x =>
 {
     var configuration = x.GetRequiredService<IConfiguration>();
@@ -179,7 +179,6 @@ builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>()
 /*Identity Configuration*/
 builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>().AddDefaultTokenProviders().AddTokenProvider<DataProtectorTokenProvider<User>>("Default");
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -192,6 +191,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 /*Mail Configuration*/
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 
 /*Stripe Service Configuration*/

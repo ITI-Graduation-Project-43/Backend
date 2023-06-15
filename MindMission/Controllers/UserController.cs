@@ -24,11 +24,35 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("Register/Student")]
-        public async Task<IActionResult> RegistrationAsync(UserDto UserDto)
+        public async Task<IActionResult> RegistrationStudentAsync(UserDto UserDto)
         {
             if (ModelState.IsValid)
             {
                 var Result = await UserService.RegistrationStudentAsync(UserMappingService.MapDtoToEntity(UserDto), UserDto.FirstName, UserDto.LastName);
+                if (Result.Succeeded)
+                {
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));
+                }
+
+                string Errors = string.Empty;
+                foreach (var Error in Result.Errors)
+                {
+                    Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
+                }
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<UserDto>()));
+            }
+            else
+            {
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+            }
+        }
+
+        [HttpPost("Register/Instructor")]
+        public async Task<IActionResult> RegistrationInstructorAsync(UserDto UserDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var Result = await UserService.RegistrationInstructorAsync(UserMappingService.MapDtoToEntity(UserDto), UserDto.FirstName, UserDto.LastName);
                 if (Result.Succeeded)
                 {
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));
@@ -56,8 +80,12 @@ namespace MindMission.API.Controllers
                 if (User != null)
                 {
                     var Info = new List<SuccessLoginDto>();
-                    Info.Add(User);
-                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "Login Succeeded", Info));
+                    if(User.Id != "blocked")
+                    {
+                        Info.Add(User);
+                        return Ok(ResponseObjectFactory.CreateResponseObject(true, "Login Succeeded", Info));
+                    }
+                    return Ok(ResponseObjectFactory.CreateResponseObject(false, "Login Failed, You are blocked", new List<SuccessLoginDto>()));
                 }
                 return Unauthorized(ResponseObjectFactory.CreateResponseObject(false, "Login Failed, Your email or password incorrect", new List<SuccessLoginDto>()));
             }
@@ -156,38 +184,46 @@ namespace MindMission.API.Controllers
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
         }
 
-        //[HttpPost]
-        //[Route("Delete")]
-        //public async Task<IActionResult> DeleteUserAsync(LoginDto LoginDto)
-        //{
-        //    var Result = await UserService.DeleteUserAsync(LoginDto.Email, LoginDto.Password);
-        //    if (Result.Succeeded)
-        //    {
-        //        return Ok(ResponseObjectFactory.CreateResponseObject(true, "Your Account is Deleted successfully", new List<string>()));
-        //    }
-        //    string Errors = string.Empty;
-        //    foreach (var Error in Result.Errors)
-        //    {
-        //        Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
-        //    }
-        //    return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
-        //}
+        [HttpPost]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteUserAsync(LoginDto LoginDto)
+        {
+            var Result = await UserService.DeleteUserAsync(LoginDto.Email, LoginDto.Password);
+            if (Result.Succeeded)
+            {
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "Your Account is Deleted successfully", new List<string>()));
+            }
+            string Errors = string.Empty;
+            foreach (var Error in Result.Errors)
+            {
+                Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
+        }
 
-        //[HttpPost]
-        //[Route("Block")]
-        //public async Task<IActionResult> BlockUserAsync([FromBody] string Email, [FromBody]bool Blocking)
-        //{
-        //    var Result = await UserService.BlockUserAsync(Email, Blocking);
-        //    if (Result.Succeeded)
-        //    {
-        //        return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is blocked successfully", new List<string>()));
-        //    }
-        //    string Errors = string.Empty;
-        //    foreach (var Error in Result.Errors)
-        //    {
-        //        Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
-        //    }
-        //    return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
-        //}
+        [HttpPost]
+        [Route("Block")]
+        public async Task<IActionResult> BlockUserAsync(string Email, bool Blocking)
+        {
+            var Result = await UserService.BlockUserAsync(Email, Blocking);
+            if (Result.Succeeded)
+            {
+                if(Blocking)
+                {
+
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is blocked successfully", new List<string>()));
+                }
+                else
+                {
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is unblocked successfully", new List<string>()));
+                }
+            }
+            string Errors = string.Empty;
+            foreach (var Error in Result.Errors)
+            {
+                Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<string>()));
+        }
     }
 }
