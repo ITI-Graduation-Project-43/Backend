@@ -18,8 +18,9 @@ namespace MindMission.Infrastructure.Repositories.Base
         }
 
         public async Task<IQueryable<TClass>> GetAllAsync()
-        {
-            return await Task.FromResult(_dbSet);
+        {            
+			var Query = await _dbSet.ToListAsync();
+            return Query.AsQueryable();
         }
 
         public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
