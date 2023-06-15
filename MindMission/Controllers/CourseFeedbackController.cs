@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
-using MindMission.Application.Mapping.Base;
-using MindMission.Domain.Models;
-using MindMission.Infrastructure.Repositories;
 
 namespace MindMission.API.Controllers
 {

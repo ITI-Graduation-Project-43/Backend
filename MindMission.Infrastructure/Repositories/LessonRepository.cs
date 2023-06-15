@@ -17,6 +17,19 @@ namespace MindMission.Infrastructure.Repositories
 
         }
 
+        public async Task<Lesson> GetByLessonIdAsync(int lessonId)
+        {
+            return await _context.Lessons
+                        .Include(lesson => lesson.Chapter)
+                        .ThenInclude(chapter => chapter.Course)
+                        .Include(lesson => lesson.Articles)
+                        .Include(lesson => lesson.Quizzes)
+                        .ThenInclude(quiz => quiz.Questions)
+                        .Include(lesson => lesson.Videos)
+                        .SingleOrDefaultAsync(lesson => lesson.Id == lessonId);
+        }
+
+
         public async Task<IQueryable<Lesson>> GetByChapterIdAsync(int chapterId)
         {
             var lessons = await _context.Lessons

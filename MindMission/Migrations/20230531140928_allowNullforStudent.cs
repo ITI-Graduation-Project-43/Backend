@@ -52,19 +52,12 @@ namespace MindMission.API.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
 
-            migrationBuilder.AddColumn<byte[]>(
-                name: "FileData",
-                table: "Attachments",
-                type: "varbinary(max)",
-                nullable: false,
-                defaultValue: new byte[0]);
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "FileData",
-                table: "Attachments");
+
 
             migrationBuilder.AlterColumn<string>(
                 name: "ProfilePicture",

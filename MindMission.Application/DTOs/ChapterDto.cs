@@ -9,7 +9,7 @@ namespace MindMission.Application.DTOs
         public int CourseId { get; set; }
         public string Title { get; set; } = string.Empty;
         public int NoOfLessons { get; set; }
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
         public List<ChapterLessonDto> Lessons { get; set; } = new List<ChapterLessonDto>();
     }
 
@@ -20,7 +20,7 @@ namespace MindMission.Application.DTOs
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public LessonType Type { get; set; }
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
         public bool IsFree { get; set; }
 
     }
