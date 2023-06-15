@@ -273,5 +273,14 @@ namespace MindMission.Infrastructure.Repositories
             return instructorCourses.AsQueryable();
         }
 
+
+        public async Task<Course> GetFeatureThisWeekCourse()
+        {
+            DateTime CutoffDate = DateTime.Now.AddDays(-7);
+
+            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
+                .OrderByDescending(c => c.Enrollments.Count())
+                .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
+        }
     }
 }

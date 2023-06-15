@@ -20,14 +20,14 @@ namespace MindMission.Application.Mapping
             return Customer;
         }
 
-        public AddStripePayment MapDtoToAddStripePayment(StripeCustomer customer, PaymentDto dto, decimal CoursePrice)
+        public AddStripePayment MapDtoToAddStripePayment(StripeCustomer customer, PaymentDto dto, decimal CoursesPrice)
         {
             AddStripePayment Payment = new AddStripePayment(
                 customer.CustomerId,
                 dto.Email,
                 dto.Description,
                 "usd",
-                (long)CoursePrice * 100);
+                (long)CoursesPrice * 100);
 
             return Payment;
         }

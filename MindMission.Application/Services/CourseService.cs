@@ -100,6 +100,9 @@ namespace MindMission.Application.Services
             return await _context.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber);
         }
 
-
+        public async Task<Course> GetFeatureThisWeekCourse()
+        {
+            return await _context.GetFeatureThisWeekCourse();
+        }
     }
 }
