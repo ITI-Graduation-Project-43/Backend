@@ -293,9 +293,5 @@ namespace MindMission.Infrastructure.Repositories
                 }
             }
 
-            await _context.SaveChangesAsync();
-
-            return course;
-        }
     }
 }

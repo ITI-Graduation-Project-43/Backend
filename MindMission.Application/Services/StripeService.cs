@@ -107,5 +107,15 @@ namespace MindMission.Application.Services
 
         //////Get Choosed Course to enroll in.
         public async Task<Course> GetEnrolledCourse(int id) => await _courseRepository.GetByIdAsync(id);
+
+        public async Task<long> GetTotalPrice(List<int> coursesIds)
+        {
+            long totalPrice = 0;
+            foreach (int courseId in coursesIds)
+            {
+                totalPrice += (long) (await GetEnrolledCourse(courseId)).Price;
+            }
+            return totalPrice;
+        }
     }
 }
