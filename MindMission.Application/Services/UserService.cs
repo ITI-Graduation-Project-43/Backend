@@ -36,6 +36,11 @@ namespace MindMission.Application.Services
             return await UserManager.RegistrationStudentAsync(user, FirstName, LasName);
         }
 
+        public async Task<IdentityResult> RegistrationInstructorAsync(User user, string FirstName, string LasName)
+        {
+            return await UserManager.RegistrationInstructorAsync(user, FirstName, LasName);
+        }
+
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
             var User = await UserManager.LoginAsync(Email, Password);
@@ -46,7 +51,7 @@ namespace MindMission.Application.Services
                 {
                     new Claim("Id", User.Id),
                     new Claim("Email", User.Email),
-                    new Claim("Role", "Admin"),
+                    new Claim("Role", User.Role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -111,7 +116,7 @@ namespace MindMission.Application.Services
 
         public async Task<IdentityResult> DeleteUserAsync(string Email, string Password)
         {
-            return await UserManager.DeactivateUserAsync(Email, Password);
+            return await UserManager.DeleteUserAsync(Email, Password);
         }
 
         public async Task<IdentityResult> BlockUserAsync(string Email, bool Blocking)
