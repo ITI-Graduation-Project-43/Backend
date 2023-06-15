@@ -15,19 +15,12 @@ namespace MindMission.API.Controllers
     {
         private readonly MindMissionDbContext _context;
         private readonly IInstructorService _instructorService;
-        private readonly InstructorMappingService _instructorMappingService;
-        /* private readonly IWebHostEnvironment _environment;*/
-        private readonly BlobServiceClient blobServiceClient;
         private readonly BlobContainerClient containerClient;
-        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public InstructorController(MindMissionDbContext context, InstructorMappingService instructorMappingService, IInstructorService instructorService, BlobServiceClient blobServiceClient, IConfiguration configuration, IWebHostEnvironment hostingEnvironment) : base(instructorMappingService)
+        public InstructorController(MindMissionDbContext context, InstructorMappingService instructorMappingService, IInstructorService instructorService, BlobServiceClient blobServiceClient, IConfiguration configuration) : base(instructorMappingService)
         {
             _context = context;
             _instructorService = instructorService;
-            _instructorMappingService = instructorMappingService;
-            this.blobServiceClient = blobServiceClient;
-            this.hostingEnvironment = hostingEnvironment;
 
             string containerName = configuration["AzureStorage:ContainerName2"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);

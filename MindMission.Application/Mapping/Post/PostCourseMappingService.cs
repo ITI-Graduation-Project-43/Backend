@@ -33,6 +33,8 @@ namespace MindMission.Application.Mapping.Post
                 Language = (Language)Enum.Parse(typeof(Language), course.Language),
                 Level = (Level)Enum.Parse(typeof(Level), course.Level),
                 Price = course.Price,
+                InstructorId = course.InstructorId,
+                CourseImage = course.ImageUrl,
                 LearningItems = (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList(),
                 EnrollmentItems = (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList(),
                 CourseRequirements = (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList(),
@@ -52,6 +54,8 @@ namespace MindMission.Application.Mapping.Post
                 Language = courseCreateDto.Language.ToString(),
                 Level = courseCreateDto.Level.ToString(),
                 Price = courseCreateDto.Price,
+                InstructorId = courseCreateDto.InstructorId,
+                ImageUrl = courseCreateDto.CourseImage,
                 LearningItems = courseCreateDto.LearningItems.Select(i => _learningItemMappingService.MapDtoToEntity(i)).ToList(),
                 EnrollmentItems = courseCreateDto.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapDtoToEntity(i)).ToList(),
                 CourseRequirements = courseCreateDto.CourseRequirements?.Select(i => _courseRequirementMappingService.MapDtoToEntity(i)).ToList(),
@@ -67,12 +71,13 @@ namespace MindMission.Application.Mapping.Post
             {
                 item.Course = course;
             }
-
-            foreach (var item in course.CourseRequirements)
+            if (course.CourseRequirements != null)
             {
-                item.Course = course;
+                foreach (var item in course.CourseRequirements)
+                {
+                    item.Course = course;
+                }
             }
-
             return course;
         }
     }

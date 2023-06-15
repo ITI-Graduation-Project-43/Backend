@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindMission.API.EmailSettings;
 using MindMission.API.Middlewares;
+using MindMission.API.Utilities;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
@@ -47,7 +48,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    options.LogTo(Console.WriteLine, LogLevel.Information);
+    //options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 /*JWT Configuration*/
@@ -228,6 +229,7 @@ builder.Services.AddSwaggerGen(Swagger =>
             Url = new Uri("https://example.com/contact"),
         }
     });
+
 
     Swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {

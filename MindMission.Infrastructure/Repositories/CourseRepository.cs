@@ -293,8 +293,9 @@ namespace MindMission.Infrastructure.Repositories
                 }
             }
 
-            return course;
+            await _context.SaveChangesAsync();
 
+            return course;
         }
 
         public async Task<Course> GetFeatureThisWeekCourse()

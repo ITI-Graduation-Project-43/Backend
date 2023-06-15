@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using MindMission.Application.Custom_Validation;
-using MindMission.Domain.Enums;
+﻿using MindMission.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -37,11 +35,11 @@ namespace MindMission.Application.DTOs
         [EnumDataType(typeof(Level))]
         public Level Level { get; set; }
 
+        [StringLength(2083)]
+        public string CourseImage { get; set; } = string.Empty;
+
         [Required]
-        [DataType(DataType.Upload)]
-        [MaxFileSize(10_000_000)] // 10 MB
-        [AllowedExtensions(new string[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" })]
-        public IFormFile CourseImage { get; set; } = new FormFile(null, 0, 0, null, null);
+        public string InstructorId { get; set; } = string.Empty;
         [Required]
         public List<LearningItemCreateDto> LearningItems { get; set; } = new List<LearningItemCreateDto>();
 

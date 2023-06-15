@@ -23,7 +23,7 @@ namespace MindMission.API.Controllers.Base
 
         static BaseController()
         {
-            EntitiesCount= 0;
+            EntitiesCount = 0;
         }
 
         #region Mapping
@@ -182,9 +182,9 @@ namespace MindMission.API.Controllers.Base
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
 
-			EntitiesCount = entities.Count();
+            EntitiesCount = entities.Count();
 
-			var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
 
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
 
