@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Domain.Models;
@@ -28,10 +30,8 @@ namespace MindMission.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                Course EnrolledCourse = await _stripeService.GetEnrolledCourse(paymentDto.CourseId);
+                long totalPrice = await _stripeService.GetTotalPrice(paymentDto.CoursesIds);
 
-                if (EnrolledCourse != null)
-                {
                     try
                     {
                         AddStripeCustomer customer = _paymentMappingService
@@ -39,18 +39,19 @@ namespace MindMission.API.Controllers
                         StripeCustomer stripeCustomer = await _stripeService.GetStripeCustomer(customer);
 
                         AddStripePayment addedStripePayment = _paymentMappingService
-                            .MapDtoToAddStripePayment(stripeCustomer, paymentDto, EnrolledCourse.Price);
+                            .MapDtoToAddStripePayment(stripeCustomer, paymentDto, totalPrice);
 
-                        return Ok(await _stripeService.GetStripePayment(addedStripePayment));
+                        var response = ResponseObjectFactory.CreateResponseObject(true, "successfull payment process", new List<StripePayment> { await _stripeService.GetStripePayment(addedStripePayment) }, 1, 1);
+
+                        return Ok(response);
                     }
                     catch
                     {
                         return StatusCode(500, "Internal Server Error");
                     }
-                }
-                return BadRequest("Non-Existed Course");
+                
             }
-            return BadRequest(ModelState);
+			return BadRequest(ModelState);
         }
     }
 }

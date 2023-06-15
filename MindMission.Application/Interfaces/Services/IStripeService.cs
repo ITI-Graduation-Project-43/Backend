@@ -13,6 +13,9 @@ namespace MindMission.Application.Interfaces.Services
 
         Task<StripeCustomer> GetStripeCustomer(AddStripeCustomer customer);
 
-        public Task<Course> GetEnrolledCourse(int id);
-    }
+        Task<Course> GetEnrolledCourse(int id);
+
+        Task<long> GetTotalPrice(List<int> coursesIds);
+
+	}
 }

@@ -178,6 +178,14 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _courseService.GetByNameAsync(name), "Course");
         }
 
+        // GET: api/Course/featureThisWeek
+        [HttpGet("featureThisWeek")]
+        public async Task<ActionResult<CourseDto>> GetFeatureThisWeekCourse()
+        {
+            return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(), "Course");
+        }
+
+
         #endregion Get
 
         #region Add
