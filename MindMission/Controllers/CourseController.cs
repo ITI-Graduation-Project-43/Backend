@@ -202,14 +202,9 @@ namespace MindMission.API.Controllers
         #region Add
 
         // POST: api/Course
-        [HttpPost]
-        public async Task<ActionResult<CourseDto>> AddCourse([FromBody] CourseDto courseDTO)
-        {
-            return await AddEntityResponse(_courseService.AddAsync, courseDTO, "Course", nameof(GetCourseById));
-        }
 
-        [HttpPost("Test")]
-        public async Task<IActionResult> Post([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
+        [HttpPost]
+        public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
         {
 
             if (!ModelState.IsValid)
@@ -295,6 +290,7 @@ namespace MindMission.API.Controllers
 
             string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
             var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { courseDto });
+
             return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
 
