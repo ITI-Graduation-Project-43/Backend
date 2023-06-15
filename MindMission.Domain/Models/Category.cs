@@ -10,8 +10,7 @@ namespace MindMission.Domain.Models
     {
         public Category()
         {
-            Courses = new HashSet<Course>();
-            InverseParent = new HashSet<Category>();
+
         }
 
         [Key]

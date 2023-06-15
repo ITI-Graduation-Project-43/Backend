@@ -7,12 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindMission.API.EmailSettings;
 using MindMission.API.Middlewares;
+using MindMission.API.Utilities;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
+using MindMission.Application.Mapping.Post;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
@@ -46,7 +48,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    options.LogTo(Console.WriteLine, LogLevel.Information);
+    //options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 /*JWT Configuration*/
@@ -105,6 +107,11 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<CourseMappingService, CourseMappingService>();
 builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingService>();
+builder.Services.AddScoped<IMappingService<Course, CourseCreateDto>, PostCourseMappingService>();
+builder.Services.AddScoped<IMappingService<CourseRequirement, CourseRequirementCreateDto>, CourseRequirementMappingService>();
+builder.Services.AddScoped<IMappingService<EnrollmentItem, EnrollmentItemCreateDto>, EnrollmentItemMappingService>();
+builder.Services.AddScoped<IMappingService<LearningItem, LearningItemCreateDto>, LearningItemMappingService>();
+
 
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
@@ -222,6 +229,7 @@ builder.Services.AddSwaggerGen(Swagger =>
             Url = new Uri("https://example.com/contact"),
         }
     });
+
 
     Swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {

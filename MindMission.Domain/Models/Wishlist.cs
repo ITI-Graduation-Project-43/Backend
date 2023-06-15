@@ -10,8 +10,7 @@ namespace MindMission.Domain.Models
     {
         public Wishlist()
         {
-            Student = new Student();
-            Course = new Course();
+
         }
 
         [Key]

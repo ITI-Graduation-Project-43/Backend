@@ -9,7 +9,6 @@ namespace MindMission.Domain.Models
     {
         public Permission()
         {
-            AdminPermissions = new HashSet<AdminPermission>();
         }
 
         [Key]

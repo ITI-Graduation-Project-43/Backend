@@ -21,7 +21,7 @@ namespace MindMission.Infrastructure.Repositories
             user.Id = Guid.NewGuid().ToString();
             user.Students.Add(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LastName });
             var Result = await UserManager.CreateAsync(user, user.PasswordHash);
-            if(Result.Succeeded)
+            if (Result.Succeeded)
             {
                 try
                 {
@@ -31,10 +31,10 @@ namespace MindMission.Infrastructure.Repositories
                         return IdentityResult.Success;
                     }
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     await UserManager.DeleteAsync(user);
-                    return IdentityResult.Failed(new IdentityError() { Code = "Role Error", Description = ex.Message});
+                    return IdentityResult.Failed(new IdentityError() { Code = "Role Error", Description = ex.Message });
                 }
             }
             return Result;
@@ -82,7 +82,7 @@ namespace MindMission.Infrastructure.Repositories
                         return SuccessDto;
                     }
                 }
-                return new SuccessLoginDto() { Id = "blocked"};
+                return new SuccessLoginDto() { Id = "blocked" };
             }
             return null;
         }

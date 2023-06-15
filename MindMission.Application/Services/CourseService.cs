@@ -104,5 +104,9 @@ namespace MindMission.Application.Services
         {
             return await _context.GetFeatureThisWeekCourse();
         }
+        public async Task<Course> AddCourseAsync(Course course)
+        {
+            return await _context.AddCourseAsync(course);
+        }
     }
 }

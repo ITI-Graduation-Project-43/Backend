@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Constants;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -15,10 +19,17 @@ namespace MindMission.API.Controllers
     public class CourseController : BaseController<Course, CourseDto, int>
     {
         private readonly ICourseService _courseService;
-
-        public CourseController(ICourseService courseService, CourseMappingService courseMappingService) : base(courseMappingService)
+        private readonly IMappingService<Course, CourseCreateDto> _postCourseMappingService;
+        private readonly BlobContainerClient _containerClient;
+        private readonly ICategoryService _categoryService;
+        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration, ICategoryService categoryService) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _postCourseMappingService = postCourseMappingService ?? throw new ArgumentNullException(nameof(postCourseMappingService));
+            string containerName = configuration["AzureStorage:ContainerName2"];
+            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+
         }
 
         #region Get
@@ -191,10 +202,96 @@ namespace MindMission.API.Controllers
         #region Add
 
         // POST: api/Course
+
         [HttpPost]
-        public async Task<ActionResult<CourseDto>> AddCourse([FromBody] CourseDto courseDTO)
+        public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
         {
-            return await AddEntityResponse(_courseService.AddAsync, courseDTO, "Course", nameof(GetCourseById));
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(InvalidDataResponse());
+
+            }
+            var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
+            if (category == null)
+            {
+                return BadRequest("Category not found.");
+            }
+
+            if (category.Type != CategoryType.Topic)
+            {
+                return BadRequest("The course must belong to a topic.");
+            }
+
+            if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
+            {
+                return BadRequest("Invalid Language.");
+            }
+
+            if (!Enum.IsDefined(typeof(Level), postCourseDto.Level))
+            {
+                return BadRequest("Invalid Level.");
+            }
+
+            if (postCourseDto.LearningItems == null || !postCourseDto.LearningItems.Any() || postCourseDto.LearningItems.Any(item => string.IsNullOrWhiteSpace(item.Title) || string.IsNullOrWhiteSpace(item.Description)))
+            {
+                return BadRequest("LearningItems are invalid.");
+            }
+
+            if (postCourseDto.EnrollmentItems == null || !postCourseDto.EnrollmentItems.Any() || postCourseDto.EnrollmentItems.Any(item => string.IsNullOrWhiteSpace(item.Title)))
+            {
+                return BadRequest("EnrollmentItems are invalid.");
+            }
+            // Check if a file is uploaded
+            if (courseImg == null || courseImg.Length == 0)
+            {
+                return BadRequest("No file was uploaded.");
+            }
+
+            // Validate the file size
+            if (courseImg.Length > 10_000_000) // 10 MB
+            {
+                return BadRequest("The file is too large. The maximum allowed size is 10 MB.");
+            }
+
+            // Validate the file extension
+            var allowedExtensions = new[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" };
+            var extension = Path.GetExtension(courseImg.FileName).ToLowerInvariant();
+
+            if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+            {
+                return BadRequest($"Invalid file extension. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+            }
+
+            // Upload the file and save the URL
+            string fileName = Guid.NewGuid().ToString() + extension;
+
+            BlobClient blobClient = _containerClient.GetBlobClient(fileName);
+            using (Stream stream = courseImg.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, true);
+            }
+
+            postCourseDto.CourseImage = blobClient.Uri.ToString();
+
+            // Map the course create DTO to a course entity.
+            var courseToCreate = _postCourseMappingService.MapDtoToEntity(postCourseDto);
+
+            // Use the service to add the course to the database.
+            var createdCourse = await _courseService.AddCourseAsync(courseToCreate);
+
+            // Map the created course entity back to a DTO.
+            var courseDto = _postCourseMappingService.MapEntityToDto(createdCourse);
+
+            if (courseDto == null)
+                return NotFound(NotFoundResponse("course"));
+            // Return the created course.
+
+
+            string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
+            var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { courseDto });
+
+            return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
 
         #endregion Add

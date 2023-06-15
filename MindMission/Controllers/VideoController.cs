@@ -41,7 +41,7 @@ namespace MindMission.API.Controllers
                 await blobClient.UploadAsync(stream, true);
             }
 
-            Video video = new Video
+            Video video = new()
             {
                 VideoUrl = blobClient.Uri.ToString(),
                 LessonId = lessonId,
@@ -67,7 +67,7 @@ namespace MindMission.API.Controllers
             }
 
             // Get the BlobClient for the video
-            BlobClient blobClient = new BlobClient(new Uri(video.VideoUrl));
+            BlobClient blobClient = new(new Uri(video.VideoUrl));
 
             if (!await blobClient.ExistsAsync())
             {
