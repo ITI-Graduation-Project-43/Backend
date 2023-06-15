@@ -205,7 +205,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("Test")]
-        public async Task<IActionResult> Post([FromBody] CourseCreateDto postCourseDto)
+        public async Task<IActionResult> Post([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
         {
 
             if (!ModelState.IsValid)
