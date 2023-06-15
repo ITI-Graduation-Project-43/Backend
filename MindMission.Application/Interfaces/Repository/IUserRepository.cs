@@ -7,7 +7,9 @@ namespace MindMission.Application.Interfaces.Repository
     public interface IUserRepository
     {
         Task<IdentityResult> RegistrationStudentAsync(User User, string FirstName, string LasName);
-        //Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LasName);
+        
+        Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LasName);
+        
         Task<SuccessLoginDto?> LoginAsync(string Email, string Password);
 
         Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password);
