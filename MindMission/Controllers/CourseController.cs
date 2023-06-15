@@ -7,6 +7,7 @@ using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -19,13 +20,16 @@ namespace MindMission.API.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IMappingService<Course, CourseCreateDto> _postCourseMappingService;
-        private readonly BlobContainerClient containerClient;
-        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration) : base(courseMappingService)
+        private readonly BlobContainerClient _containerClient;
+        private readonly ICategoryService _categoryService;
+        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration, ICategoryService categoryService) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _postCourseMappingService = postCourseMappingService ?? throw new ArgumentNullException(nameof(postCourseMappingService));
             string containerName = configuration["AzureStorage:ContainerName2"];
-            containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+
         }
 
         #region Get
@@ -210,16 +214,19 @@ namespace MindMission.API.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
-                //return BadRequest(InvalidDataResponse());
+                return BadRequest(InvalidDataResponse());
 
             }
-
-            if (!Enum.IsDefined(typeof(CategoryType), postCourseDto.Category) || postCourseDto.Category != CategoryType.Topic)
+            var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
+            if (category == null)
             {
-                return BadRequest("Invalid Category.");
+                return BadRequest("Category not found.");
             }
 
+            if (category.Type != CategoryType.Topic)
+            {
+                return BadRequest("The course must belong to a topic.");
+            }
 
             if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
             {
@@ -264,7 +271,7 @@ namespace MindMission.API.Controllers
             // Upload the file and save the URL
             string fileName = Guid.NewGuid().ToString() + extension;
 
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            BlobClient blobClient = _containerClient.GetBlobClient(fileName);
             using (Stream stream = courseImg.OpenReadStream())
             {
                 await blobClient.UploadAsync(stream, true);
@@ -284,18 +291,11 @@ namespace MindMission.API.Controllers
             if (courseDto == null)
                 return NotFound(NotFoundResponse("course"));
             // Return the created course.
-            return CreatedAtRoute(new { id = courseDto.Id }, courseDto);
 
 
-
-
-
-
-
-
-            //string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
-            //var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { courseDto });
-            //return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
+            string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
+            var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { courseDto });
+            return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
 
         #endregion Add

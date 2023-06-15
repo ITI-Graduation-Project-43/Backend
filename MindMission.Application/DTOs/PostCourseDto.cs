@@ -18,10 +18,9 @@ namespace MindMission.Application.DTOs
         [Required]
         [StringLength(2048)]
         public string Description { get; set; } = string.Empty;
-
         [Required]
-        [EnumDataType(typeof(CategoryType))]
-        public CategoryType Category { get; set; }
+
+        public int CategoryId { get; set; }
 
         [Required]
         [EnumDataType(typeof(Language))]

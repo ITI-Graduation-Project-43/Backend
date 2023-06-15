@@ -11,12 +11,7 @@ namespace MindMission.Domain.Models
     {
         public Course()
         {
-            Chapters = new HashSet<Chapter>();
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Enrollments = new HashSet<Enrollment>();
-            Wishlists = new HashSet<Wishlist>();
-            Instructor = new Instructor();
-            Category = new Category();
+
         }
 
         [Key]

@@ -29,7 +29,6 @@ namespace MindMission.Application.Mapping.Post
                 Title = course.Title,
                 ShortDescription = course.ShortDescription,
                 Description = course.Description,
-                Category = (CategoryType)course.CategoryId,
                 Language = (Language)Enum.Parse(typeof(Language), course.Language),
                 Level = (Level)Enum.Parse(typeof(Level), course.Level),
                 Price = course.Price,
@@ -38,6 +37,8 @@ namespace MindMission.Application.Mapping.Post
                 LearningItems = (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList(),
                 EnrollmentItems = (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList(),
                 CourseRequirements = (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList(),
+                CategoryId = course.CategoryId,
+
             };
 
             return courseCreateDto;
@@ -50,7 +51,7 @@ namespace MindMission.Application.Mapping.Post
                 Title = courseCreateDto.Title,
                 ShortDescription = courseCreateDto.ShortDescription,
                 Description = courseCreateDto.Description,
-                CategoryId = (int)courseCreateDto.Category,
+                CategoryId = courseCreateDto.CategoryId,
                 Language = courseCreateDto.Language.ToString(),
                 Level = courseCreateDto.Level.ToString(),
                 Price = courseCreateDto.Price,

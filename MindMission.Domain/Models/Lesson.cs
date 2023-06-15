@@ -11,11 +11,7 @@ namespace MindMission.Domain.Models
     {
         public Lesson()
         {
-            Articles = new HashSet<Article>();
-            Attachments = new HashSet<Attachment>();
-            Discussions = new HashSet<Discussion>();
-            Quizzes = new HashSet<Quiz>();
-            Videos = new HashSet<Video>();
+
         }
 
         [Key]

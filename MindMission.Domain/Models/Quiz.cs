@@ -10,7 +10,6 @@ namespace MindMission.Domain.Models
     {
         public Quiz()
         {
-            Questions = new HashSet<Question>();
         }
 
         [Key]

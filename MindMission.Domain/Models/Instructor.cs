@@ -11,9 +11,7 @@ namespace MindMission.Domain.Models
     {
         public Instructor()
         {
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Courses = new HashSet<Course>();
-            User = new User();
+
         }
 
         [Required]

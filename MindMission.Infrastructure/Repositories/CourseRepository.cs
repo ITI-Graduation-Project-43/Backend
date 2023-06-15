@@ -292,6 +292,10 @@ namespace MindMission.Infrastructure.Repositories
                     _context.Entry(requirement).State = EntityState.Added;
                 }
             }
+            if (course.Instructor != null)
+            {
+                _context.Entry(course.Instructor).State = EntityState.Detached;
+            }
 
             await _context.SaveChangesAsync();
 
