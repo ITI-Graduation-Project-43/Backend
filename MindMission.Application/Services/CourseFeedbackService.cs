@@ -8,7 +8,7 @@ namespace MindMission.Application.Services
     {
         private readonly ICourseFeedbackRepository CourseFeedbackRepository;
 
-        public CourseFeedbackService(ICourseFeedbackRepository _CourseFeedbackRepository) 
+        public CourseFeedbackService(ICourseFeedbackRepository _CourseFeedbackRepository)
         {
             CourseFeedbackRepository = _CourseFeedbackRepository;
         }
@@ -17,7 +17,6 @@ namespace MindMission.Application.Services
         {
             return await CourseFeedbackRepository.GetFeedbackByCourseId(CourseId);
         }
-
         public async Task<IQueryable<CourseFeedback>> GetFeedbackByInstructorId(string InstructorId)
         {
             return await CourseFeedbackRepository.GetFeedbackByInstructorId(InstructorId);
