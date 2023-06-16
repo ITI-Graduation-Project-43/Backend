@@ -12,8 +12,8 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    [Migration("20230615214241_xxx")]
-    partial class xxx
+    [Migration("20230616090942_timetracking")]
+    partial class timetracking
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1002,6 +1002,34 @@ namespace MindMission.API.Migrations
                     b.ToTable("Students");
                 });
 
+            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex(new[] { "CourseId" }, "idx_TimeTracking_courseid");
+
+                    b.ToTable("TimeTrackings");
+                });
+
             modelBuilder.Entity("MindMission.Domain.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -1027,19 +1055,25 @@ namespace MindMission.API.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValueSql("((1))");
 
                     b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeactivated")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -1048,6 +1082,10 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -1072,6 +1110,10 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("(getdate())");
 
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -1079,6 +1121,11 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1451,7 +1498,7 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Instructor", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Instructors")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1506,12 +1553,33 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
+                {
+                    b.HasOne("MindMission.Domain.Models.Course", "Course")
+                        .WithMany("TimeTrackings")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__timeTrackings__Cours__59C55456");
+
+                    b.HasOne("MindMission.Domain.Models.Student", "Student")
+                        .WithMany("TimeTrackings")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__timeTrackings__Stude__5AB9788F");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.UserAccount", b =>
@@ -1610,6 +1678,8 @@ namespace MindMission.API.Migrations
 
                     b.Navigation("LearningItems");
 
+                    b.Navigation("TimeTrackings");
+
                     b.Navigation("Wishlists");
                 });
 
@@ -1654,14 +1724,9 @@ namespace MindMission.API.Migrations
 
                     b.Navigation("Enrollments");
 
+                    b.Navigation("TimeTrackings");
+
                     b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("MindMission.Domain.Models.User", b =>
-                {
-                    b.Navigation("Instructors");
-
-                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }
