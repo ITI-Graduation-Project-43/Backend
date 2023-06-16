@@ -5,13 +5,13 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Patch;
 using MindMission.Application.Interfaces.Services;
-using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Application.Exceptions;
+using MindMission.Application.DTOs.PostDtos;
 
 namespace MindMission.API.Controllers
 {
@@ -20,11 +20,16 @@ namespace MindMission.API.Controllers
     public class CourseController : BaseController<Course, CourseDto, int>
     {
         private readonly ICourseService _courseService;
-        private readonly IMappingService<Course, CourseCreateDto> _postCourseMappingService;
+        private readonly IMappingService<Course, PostCourseDto> _postCourseMappingService;
         private readonly ICategoryService _categoryService;
         private readonly IUploadImage _uploadImageService;
         private readonly ICoursePatchValidator _coursePatchValidator;
-        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, ICategoryService categoryService, IUploadImage uploadImageService, ICoursePatchValidator coursePatchValidator) : base(courseMappingService)
+        public CourseController(ICourseService courseService,
+                                IMappingService<Course, CourseDto> courseMappingService,
+                                IMappingService<Course, PostCourseDto> postCourseMappingService,
+                                ICategoryService categoryService,
+                                IUploadImage uploadImageService,
+                                ICoursePatchValidator coursePatchValidator) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _postCourseMappingService = postCourseMappingService ?? throw new ArgumentNullException(nameof(postCourseMappingService));
@@ -205,7 +210,7 @@ namespace MindMission.API.Controllers
         // POST: api/Course
 
         [HttpPost]
-        public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
+        public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {
 
             if (!ModelState.IsValid)
@@ -270,7 +275,7 @@ namespace MindMission.API.Controllers
 
 
             string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
-            var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { courseDto });
+            var response = ResponseObjectFactory.CreateResponseObject<PostCourseDto>(true, message, new List<PostCourseDto> { courseDto });
 
             return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
@@ -295,7 +300,7 @@ namespace MindMission.API.Controllers
             var course = await _courseService.GetByIdAsync(id);
 
             if (course == null)
-                return NotFound(NotFoundResponse(course.GetType().Name));
+                return NotFound(NotFoundResponse("Course"));
             await _courseService.SoftDeleteAsync(id);
             return NoContent();
         }
@@ -305,7 +310,7 @@ namespace MindMission.API.Controllers
 
         // PUT: api/Course/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCourse(int id, [FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
+        public async Task<IActionResult> UpdateCourse(int id, [FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
                                                                        c => c.EnrollmentItems,
@@ -314,6 +319,11 @@ namespace MindMission.API.Controllers
             {
                 return NotFound(NotFoundResponse("Course"));
             }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(InvalidDataResponse());
+            }
+
             postCourseDto.Id = id;
             var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
             if (category == null)
@@ -366,14 +376,14 @@ namespace MindMission.API.Controllers
             var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourse);
 
             string message = string.Format(SuccessMessages.UpdatedSuccessfully, "Course");
-            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<CourseCreateDto> { courseDto });
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<PostCourseDto> { courseDto });
 
             return Ok(response);
         }
 
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchCourse(int id, [FromBody] JsonPatchDocument<CourseCreateDto> patchDoc)
+        public async Task<IActionResult> PatchCourse(int id, [FromBody] JsonPatchDocument<PostCourseDto> patchDoc)
         {
             if (patchDoc != null)
             {
@@ -418,7 +428,7 @@ namespace MindMission.API.Controllers
                 var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourseEntity);
 
                 string message = string.Format(SuccessMessages.UpdatedSuccessfully, "Course");
-                var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<CourseCreateDto> { courseDto });
+                var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<PostCourseDto> { courseDto });
 
                 return Ok(response);
             }

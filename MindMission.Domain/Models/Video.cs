@@ -15,8 +15,6 @@ namespace MindMission.Domain.Models
 
         public int LessonId { get; set; }
 
-        [NotMapped]
-        public IFormFile VideoFile { get; set; }
 
         [Required]
         [StringLength(2048)]

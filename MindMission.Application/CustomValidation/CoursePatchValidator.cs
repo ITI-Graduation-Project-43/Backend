@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
-using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Patch;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Application.Exceptions;
 using Newtonsoft.Json;
+using MindMission.Application.DTOs.PostDtos;
 
-
-namespace MindMission.Infrastructure
+namespace MindMission.Application.CustomValidation
 {
     public class CoursePatchValidator : ICoursePatchValidator
     {
@@ -20,7 +19,7 @@ namespace MindMission.Infrastructure
             _instructorService = instructorService;
         }
 
-        public async Task ValidatePatchAsync(JsonPatchDocument<CourseCreateDto> patchDoc)
+        public async Task ValidatePatchAsync(JsonPatchDocument<PostCourseDto> patchDoc)
         {
             foreach (var operation in patchDoc.Operations)
             {
@@ -97,7 +96,6 @@ namespace MindMission.Infrastructure
                 }
             }
         }
-
 
     }
 

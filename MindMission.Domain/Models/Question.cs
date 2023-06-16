@@ -15,7 +15,7 @@ namespace MindMission.Domain.Models
         public int QuizId { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(500)]
         public string QuestionText { get; set; }
 
         [Required]
@@ -36,6 +36,8 @@ namespace MindMission.Domain.Models
 
         [Required]
         [StringLength(1)]
+        [RegularExpression("^[A-D]$")]
+
         [Unicode(false)]
         public string CorrectAnswer { get; set; }
 

@@ -20,12 +20,13 @@ using MindMission.Application.Services;
 using MindMission.Application.Services_Classes;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
 using Serilog;
 using Stripe;
 using System.Text;
+using MindMission.Application.CustomValidation;
+using MindMission.Application.DTOs.PostDtos;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -82,7 +83,6 @@ builder.Services.AddScoped(x =>
 
 /*  upload image */
 builder.Services.AddScoped<IUploadImage, UploadImageService>();
-builder.Services.AddScoped<ICoursePatchValidator, CoursePatchValidator>();
 
 /*Admin Configuration*/
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -110,9 +110,9 @@ builder.Services.AddScoped<IMappingService<Category, CategoryDto>, CategoryMappi
 /*Course Configuration*/
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<CourseMappingService, CourseMappingService>();
+builder.Services.AddScoped<ICoursePatchValidator, CoursePatchValidator>();
 builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingService>();
-builder.Services.AddScoped<IMappingService<Course, CourseCreateDto>, PostCourseMappingService>();
+builder.Services.AddScoped<IMappingService<Course, PostCourseDto>, PostCourseMappingService>();
 builder.Services.AddScoped<IMappingService<CourseRequirement, CourseRequirementCreateDto>, CourseRequirementMappingService>();
 builder.Services.AddScoped<IMappingService<EnrollmentItem, EnrollmentItemCreateDto>, EnrollmentItemMappingService>();
 builder.Services.AddScoped<IMappingService<LearningItem, LearningItemCreateDto>, LearningItemMappingService>();
@@ -175,8 +175,16 @@ builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingS
 /*Lesson Configuration*/
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<ILessonService, LessonService>();
-builder.Services.AddScoped<LessonMappingService, LessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, PostQuizLessonDto>, PostQuizLessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, PostArticleLessonDto>, PostArticleLessonMappingService>();
+builder.Services.AddScoped<IMappingService<Lesson, PostVideoLessonDto>, PostVideoLessonMappingService>();
+builder.Services.AddScoped<IMappingService<PostQuestionDto, QuestionDto>, PostQuestionMappingService>();
+builder.Services.AddScoped<IArticleLessonPatchValidator, ArticleLessonPatchValidator>();
+builder.Services.AddScoped<IQuizLessonPatchValidator, QuizLessonPatchValidator>();
+builder.Services.AddScoped<IVideoLessonPatchValidator, VideoLessonPatchValidator>();
+
+
 
 /*Attachment Configuration*/
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();

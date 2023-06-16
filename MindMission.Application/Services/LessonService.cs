@@ -14,7 +14,7 @@ namespace MindMission.Application.Services_Classes
         {
             _context = context;
         }
-
+        #region Get
         public Task<IQueryable<Lesson>> GetAllAsync()
         {
             return _context.GetAllAsync();
@@ -34,29 +34,6 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.GetByIdAsync(id, IncludeProperties);
         }
-
-        public Task<Lesson> AddAsync(Lesson entity)
-        {
-            return _context.AddAsync(entity);
-        }
-
-        public Task UpdateAsync(Lesson entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
-
-        public Task SoftDeleteAsync(int id)
-        {
-            return _context.SoftDeleteAsync(id);
-        }
-
-
-
 
         public Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId)
         {
@@ -87,5 +64,57 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.GetByLessonIdAsync(lessonId);
         }
+        #endregion
+        public Task<Lesson> AddAsync(Lesson entity)
+        {
+            return _context.AddAsync(entity);
+        }
+
+        public Task UpdateAsync(Lesson entity)
+        {
+            return _context.UpdateAsync(entity);
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            return _context.DeleteAsync(id);
+        }
+
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
+
+        public async Task<Lesson> AddArticleLessonAsync(Lesson lesson)
+        {
+            return await _context.AddArticleLessonAsync(lesson);
+        }
+        public async Task<Lesson> AddVideoLessonAsync(Lesson lesson)
+        {
+            return await _context.AddVideoLessonAsync(lesson);
+        }
+        public async Task<Lesson> AddQuizLessonAsync(Lesson lesson)
+        {
+            return await _context.AddQuizLessonAsync(lesson);
+        }
+        public async Task<Lesson> UpdateArticleLessonAsync(int id, Lesson lesson)
+        {
+            return await _context.UpdateArticleLessonAsync(id, lesson);
+        }
+
+        public async Task<Lesson> UpdateVideoLessonAsync(int id, Lesson lesson)
+        {
+            return await _context.UpdateVideoLessonAsync(id, lesson);
+        }
+
+        public async Task<Lesson> UpdateQuizLessonAsync(int id, Lesson lesson)
+        {
+            return await _context.UpdateQuizLessonAsync(id, lesson);
+        }
+        public async Task<Lesson> UpdateLessonPartialAsync(int id, Lesson lesson)
+        {
+            return await _context.UpdateLessonPartialAsync(id, lesson);
+        }
+
     }
 }

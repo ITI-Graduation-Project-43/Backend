@@ -1,4 +1,4 @@
-﻿using MindMission.Application.DTOs;
+﻿using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -6,7 +6,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping.Post
 {
-    public class PostCourseMappingService : IMappingService<Course, CourseCreateDto>
+    public class PostCourseMappingService : IMappingService<Course, PostCourseDto>
     {
         private readonly IMappingService<LearningItem, LearningItemCreateDto> _learningItemMappingService;
         private readonly IMappingService<EnrollmentItem, EnrollmentItemCreateDto> _enrollmentItemMappingService;
@@ -22,9 +22,9 @@ namespace MindMission.Application.Mapping.Post
             _courseRequirementMappingService = courseRequirementMappingService;
         }
 
-        public async Task<CourseCreateDto> MapEntityToDto(Course course)
+        public async Task<PostCourseDto> MapEntityToDto(Course course)
         {
-            var courseCreateDto = new CourseCreateDto
+            var courseCreateDto = new PostCourseDto
             {
                 Id = course.Id,
                 Title = course.Title,
@@ -45,7 +45,7 @@ namespace MindMission.Application.Mapping.Post
             return courseCreateDto;
         }
 
-        public Course MapDtoToEntity(CourseCreateDto courseCreateDto)
+        public Course MapDtoToEntity(PostCourseDto courseCreateDto)
         {
             var course = new Course
             {
