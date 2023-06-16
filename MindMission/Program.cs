@@ -176,6 +176,7 @@ builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingS
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
+builder.Services.AddScoped<IMappingService<PostQuestionDto, QuestionDto>, PostQuestionMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostQuizLessonDto>, PostQuizLessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostArticleLessonDto>, PostArticleLessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostVideoLessonDto>, PostVideoLessonMappingService>();
