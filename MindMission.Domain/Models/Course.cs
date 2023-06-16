@@ -1,22 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
     [Index(nameof(InstructorId), Name = "idx_courses_instructorid")]
-    public partial class Course : IEntity<int>
+    public partial class Course : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Course()
         {
-            Chapters = new HashSet<Chapter>();
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Enrollments = new HashSet<Enrollment>();
-            Wishlists = new HashSet<Wishlist>();
-            Instructor = new Instructor();
-            Category = new Category();
+
         }
 
         [Key]
@@ -104,8 +100,8 @@ namespace MindMission.Domain.Models
         #endregion
         public bool Published { get; set; } = false;
         public bool Approved { get; set; } = false;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
 
         [ForeignKey(nameof(CategoryId))]
         [InverseProperty("Courses")]
@@ -126,6 +122,8 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(Wishlist.Course))]
         public virtual ICollection<Wishlist> Wishlists { get; set; }
+        [InverseProperty(nameof(TimeTracking.Course))]
+        public ICollection<TimeTracking> TimeTrackings { get; set; }
 
 
         public ICollection<LearningItem> LearningItems { get; set; }

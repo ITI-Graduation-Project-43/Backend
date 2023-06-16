@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -8,14 +9,11 @@ namespace MindMission.Domain.Models
 {
     //[Index(nameof(Id), Name = "UQ__Students__1788CC4D11934C53", IsUnique = true)]
     //[Index(nameof(Id), Name = "idx_students_userid")]
-    public partial class Student : IEntity<string>
+    public partial class Student : BaseEntity, IEntity<string>, ISoftDeletable
     {
         public Student()
         {
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Enrollments = new HashSet<Enrollment>();
-            Wishlists = new HashSet<Wishlist>();
-            User = new User();
+
         }
 
         [Key]
@@ -43,8 +41,8 @@ namespace MindMission.Domain.Models
 
         public int NumCourses { get; set; }
         public int NumWishlist { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
 
         [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }
@@ -57,5 +55,8 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(Wishlist.Student))]
         public virtual ICollection<Wishlist> Wishlists { get; set; }
+
+        [InverseProperty(nameof(TimeTracking.Student))]
+        public ICollection<TimeTracking> TimeTrackings { get; set; }
     }
 }

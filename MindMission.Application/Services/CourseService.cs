@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
@@ -14,7 +15,7 @@ namespace MindMission.Application.Services
         {
             _context = context;
         }
-
+        #region Get
         public Task<IQueryable<Course>> GetAllAsync()
         {
             return _context.GetAllAsync();
@@ -35,20 +36,6 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id, IncludeProperties);
         }
 
-        public Task<Course> AddAsync(Course entity)
-        {
-            return _context.AddAsync(entity);
-        }
-
-        public Task UpdateAsync(Course entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
 
         public async Task<Course> GetByNameAsync(string name)
         {
@@ -104,9 +91,39 @@ namespace MindMission.Application.Services
         {
             return await _context.GetFeatureThisWeekCourse();
         }
+        #endregion
+
+        public Task<Course> AddAsync(Course entity)
+        {
+            return _context.AddAsync(entity);
+        }
+
+        public Task UpdateAsync(Course entity)
+        {
+            return _context.UpdateAsync(entity);
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            return _context.DeleteAsync(id);
+        }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
+
         public async Task<Course> AddCourseAsync(Course course)
         {
             return await _context.AddCourseAsync(course);
         }
+        public async Task<Course> UpdateCourseAsync(int id, Course course)
+        {
+            return await _context.UpdateCourseAsync(id, course);
+        }
+        public async Task<Course> UpdateCoursePartialAsync(int id, Course course)
+        {
+            return await _context.UpdateCoursePartialAsync(id, course);
+        }
     }
 }
+

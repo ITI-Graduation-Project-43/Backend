@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Permission : IEntity<int>
+    public partial class Permission : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Permission()
         {
-            AdminPermissions = new HashSet<AdminPermission>();
         }
 
         [Key]
@@ -23,6 +23,8 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         [Unicode(false)]
         public string Description { get; set; }
+        public bool IsDeleted { get; set; } = false;
+
 
         [InverseProperty(nameof(AdminPermission.Permission))]
         public virtual ICollection<AdminPermission> AdminPermissions { get; set; }

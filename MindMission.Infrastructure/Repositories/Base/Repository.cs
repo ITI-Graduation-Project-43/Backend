@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace MindMission.Infrastructure.Repositories.Base
 {
-    public class Repository<TClass, TDataType> : IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, new()
+    public class Repository<TClass, TDataType> : IRepository<TClass, TDataType> where TClass : class, IEntity<TDataType>, ISoftDeletable, new()
     {
         private readonly MindMissionDbContext _context;
         private readonly DbSet<TClass> _dbSet;
@@ -19,7 +19,8 @@ namespace MindMission.Infrastructure.Repositories.Base
 
         public async Task<IQueryable<TClass>> GetAllAsync()
         {
-            return await Task.FromResult(_dbSet);
+            var Query = await _dbSet.ToListAsync();
+            return Query.AsQueryable();
         }
 
         public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
@@ -73,6 +74,20 @@ namespace MindMission.Infrastructure.Repositories.Base
             await _context.SaveChangesAsync();
         }
 
+        public async Task SoftDeleteAsync(TDataType id)
+        {
+            var entity = await _context.Set<TClass>().FindAsync(id);
+            if (entity != null)
+            {
+                entity.IsDeleted = true;
+                _context.Entry(entity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"No entity with id {id} found.");
+            }
+        }
 
 
     }

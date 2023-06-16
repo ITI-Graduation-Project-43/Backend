@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
     [Index(nameof(CourseId), Name = "idx_chapters_courseid")]
-    public partial class Chapter : IEntity<int>
+    public partial class Chapter : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Chapter()
         {
-            Lessons = new HashSet<Lesson>();
-            Course = new Course();
+
         }
 
         [Key]
@@ -26,8 +26,8 @@ namespace MindMission.Domain.Models
 
         public int NoOfLessons { get; set; }
         public float NoOfHours { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Chapters")]

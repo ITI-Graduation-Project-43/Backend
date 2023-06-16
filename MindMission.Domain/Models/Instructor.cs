@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Instructor : IEntity<string>
+    public partial class Instructor : BaseEntity, IEntity<string>, ISoftDeletable
     {
         public Instructor()
         {
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Courses = new HashSet<Course>();
-            User = new User();
+
         }
 
         [Required]
@@ -55,8 +54,8 @@ namespace MindMission.Domain.Models
         public int NoOfStudents { get; set; }
         public double? AvgRating { get; set; }
         public int NoOfRatings { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
 
         [ForeignKey(nameof(Id))]
         public virtual User User { get; set; }

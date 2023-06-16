@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.PostDtos
 {
-    public class CourseCreateDto
+    public class PostCourseDto
     {
-
+        public int Id { get; set; }
         [Required]
         [StringLength(200)]
         public string Title { get; set; } = string.Empty;
@@ -18,10 +18,9 @@ namespace MindMission.Application.DTOs
         [Required]
         [StringLength(2048)]
         public string Description { get; set; } = string.Empty;
-
         [Required]
-        [EnumDataType(typeof(CategoryType))]
-        public CategoryType Category { get; set; }
+
+        public int CategoryId { get; set; }
 
         [Required]
         [EnumDataType(typeof(Language))]

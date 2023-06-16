@@ -32,7 +32,7 @@ namespace MindMission.API.Controllers.Base
         {
             var dtoResults = new List<TDto>();
 
-            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Enrollment) || typeof(TEntity) == typeof(Wishlist))
+            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Wishlist) || typeof(TEntity) == typeof(Enrollment))
             {
                 // Run the mapping sequentially for Student and Instructor types.
                 foreach (var entity in entities)
@@ -274,9 +274,6 @@ namespace MindMission.API.Controllers.Base
                 return BadRequest(BadRequestResponse("Patch document cannot be null."));
 
             }
-
-
-
 
             patchDocument.ApplyTo(dto, error => ModelState.AddModelError("JsonPatch", error.ErrorMessage));
 

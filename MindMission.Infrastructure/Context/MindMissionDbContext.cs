@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using MindMission.Domain.Models.Base;
+using System.Reflection.Emit;
 
 namespace MindMission.Infrastructure.Context
 {
@@ -25,11 +27,13 @@ namespace MindMission.Infrastructure.Context
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<Quiz> Quizzes { get; set; }
         public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<TimeTracking> TimeTrackings { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserAccount> UserAccounts { get; set; }
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<WebsiteFeedback> WebsiteFeedbacks { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
+
 
         public MindMissionDbContext(DbContextOptions<MindMissionDbContext> options) : base(options)
         {
@@ -37,6 +41,15 @@ namespace MindMission.Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    builder.Entity(entityType.ClrType).Property("CreatedAt").HasDefaultValueSql("getdate()");
+                    builder.Entity(entityType.ClrType).Property("UpdatedAt").HasDefaultValueSql("getdate()");
+                }
+            }
             base.OnModelCreating(builder);
             builder.Entity<Account>(entity =>
             {
@@ -45,8 +58,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Admin>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Email).IsUnicode(false);
 
@@ -62,7 +73,6 @@ namespace MindMission.Infrastructure.Context
                 entity.HasKey(e => new { e.Id, e.PermissionId })
                     .HasName("PK__AdminPer__9F658B3A6B1E0167");
 
-                entity.Property(e => e.GrantedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.HasOne(d => d.Admin)
@@ -80,8 +90,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Article>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.HasOne(d => d.Lesson)
@@ -93,8 +101,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Attachment>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.HasOne(d => d.Lesson)
@@ -106,8 +112,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Category>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Name).IsUnicode(false);
                 entity.Property(e => e.Type).HasConversion(new EnumToStringConverter<CategoryType>());
@@ -123,8 +127,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Chapter>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Title).IsUnicode(false);
 
@@ -137,8 +139,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Course>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.Property(e => e.Description).IsUnicode(false);
@@ -168,8 +168,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<CourseFeedback>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.CourseFeedbacks)
@@ -194,10 +192,6 @@ namespace MindMission.Infrastructure.Context
             {
                 entity.Property(e => e.Content).IsUnicode(false);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
-
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Discussions)
                     .HasForeignKey(d => d.LessonId)
@@ -212,7 +206,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Enrollment>(entity =>
             {
-                entity.Property(e => e.EnrollmentDate).HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Enrollments)
@@ -231,10 +224,6 @@ namespace MindMission.Infrastructure.Context
             {
                 entity.Property(e => e.Bio).IsUnicode(false);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
-
                 entity.Property(e => e.Description).IsUnicode(false);
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
@@ -248,9 +237,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Lesson>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
 
                 entity.Property(e => e.Type).HasConversion(new EnumToStringConverter<LessonType>());
 
@@ -274,9 +260,6 @@ namespace MindMission.Infrastructure.Context
                     .IsUnicode(false)
                     .IsFixedLength();
 
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
 
                 entity.HasOne(d => d.Quiz)
                     .WithMany(p => p.Questions)
@@ -287,8 +270,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Quiz>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.HasOne(d => d.Lesson)
@@ -302,9 +283,6 @@ namespace MindMission.Infrastructure.Context
             {
                 entity.Property(e => e.Bio).IsUnicode(false).IsRequired(false);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
 
@@ -316,16 +294,12 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<User>(entity =>
             {
                 entity.Ignore(e => e.UserName);
-                
+
                 entity.Ignore(e => e.NormalizedUserName);
 
                 entity.HasIndex(e => e.Email).IsUnique();
 
                 entity.Property(e => e.Email).IsRequired();
-
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
@@ -335,9 +309,6 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<UserAccount>(entity =>
             {
                 entity.Property(e => e.AccountLink).IsUnicode(false);
-
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
 
                 entity.HasOne(d => d.Account)
@@ -349,9 +320,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Video>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
-
 
                 entity.HasOne(d => d.Lesson)
                     .WithMany(p => p.Videos)
@@ -362,15 +330,12 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<WebsiteFeedback>(entity =>
             {
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FeedbackText).IsUnicode(false);
             });
 
             builder.Entity<Wishlist>(entity =>
             {
-                entity.Property(e => e.AddedDate).HasDefaultValueSql("(getdate())");
-
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Wishlists)
                     .HasForeignKey(d => d.CourseId)
@@ -382,6 +347,21 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
+            });
+
+            builder.Entity<TimeTracking>(entity =>
+            {
+                entity.HasOne(d => d.Course)
+                    .WithMany(p => p.TimeTrackings)
+                    .HasForeignKey(d => d.CourseId)
+                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .HasConstraintName("FK__timeTrackings__Cours__59C55456");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.TimeTrackings)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .HasConstraintName("FK__timeTrackings__Stude__5AB9788F");
             });
         }
     }

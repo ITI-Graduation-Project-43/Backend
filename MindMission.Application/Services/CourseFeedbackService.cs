@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 
@@ -12,7 +13,10 @@ namespace MindMission.Application.Services
         {
             CourseFeedbackRepository = _CourseFeedbackRepository;
         }
-
+        public Task SoftDeleteAsync(int id)
+        {
+            return CourseFeedbackRepository.SoftDeleteAsync(id);
+        }
         public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseId(int CourseId)
         {
             return await CourseFeedbackRepository.GetFeedbackByCourseId(CourseId);
