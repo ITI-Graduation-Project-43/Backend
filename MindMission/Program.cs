@@ -48,7 +48,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    //options.LogTo(Console.WriteLine, LogLevel.Information);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 /*JWT Configuration*/

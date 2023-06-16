@@ -1449,7 +1449,7 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Instructor", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Instructors")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1504,7 +1504,7 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1653,13 +1653,6 @@ namespace MindMission.API.Migrations
                     b.Navigation("Enrollments");
 
                     b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("MindMission.Domain.Models.User", b =>
-                {
-                    b.Navigation("Instructors");
-
-                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }

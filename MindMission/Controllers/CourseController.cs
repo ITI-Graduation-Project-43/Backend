@@ -205,7 +205,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("Test")]
-        public async Task<IActionResult> Post([FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
+        public async Task<IActionResult> Post(CourseCreateDto postCourseDto)
         {
 
             if (!ModelState.IsValid)
@@ -241,36 +241,36 @@ namespace MindMission.API.Controllers
                 return BadRequest("EnrollmentItems are invalid.");
             }
             // Check if a file is uploaded
-            if (courseImg == null || courseImg.Length == 0)
-            {
-                return BadRequest("No file was uploaded.");
-            }
+            //if (courseImg == null || courseImg.Length == 0)
+            //{
+            //    return BadRequest("No file was uploaded.");
+            //}
 
-            // Validate the file size
-            if (courseImg.Length > 10_000_000) // 10 MB
-            {
-                return BadRequest("The file is too large. The maximum allowed size is 10 MB.");
-            }
+            //// Validate the file size
+            //if (courseImg.Length > 10_000_000) // 10 MB
+            //{
+            //    return BadRequest("The file is too large. The maximum allowed size is 10 MB.");
+            //}
 
-            // Validate the file extension
-            var allowedExtensions = new[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" };
-            var extension = Path.GetExtension(courseImg.FileName).ToLowerInvariant();
+            //// Validate the file extension
+            //var allowedExtensions = new[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" };
+            //var extension = Path.GetExtension(courseImg.FileName).ToLowerInvariant();
 
-            if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
-            {
-                return BadRequest($"Invalid file extension. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
-            }
+            //if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+            //{
+            //    return BadRequest($"Invalid file extension. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+            //}
 
-            // Upload the file and save the URL
-            string fileName = Guid.NewGuid().ToString() + extension;
+            //// Upload the file and save the URL
+            //string fileName = Guid.NewGuid().ToString() + extension;
 
-            BlobClient blobClient = containerClient.GetBlobClient(fileName);
-            using (Stream stream = courseImg.OpenReadStream())
-            {
-                await blobClient.UploadAsync(stream, true);
-            }
+            //BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            //using (Stream stream = courseImg.OpenReadStream())
+            //{
+            //    await blobClient.UploadAsync(stream, true);
+            //}
 
-            postCourseDto.CourseImage = blobClient.Uri.ToString();
+            //postCourseDto.CourseImage = blobClient.Uri.ToString();
 
             // Map the course create DTO to a course entity.
             var courseToCreate = _postCourseMappingService.MapDtoToEntity(postCourseDto);
