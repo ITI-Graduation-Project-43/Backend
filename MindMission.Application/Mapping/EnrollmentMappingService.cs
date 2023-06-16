@@ -25,14 +25,16 @@ namespace MindMission.Application.Mapping
                 Id = Enrollment.Id,
                 EnrollmentDate = Enrollment.EnrollmentDate
             };
-            var course = await _CourseService.GetByIdAsync(Enrollment.CourseId);
+            var course = await _CourseService.GetByIdAsync(Enrollment.CourseId,en=>en.Category);
             if (course != null)
             {
                 EnrollmentDto.CourseId = course.Id;
                 EnrollmentDto.CourseTitle = course.Title;
-                EnrollmentDto.CourseShortDescription = course.ShortDescription;
+                EnrollmentDto.CourseDescription = course.Description;
                 EnrollmentDto.CourseImageUrl = course.ImageUrl;
                 EnrollmentDto.CoursePrice = course.Price;
+                EnrollmentDto.CourseAvgReview = course.AvgReview;
+                EnrollmentDto.CategoryName = course.Category.Name;
             }
             var student = await _StudentService.GetByIdAsync(Enrollment.StudentId);
             if (student != null)
@@ -47,7 +49,6 @@ namespace MindMission.Application.Mapping
         {
             return new Enrollment
             {
-                Id = EnrollmentDto.Id,
                 EnrollmentDate = EnrollmentDto.EnrollmentDate,
                 CourseId = EnrollmentDto.CourseId,
                 StudentId = EnrollmentDto.StudentId

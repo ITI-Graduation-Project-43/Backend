@@ -46,7 +46,7 @@ namespace MindMission.API.Controllers
         }
 
         // GET: api/Enrollment/{EnrollmentId}
-        [HttpGet("{EnrollmentId}")]
+        [HttpGet("{EnrollmentId}",Name = "GetEnrollmentById")]
         public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int EnrollmentId)
         {
             return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(EnrollmentId), "Enrollment");
@@ -60,7 +60,13 @@ namespace MindMission.API.Controllers
         [HttpPost]
         public async Task<ActionResult<EnrollmentDto>> AddEnrollment([FromBody] EnrollmentDto EnrollmentDTO)
         {
-            return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
+            var enrollment = _EnrollmentMappingService.MapDtoToEntity(EnrollmentDTO);
+            var addedEnrollment = _EnrollmentService.AddAsync(enrollment);
+            return Ok(new
+            {
+                EnrollmentId = addedEnrollment.Id
+            });
+			//return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
         }
 
         #endregion Add
