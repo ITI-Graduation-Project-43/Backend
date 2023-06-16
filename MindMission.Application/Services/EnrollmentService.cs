@@ -57,9 +57,13 @@ namespace MindMission.Application.Services
             return await _context.GetByIdAsync(id, IncludeProperties);
         }
 
-        public Task UpdateAsync(Enrollment entity)
+        public Task<Enrollment> UpdateAsync(Enrollment entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public async Task<Enrollment> UpdatePartialAsync(int id, Enrollment entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
         }
     }
 }

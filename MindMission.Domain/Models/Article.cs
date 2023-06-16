@@ -15,12 +15,12 @@ namespace MindMission.Domain.Models
         public int LessonId { get; set; }
 
         [Required]
-        public string Content { get; set; } = string.Empty;
+        public string? Content { get; set; }
 
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(LessonId))]
-        [InverseProperty("Articles")]
-        public virtual Lesson Lesson { get; set; } = new();
+        [InverseProperty("Article")]
+        public virtual Lesson Lesson { get; set; }
     }
 }

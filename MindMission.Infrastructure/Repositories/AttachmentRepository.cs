@@ -15,7 +15,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task PostAttachmentAsync(Lesson lesson, Attachment attachment)
         {
-            lesson.Attachments.Add(attachment);
+            lesson.Attachment = attachment;
             await _context.SaveChangesAsync();
         }
 

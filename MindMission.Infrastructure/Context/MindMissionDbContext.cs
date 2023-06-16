@@ -88,11 +88,9 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Article>(entity =>
             {
-
-
                 entity.HasOne(d => d.Lesson)
-                    .WithMany(p => p.Articles)
-                    .HasForeignKey(d => d.LessonId)
+                    .WithOne(p => p.Article)
+                    .HasForeignKey<Article>(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Articles__Lesson__395884C4");
             });
@@ -102,8 +100,8 @@ namespace MindMission.Infrastructure.Context
 
 
                 entity.HasOne(d => d.Lesson)
-                    .WithMany(p => p.Attachments)
-                    .HasForeignKey(d => d.LessonId)
+                    .WithOne(p => p.Attachment)
+                    .HasForeignKey<Attachment>(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Attachmen__Lesso__3D2915A8");
             });
@@ -271,8 +269,8 @@ namespace MindMission.Infrastructure.Context
 
 
                 entity.HasOne(d => d.Lesson)
-                    .WithMany(p => p.Quizzes)
-                    .HasForeignKey(d => d.LessonId)
+                    .WithOne(p => p.Quiz)
+                    .HasForeignKey<Quiz>(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Quizzes__LessonI__2B0A656D");
             });
@@ -320,8 +318,8 @@ namespace MindMission.Infrastructure.Context
             {
 
                 entity.HasOne(d => d.Lesson)
-                    .WithMany(p => p.Videos)
-                    .HasForeignKey(d => d.LessonId)
+                    .WithOne(p => p.Video)
+                    .HasForeignKey<Video>(d => d.LessonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Videos__LessonId__3587F3E0");
             });

@@ -40,9 +40,13 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Category entity)
+        public Task<Category> UpdateAsync(Category entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public Task<Category> UpdatePartialAsync(int id, Category entity)
+        {
+            return _context.UpdatePartialAsync(id, entity);
         }
 
         public Task DeleteAsync(int id)

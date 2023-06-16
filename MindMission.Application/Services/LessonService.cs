@@ -70,11 +70,14 @@ namespace MindMission.Application.Services_Classes
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Lesson entity)
+        public Task<Lesson> UpdateAsync(Lesson entity)
         {
             return _context.UpdateAsync(entity);
         }
-
+        public async Task<Lesson> UpdatePartialAsync(int id, Lesson entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);

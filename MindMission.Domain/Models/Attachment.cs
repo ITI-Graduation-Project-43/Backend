@@ -25,7 +25,7 @@ namespace MindMission.Domain.Models
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(LessonId))]
-        [InverseProperty("Attachments")]
+        [InverseProperty("Attachment")]
         public virtual Lesson Lesson { get; set; } = new Lesson();
 
         [Required]

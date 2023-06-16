@@ -53,9 +53,13 @@ namespace MindMission.Application.Services
             return await _context.GetUserAccountsAsync(id);
         }
 
-        public Task UpdateAsync(UserAccount entity)
+        public Task<UserAccount> UpdateAsync(UserAccount entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public async Task<UserAccount> UpdatePartialAsync(int id, UserAccount entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MindMission.Domain.Models
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(LessonId))]
-        [InverseProperty("Videos")]
+        [InverseProperty("Video")]
         public virtual Lesson Lesson { get; set; }
     }
 }

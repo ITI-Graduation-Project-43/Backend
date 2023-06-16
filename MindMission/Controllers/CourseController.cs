@@ -423,7 +423,7 @@ namespace MindMission.API.Controllers
 
                 courseInDb = _postCourseMappingService.MapDtoToEntity(courseToUpdateDto);
 
-                var updatedCourseEntity = await _courseService.UpdateCoursePartialAsync(id, courseInDb);
+                var updatedCourseEntity = await _courseService.UpdatePartialAsync(id, courseInDb);
 
                 var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourseEntity);
 

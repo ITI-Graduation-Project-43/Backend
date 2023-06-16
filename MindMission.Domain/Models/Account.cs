@@ -10,7 +10,6 @@ namespace MindMission.Domain.Models
     {
         public Account()
         {
-            UserAccounts = new HashSet<UserAccount>();
         }
 
         [Key]
@@ -21,9 +20,9 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         [EnumDataType(typeof(UserAccount))]
         public string AccountType { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         [InverseProperty(nameof(UserAccount.Account))]
         public virtual ICollection<UserAccount> UserAccounts { get; set; }
-        public bool IsDeleted { get; set; } = false;
     }
 }

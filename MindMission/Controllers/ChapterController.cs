@@ -2,6 +2,7 @@
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
@@ -13,9 +14,9 @@ namespace MindMission.API.Controllers
     public class ChapterController : BaseController<Chapter, ChapterDto, int>
     {
         private readonly IChapterService _chapterService;
-        private readonly ChapterMappingService _chapterMappingService;
+        private readonly IMappingService<Chapter, ChapterDto> _chapterMappingService;
 
-        public ChapterController(IChapterService chapterService, ChapterMappingService chapterMappingService) :
+        public ChapterController(IChapterService chapterService, IMappingService<Chapter, ChapterDto> chapterMappingService) :
             base(chapterMappingService)
         {
             _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));

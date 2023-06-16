@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
@@ -23,10 +24,10 @@ namespace MindMission.Infrastructure.Repositories
             return await _context.Lessons
                         .Include(lesson => lesson.Chapter)
                         .ThenInclude(chapter => chapter.Course)
-                        .Include(lesson => lesson.Articles)
-                        .Include(lesson => lesson.Quizzes)
+                        .Include(lesson => lesson.Article)
+                        .Include(lesson => lesson.Quiz)
                         .ThenInclude(quiz => quiz.Questions)
-                        .Include(lesson => lesson.Videos)
+                        .Include(lesson => lesson.Video)
                         .SingleOrDefaultAsync(lesson => lesson.Id == lessonId);
         }
 
@@ -90,12 +91,9 @@ namespace MindMission.Infrastructure.Repositories
         {
 
             _context.Lessons.Add(lesson);
-            if (lesson.Articles != null)
+            if (lesson.Article != null)
             {
-                foreach (var article in lesson.Articles)
-                {
-                    _context.Entry(article).State = EntityState.Added;
-                }
+                _context.Entry(lesson.Article).State = EntityState.Added;
             }
             await _context.SaveChangesAsync();
             return lesson;
@@ -104,12 +102,9 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Lesson> AddVideoLessonAsync(Lesson lesson)
         {
             _context.Lessons.Add(lesson);
-            if (lesson.Videos != null)
+            if (lesson.Video != null)
             {
-                foreach (var video in lesson.Videos)
-                {
-                    _context.Entry(video).State = EntityState.Added;
-                }
+                _context.Entry(lesson.Video).State = EntityState.Added;
             }
             await _context.SaveChangesAsync();
             return lesson;
@@ -118,18 +113,15 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Lesson> AddQuizLessonAsync(Lesson lesson)
         {
             _context.Lessons.Add(lesson);
-            if (lesson.Quizzes != null)
+            if (lesson.Quiz != null)
             {
-                foreach (var quiz in lesson.Quizzes)
-                {
-                    _context.Entry(quiz).State = EntityState.Added;
+                _context.Entry(lesson.Quiz).State = EntityState.Added;
 
-                    if (quiz.Questions != null)
+                if (lesson.Quiz.Questions != null)
+                {
+                    foreach (var question in lesson.Quiz.Questions)
                     {
-                        foreach (var question in quiz.Questions)
-                        {
-                            _context.Entry(question).State = EntityState.Added;
-                        }
+                        _context.Entry(question).State = EntityState.Added;
                     }
                 }
             }
@@ -140,25 +132,24 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Lesson> UpdateArticleLessonAsync(int id, Lesson lesson)
         {
             var lessonInDb = await _context.Lessons
-                                           .Include(l => l.Articles)
-                                           .SingleOrDefaultAsync(l => l.Id == id) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Lesson with id {id}"));
+                                            .Include(l => l.Article)
+                                            .SingleOrDefaultAsync(l => l.Id == id)
+                                            ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Lesson with id {id}"));
 
             _context.Entry(lessonInDb).CurrentValues.SetValues(lesson);
 
-            if (lessonInDb.Articles != null)
+            if (lessonInDb.Article != null)
             {
-                foreach (var article in lessonInDb.Articles.ToList())
-                {
-                    _context.Entry(article).State = EntityState.Deleted;
-                }
-                lessonInDb.Articles.Clear();
+                _context.Entry(lessonInDb.Article).State = EntityState.Deleted;
+                lessonInDb.Article = null;
             }
-            if (lesson.Articles != null)
+
+            if (lesson.Article != null)
             {
-                foreach (var article in lesson.Articles)
+                lessonInDb.Article = new Article
                 {
-                    lessonInDb.Articles?.Add(article);
-                }
+                    Content = lesson.Article.Content
+                };
             }
 
             _context.Lessons.Update(lessonInDb);
@@ -166,29 +157,28 @@ namespace MindMission.Infrastructure.Repositories
 
             return lessonInDb;
         }
+
         public async Task<Lesson> UpdateVideoLessonAsync(int id, Lesson lesson)
         {
             var lessonInDb = await _context.Lessons
-                                           .Include(l => l.Videos)
+                                           .Include(l => l.Video)
                                            .SingleOrDefaultAsync(l => l.Id == id) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Lesson with id {id}"));
 
             _context.Entry(lessonInDb).CurrentValues.SetValues(lesson);
 
-            if (lessonInDb.Videos != null)
+            if (lessonInDb.Video != null)
             {
-                foreach (var video in lessonInDb.Videos.ToList())
-                {
-                    _context.Entry(video).State = EntityState.Deleted;
-                }
-                lessonInDb.Videos.Clear();
+                _context.Entry(lessonInDb.Video).State = EntityState.Deleted;
+                lessonInDb.Video = null;
             }
-            if (lesson.Videos != null)
+            if (lesson.Video != null)
             {
-                foreach (var video in lesson.Videos)
+                lesson.Video = new Video
                 {
-                    lessonInDb.Videos?.Add(video);
-                }
+                    VideoUrl = lesson.Video.VideoUrl
+                };
             }
+
 
             _context.Lessons.Update(lessonInDb);
             await _context.SaveChangesAsync();
@@ -199,34 +189,28 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Lesson> UpdateQuizLessonAsync(int id, Lesson lesson)
         {
             var lessonInDb = await _context.Lessons
-                                           .Include(l => l.Quizzes)
+                                           .Include(l => l.Quiz)
                                            .ThenInclude(q => q.Questions)
                                            .SingleOrDefaultAsync(l => l.Id == id) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Lesson with id {id}"));
 
             _context.Entry(lessonInDb).CurrentValues.SetValues(lesson);
 
-            if (lessonInDb.Quizzes != null)
+            if (lessonInDb.Quiz != null)
             {
-                foreach (var quiz in lessonInDb.Quizzes.ToList())
+                if (lessonInDb.Quiz.Questions != null)
                 {
-                    if (quiz.Questions != null)
+                    foreach (var question in lessonInDb.Quiz.Questions.ToList())
                     {
-                        foreach (var question in quiz.Questions.ToList())
-                        {
-                            _context.Entry(question).State = EntityState.Deleted;
-                        }
-                        quiz.Questions.Clear();
+                        _context.Entry(question).State = EntityState.Deleted;
                     }
-                    _context.Entry(quiz).State = EntityState.Deleted;
+                    lessonInDb.Quiz.Questions.Clear();
                 }
-                lessonInDb.Quizzes.Clear();
+                _context.Entry(lessonInDb.Quiz).State = EntityState.Deleted;
+                lessonInDb.Quiz = null;
             }
-            if (lesson.Quizzes != null)
+            if (lesson.Quiz != null)
             {
-                foreach (var quiz in lesson.Quizzes)
-                {
-                    lessonInDb.Quizzes?.Add(quiz);
-                }
+                lessonInDb.Quiz = lesson.Quiz;
             }
 
             _context.Lessons.Update(lessonInDb);

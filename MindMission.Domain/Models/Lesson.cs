@@ -41,19 +41,15 @@ namespace MindMission.Domain.Models
         [InverseProperty("Lessons")]
         public virtual Chapter Chapter { get; set; }
 
-        [InverseProperty(nameof(Article.Lesson))]
-        public virtual ICollection<Article> Articles { get; set; }
-
-        [InverseProperty(nameof(Attachment.Lesson))]
-        public virtual ICollection<Attachment> Attachments { get; set; }
 
         [InverseProperty(nameof(Discussion.Lesson))]
         public virtual ICollection<Discussion> Discussions { get; set; }
 
-        [InverseProperty(nameof(Quiz.Lesson))]
-        public virtual ICollection<Quiz> Quizzes { get; set; }
 
-        [InverseProperty(nameof(Video.Lesson))]
-        public virtual ICollection<Video> Videos { get; set; }
+        public virtual Attachment Attachment { get; set; }
+
+        public virtual Article Article { get; set; }
+        public virtual Quiz Quiz { get; set; }
+        public virtual Video Video { get; set; }
     }
 }

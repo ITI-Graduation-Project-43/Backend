@@ -29,11 +29,14 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Permission entity)
+        public Task<Permission> UpdateAsync(Permission entity)
         {
             return _context.UpdateAsync(entity);
         }
-
+        public async Task<Permission> UpdatePartialAsync(int id, Permission entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);

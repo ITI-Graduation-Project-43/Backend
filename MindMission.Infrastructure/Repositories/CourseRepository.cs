@@ -361,11 +361,6 @@ namespace MindMission.Infrastructure.Repositories
             return courseInDb;
         }
 
-        public async Task<Course> UpdateCoursePartialAsync(int id, Course course)
-        {
-            _context.Entry(course).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return course;
-        }
+
     }
 }

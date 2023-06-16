@@ -1,7 +1,9 @@
 ﻿using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Common;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
+using System.Security.Principal;
 
 namespace MindMission.Application.Services
 {
@@ -45,11 +47,14 @@ namespace MindMission.Application.Services
             return _context.SoftDeleteAsync(id);
         }
 
-        Task IRepository<Admin, int>.UpdateAsync(Admin entity)
+        Task<Admin> IRepository<Admin, int>.UpdateAsync(Admin entity)
         {
             return _context.UpdateAsync(entity);
         }
 
-
+        public Task<Admin> UpdatePartialAsync(int id, Admin entity)
+        {
+            return _context.UpdatePartialAsync(id, entity);
+        }
     }
 }

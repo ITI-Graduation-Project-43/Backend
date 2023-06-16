@@ -19,13 +19,14 @@ namespace MindMission.Application.Mapping.Post
         {
             var postQuizLessonDto = new PostQuizLessonDto
             {
+                ChapterId = lesson.ChapterId,
                 LessonId = lesson.Id,
                 Title = lesson.Title,
                 Description = lesson.Description,
                 NoOfHours = lesson.NoOfHours,
                 IsFree = lesson.IsFree,
-                Questions = lesson.Quizzes != null
-                    ? (await Task.WhenAll(lesson.Quizzes.SelectMany(q => q.Questions)
+                Questions = lesson.Quiz != null
+                    ? (await Task.WhenAll(lesson.Quiz.Questions
                         .Select(q => _questionMappingService.MapEntityToDto(q)))).ToList()
                     : new List<PostQuestionDto>()
             };
@@ -37,6 +38,7 @@ namespace MindMission.Application.Mapping.Post
         {
             var lesson = new Lesson
             {
+                ChapterId = postQuizLessonDto.ChapterId,
                 Id = postQuizLessonDto.LessonId,
                 Title = postQuizLessonDto.Title,
                 Description = postQuizLessonDto.Description,
@@ -59,7 +61,7 @@ namespace MindMission.Application.Mapping.Post
                     quiz.Questions.Add(question);
                 }
 
-                lesson.Quizzes = new List<Quiz> { quiz };
+                lesson.Quiz = quiz;
             }
 
             return lesson;

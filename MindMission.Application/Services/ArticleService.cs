@@ -49,9 +49,13 @@ namespace MindMission.Application.Services
             return _context.SoftDeleteAsync(id);
         }
 
-        Task IRepository<Article, int>.UpdateAsync(Article entity)
+        Task<Article> IRepository<Article, int>.UpdateAsync(Article entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public Task<Article> UpdatePartialAsync(int id, Article entity)
+        {
+            return _context.UpdatePartialAsync(id, entity);
         }
     }
 }

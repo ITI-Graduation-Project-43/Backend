@@ -98,7 +98,7 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Course entity)
+        public Task<Course> UpdateAsync(Course entity)
         {
             return _context.UpdateAsync(entity);
         }
@@ -120,10 +120,11 @@ namespace MindMission.Application.Services
         {
             return await _context.UpdateCourseAsync(id, course);
         }
-        public async Task<Course> UpdateCoursePartialAsync(int id, Course course)
+        public async Task<Course> UpdatePartialAsync(int id, Course entity)
         {
-            return await _context.UpdateCoursePartialAsync(id, course);
+            return await _context.UpdatePartialAsync(id, entity);
         }
+
     }
 }
 

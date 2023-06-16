@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using Stripe;
 using System.Linq.Expressions;
 
 namespace MindMission.Infrastructure.Repositories.Base
@@ -62,11 +64,19 @@ namespace MindMission.Infrastructure.Repositories.Base
             return entity;
         }
 
-        public async Task UpdateAsync(TClass entity)
+        public async Task<TClass> UpdateAsync(TClass entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
+        public async Task<TClass> UpdatePartialAsync(TDataType id, TClass entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
 
         public async Task DeleteAsync(TDataType id)
         {

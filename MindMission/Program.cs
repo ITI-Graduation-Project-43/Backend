@@ -27,6 +27,7 @@ using Stripe;
 using System.Text;
 using MindMission.Application.CustomValidation;
 using MindMission.Application.DTOs.PostDtos;
+using MindMission.Application.Interfaces.DtoValidator;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -89,6 +90,16 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 
+
+#region Article 
+/*Article Configuration*/
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
+builder.Services.AddScoped<IMappingService<Article, PostArticleDto>, PostArticleMappingService>();
+builder.Services.AddScoped<IArticleDtoValidator, ArticleDtoValidator>();
+
+#endregion
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
@@ -142,11 +153,7 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
 builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
 
-/*Article Configuration*/
-builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
-builder.Services.AddScoped<IArticleService, ArticleService>();
-builder.Services.AddScoped<ArticleMappingService, ArticleMappingService>();
-builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
+
 
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -169,8 +176,8 @@ builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>()
 /*Chapter Configuration*/
 builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
 builder.Services.AddScoped<IChapterService, ChapterService>();
-builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
 builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
+builder.Services.AddScoped<IMappingService<Chapter, PostChapterDto>, PostChapterMappingService>();
 
 /*Lesson Configuration*/
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
