@@ -35,9 +35,9 @@ namespace MindMission.Application.Mapping.Post
                 Price = course.Price,
                 InstructorId = course.InstructorId,
                 CourseImage = course.ImageUrl,
-                LearningItems = (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList(),
-                EnrollmentItems = (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList(),
-                CourseRequirements = (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList(),
+                LearningItems = course.LearningItems != null ? (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList() : new List<LearningItemCreateDto>(),
+                EnrollmentItems = course.EnrollmentItems != null ? (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList() : new List<EnrollmentItemCreateDto>(),
+                CourseRequirements = course.CourseRequirements != null ? (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList() : new List<CourseRequirementCreateDto>(),
                 CategoryId = course.CategoryId,
 
             };
@@ -49,6 +49,7 @@ namespace MindMission.Application.Mapping.Post
         {
             var course = new Course
             {
+                Id = courseCreateDto.Id,
                 Title = courseCreateDto.Title,
                 ShortDescription = courseCreateDto.ShortDescription,
                 Description = courseCreateDto.Description,

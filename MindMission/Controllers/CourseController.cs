@@ -1,17 +1,17 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
+using MindMission.Application.Interfaces.Patch;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-using System.Collections.Generic;
+using MindMission.Application.Exceptions;
 
 namespace MindMission.API.Controllers
 {
@@ -21,16 +21,16 @@ namespace MindMission.API.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IMappingService<Course, CourseCreateDto> _postCourseMappingService;
-        private readonly BlobContainerClient _containerClient;
         private readonly ICategoryService _categoryService;
-        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration, ICategoryService categoryService) : base(courseMappingService)
+        private readonly IUploadImage _uploadImageService;
+        private readonly ICoursePatchValidator _coursePatchValidator;
+        public CourseController(ICourseService courseService, CourseMappingService courseMappingService, IMappingService<Course, CourseCreateDto> postCourseMappingService, ICategoryService categoryService, IUploadImage uploadImageService, ICoursePatchValidator coursePatchValidator) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _postCourseMappingService = postCourseMappingService ?? throw new ArgumentNullException(nameof(postCourseMappingService));
-            string containerName = configuration["AzureStorage:ContainerName2"];
-            _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
             _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
-
+            _uploadImageService = uploadImageService ?? throw new ArgumentNullException(nameof(uploadImageService));
+            _coursePatchValidator = coursePatchValidator ?? throw new ArgumentNullException(nameof(coursePatchValidator));
         }
 
         #region Get
@@ -216,64 +216,44 @@ namespace MindMission.API.Controllers
             var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
             if (category == null)
             {
-                return BadRequest("Category not found.");
+                return BadRequest(NotFoundResponse("Category"));
             }
 
             if (category.Type != CategoryType.Topic)
             {
-                return BadRequest("The course must belong to a topic.");
+                return BadRequest(ValidationFailedResponse());
             }
 
             if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
             {
-                return BadRequest("Invalid Language.");
+                return BadRequest(ValidationFailedResponse());
             }
 
             if (!Enum.IsDefined(typeof(Level), postCourseDto.Level))
             {
-                return BadRequest("Invalid Level.");
+                return BadRequest(ValidationFailedResponse());
             }
 
             if (postCourseDto.LearningItems == null || !postCourseDto.LearningItems.Any() || postCourseDto.LearningItems.Any(item => string.IsNullOrWhiteSpace(item.Title) || string.IsNullOrWhiteSpace(item.Description)))
             {
-                return BadRequest("LearningItems are invalid.");
+                return BadRequest(ValidationFailedResponse());
             }
 
             if (postCourseDto.EnrollmentItems == null || !postCourseDto.EnrollmentItems.Any() || postCourseDto.EnrollmentItems.Any(item => string.IsNullOrWhiteSpace(item.Title)))
             {
-                return BadRequest("EnrollmentItems are invalid.");
+                return BadRequest(ValidationFailedResponse());
             }
-            // Check if a file is uploaded
-            if (courseImg == null || courseImg.Length == 0)
+
+            string courseImage = await _uploadImageService.UploadImage(courseImg);
+
+
+            if (string.IsNullOrEmpty(courseImage))
             {
-                return BadRequest("No file was uploaded.");
+                return BadRequest(ValidationFailedResponse());
             }
 
-            // Validate the file size
-            if (courseImg.Length > 10_000_000) // 10 MB
-            {
-                return BadRequest("The file is too large. The maximum allowed size is 10 MB.");
-            }
 
-            // Validate the file extension
-            var allowedExtensions = new[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" };
-            var extension = Path.GetExtension(courseImg.FileName).ToLowerInvariant();
-
-            if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
-            {
-                return BadRequest($"Invalid file extension. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
-            }
-
-            // Upload the file and save the URL
-            string fileName = Guid.NewGuid().ToString() + extension;
-
-            BlobClient blobClient = _containerClient.GetBlobClient(fileName);
-            using (Stream stream = courseImg.OpenReadStream())
-            {
-                await blobClient.UploadAsync(stream, true);
-            }
-
-            postCourseDto.CourseImage = blobClient.Uri.ToString();
+            postCourseDto.CourseImage = courseImage;
 
             // Map the course create DTO to a course entity.
             var courseToCreate = _postCourseMappingService.MapDtoToEntity(postCourseDto);
@@ -285,7 +265,7 @@ namespace MindMission.API.Controllers
             var courseDto = await _postCourseMappingService.MapEntityToDto(createdCourse);
 
             if (courseDto == null)
-                return NotFound(NotFoundResponse("course"));
+                return NotFound(NotFoundResponse("Course"));
             // Return the created course.
 
 
@@ -310,15 +290,77 @@ namespace MindMission.API.Controllers
 
         #region Edit Patch/Put
 
-        // PUT: api/Course/{courseId}
-        [HttpPut("{courseId}")]
-        public async Task<ActionResult> UpdateCourse(int courseId, CourseDto courseDto)
+        // PUT: api/Course/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCourse(int id, [FromForm] IFormFile courseImg, [FromForm] CourseCreateDto postCourseDto)
         {
-            return await UpdateEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, courseDto, "Course");
+            var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
+                                                                       c => c.EnrollmentItems,
+                                                                       c => c.EnrollmentItems);
+            if (courseToUpdate == null)
+            {
+                return NotFound(NotFoundResponse("Course"));
+            }
+            postCourseDto.Id = id;
+            var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
+            if (category == null)
+            {
+                return BadRequest(NotFoundResponse("Category"));
+            }
+
+            if (category.Type != CategoryType.Topic)
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Level), postCourseDto.Level))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.LearningItems == null || !postCourseDto.LearningItems.Any() || postCourseDto.LearningItems.Any(item => string.IsNullOrWhiteSpace(item.Title) || string.IsNullOrWhiteSpace(item.Description)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.EnrollmentItems == null || !postCourseDto.EnrollmentItems.Any() || postCourseDto.EnrollmentItems.Any(item => string.IsNullOrWhiteSpace(item.Title)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            string courseImage = await _uploadImageService.UploadImage(courseImg);
+
+
+            if (string.IsNullOrEmpty(courseImage))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+
+            postCourseDto.CourseImage = courseImage;
+            // Map the course update DTO to a course entity.
+            var updatedCourseEntity = _postCourseMappingService.MapDtoToEntity(postCourseDto);
+
+            // Use the service to update the course in the database.
+            var updatedCourse = await _courseService.UpdateCourseAsync(id, updatedCourseEntity);
+
+            // Map the updated course entity back to a DTO.
+            var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourse);
+
+            string message = string.Format(SuccessMessages.UpdatedSuccessfully, "Course");
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<CourseCreateDto> { courseDto });
+
+            return Ok(response);
         }
 
+
         // PATCH: api/Course/{courseId}
-        [HttpPatch("{courseId}")]
+        [HttpPatch("{courseId}/xx")]
         public async Task<ActionResult> PatchCourse(int courseId, [FromBody] JsonPatchDocument<CourseDto> patchDocument)
         {
             if (patchDocument == null)
@@ -327,6 +369,62 @@ namespace MindMission.API.Controllers
             }
 
             return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, "Course", patchDocument);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchCourse(int id, [FromBody] JsonPatchDocument<CourseCreateDto> patchDoc)
+        {
+            if (patchDoc != null)
+            {
+                var courseInDb = await _courseService.GetByIdAsync(id, c => c.LearningItems,
+                                                                       c => c.EnrollmentItems, 
+                                                                       c => c.EnrollmentItems);
+
+                if (courseInDb == null)
+                {
+                    return NotFound(NotFoundResponse("Course"));
+                }
+
+
+                var courseToUpdateDto = await _postCourseMappingService.MapEntityToDto(courseInDb);
+                if (courseToUpdateDto == null)
+                {
+                    return BadRequest(BadRequestResponse("Dto cannot be null."));
+                }
+
+                try
+                {
+                    await _coursePatchValidator.ValidatePatchAsync(patchDoc);
+                }
+                catch (ValidationException ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+
+
+
+                patchDoc.ApplyTo(courseToUpdateDto, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(InvalidDataResponse());
+                }
+
+                courseInDb = _postCourseMappingService.MapDtoToEntity(courseToUpdateDto);
+
+                var updatedCourseEntity = await _courseService.UpdateCoursePartialAsync(id, courseInDb);
+
+                var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourseEntity);
+
+                string message = string.Format(SuccessMessages.UpdatedSuccessfully, "Course");
+                var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<CourseCreateDto> { courseDto });
+
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         #endregion Edit Patch/Put

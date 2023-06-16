@@ -10,6 +10,7 @@ using MindMission.API.Middlewares;
 using MindMission.API.Utilities;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Patch;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
@@ -20,6 +21,7 @@ using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories;
 using Serilog;
@@ -48,7 +50,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    //options.LogTo(Console.WriteLine, LogLevel.Information);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 /*JWT Configuration*/
@@ -78,6 +80,10 @@ builder.Services.AddScoped(x =>
     string connectionString = configuration["AzureStorage:ConnectionString"];
     return new BlobServiceClient(connectionString);
 });
+
+/*  upload image */
+builder.Services.AddScoped<IUploadImage, UploadImageService>();
+builder.Services.AddScoped<ICoursePatchValidator, CoursePatchValidator>();
 
 /*Admin Configuration*/
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();

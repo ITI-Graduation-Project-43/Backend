@@ -108,5 +108,15 @@ namespace MindMission.Application.Services
         {
             return await _context.AddCourseAsync(course);
         }
+        public async Task<Course> UpdateCourseAsync(int id, Course course)
+        {
+            return await _context.UpdateCourseAsync(id, course);
+        }
+
+        public async Task<Course> UpdateCoursePartialAsync(int id, Course course)
+        {
+            return await _context.UpdateCoursePartialAsync(id, course);
+        }
     }
 }
+
