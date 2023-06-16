@@ -1,15 +1,15 @@
 ﻿using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping.Base;
-
+using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping.Post
 {
-    public class PostQuestionMappingService : IMappingService<PostQuestionDto, QuestionDto>
+    public class PostQuestionMappingService : IMappingService<Question, PostQuestionDto>
     {
-        public async Task<QuestionDto> MapEntityToDto(PostQuestionDto postQuestion)
+        public async Task<PostQuestionDto> MapEntityToDto(Question postQuestion)
         {
-            var questionDto = new QuestionDto
+            var questionDto = new PostQuestionDto
             {
                 QuestionText = postQuestion.QuestionText,
                 ChoiceA = postQuestion.ChoiceA,
@@ -22,9 +22,9 @@ namespace MindMission.Application.Mapping.Post
             return questionDto;
         }
 
-        public PostQuestionDto MapDtoToEntity(QuestionDto question)
+        public Question MapDtoToEntity(PostQuestionDto question)
         {
-            var postQuestionDto = new PostQuestionDto
+            var postQuestionDto = new Question
             {
                 QuestionText = question.QuestionText,
                 ChoiceA = question.ChoiceA,

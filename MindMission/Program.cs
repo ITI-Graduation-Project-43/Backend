@@ -176,11 +176,10 @@ builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingS
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IMappingService<Lesson, LessonDto>, LessonMappingService>();
-builder.Services.AddScoped<IMappingService<PostQuestionDto, QuestionDto>, PostQuestionMappingService>();
+builder.Services.AddScoped<IMappingService<Question, PostQuestionDto>, PostQuestionMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostQuizLessonDto>, PostQuizLessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostArticleLessonDto>, PostArticleLessonMappingService>();
 builder.Services.AddScoped<IMappingService<Lesson, PostVideoLessonDto>, PostVideoLessonMappingService>();
-builder.Services.AddScoped<IMappingService<PostQuestionDto, QuestionDto>, PostQuestionMappingService>();
 builder.Services.AddScoped<IArticleLessonPatchValidator, ArticleLessonPatchValidator>();
 builder.Services.AddScoped<IQuizLessonPatchValidator, QuizLessonPatchValidator>();
 builder.Services.AddScoped<IVideoLessonPatchValidator, VideoLessonPatchValidator>();
