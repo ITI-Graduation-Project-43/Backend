@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
@@ -49,7 +50,10 @@ namespace MindMission.Application.Services
         {
             return _context.DeleteAsync(id);
         }
-
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
         public async Task<Course> GetByNameAsync(string name)
         {
             return await _context.GetByNameAsync(name);

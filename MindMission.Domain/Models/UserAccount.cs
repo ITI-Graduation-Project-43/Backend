@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ namespace MindMission.Domain.Models
 {
     [Index(nameof(UserId), nameof(AccountId), Name = "UX_UserAccounts_User_AccountType", IsUnique = true)]
     [Index(nameof(UserId), Name = "idx_useraccounts_userid")]
-    public partial class UserAccount : IEntity<int>
+    public partial class UserAccount : BaseEntity, IEntity<int>, ISoftDeletable
     {
         [Key]
         public int Id { get; set; }
@@ -19,9 +20,8 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         [Unicode(false)]
         public string AccountLink { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey(nameof(AccountId))]
         [InverseProperty("UserAccounts")]

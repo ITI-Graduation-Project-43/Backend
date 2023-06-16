@@ -40,13 +40,15 @@ namespace MindMission.Application.Services
             return _context.DeleteAsync(id);
         }
 
-
+        Task IRepository<Admin, int>.SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
 
         Task IRepository<Admin, int>.UpdateAsync(Admin entity)
         {
             return _context.UpdateAsync(entity);
         }
-
 
 
     }

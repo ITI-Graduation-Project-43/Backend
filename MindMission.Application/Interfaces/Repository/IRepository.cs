@@ -18,6 +18,8 @@ namespace MindMission.Application.Repository_Interfaces
         Task UpdateAsync(TClass entity);
 
         Task DeleteAsync(TDataType id);
+        Task SoftDeleteAsync(TDataType id);
+
 
     }
 }

@@ -11,6 +11,7 @@ namespace MindMission.Application.Interfaces.Repository
         Task<IQueryable<CourseFeedback>> GetTopInstructorsRating(int NumberOfInstructor);
         Task<CourseFeedback> AddCourseFeedback(CourseFeedback CourseFeedback);
         Task<CourseFeedback?> UpdateCourseFeedback(int Id, CourseFeedback CourseFeedback);
+        Task SoftDeleteAsync(int id);
 
     }
 }

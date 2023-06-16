@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
     [Index(nameof(QuizId), Name = "idx_questions_quizid")]
-    public partial class Question : IEntity<int>
+    public partial class Question : BaseEntity, IEntity<int>, ISoftDeletable
     {
         [Key]
         public int Id { get; set; }
@@ -38,8 +39,7 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string CorrectAnswer { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(QuizId))]
         [InverseProperty("Questions")]

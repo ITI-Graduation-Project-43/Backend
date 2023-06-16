@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    public partial class Admin : BaseEntity, IEntity<int>
+    public partial class Admin : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Admin()
         {
@@ -40,6 +41,7 @@ namespace MindMission.Domain.Models
         public string PasswordHash { get; set; }
 
         public bool IsDeactivated { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         [InverseProperty(nameof(AdminPermission.Admin))]
         public virtual ICollection<AdminPermission> AdminPermissions { get; set; }

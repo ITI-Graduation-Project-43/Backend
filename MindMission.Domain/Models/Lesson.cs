@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
     [Index(nameof(ChapterId), Name = "idx_lessons_chapterid")]
-    public partial class Lesson : IEntity<int>
+    public partial class Lesson : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Lesson()
         {
@@ -33,8 +34,8 @@ namespace MindMission.Domain.Models
 
         public float NoOfHours { get; set; }
         public bool IsFree { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
 
         [ForeignKey(nameof(ChapterId))]
         [InverseProperty("Lessons")]
