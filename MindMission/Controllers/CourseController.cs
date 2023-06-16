@@ -275,7 +275,7 @@ namespace MindMission.API.Controllers
 
             string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
 
-            var response = ResponseObjectFactory.CreateResponseObject<CourseCreateDto>(true, message, new List<CourseCreateDto> { await courseDto });
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<PostCourseDto> { courseDto });
 
 
             return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
