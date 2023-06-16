@@ -279,13 +279,26 @@ namespace MindMission.API.Controllers
 
         #region Delete
 
-        // DELETE: api/Course/{courseId}
-        [HttpDelete("{courseId}")]
+        // DELETE: api/Course/delete/{courseId}
+        [HttpDelete("delete/{courseId}")]
         public async Task<IActionResult> DeleteCourse(int courseId)
         {
+
             return await DeleteEntityResponse(_courseService.GetByIdAsync, _courseService.DeleteAsync, courseId);
         }
+        // DELETE: api/Course/{id}
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var course = await _courseService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse(course.GetType().Name));
+            await _courseService.SoftDeleteAsync(id);
+            return NoContent();
+        }
         #endregion Delete
 
         #region Edit Patch/Put
@@ -359,25 +372,13 @@ namespace MindMission.API.Controllers
         }
 
 
-        // PATCH: api/Course/{courseId}
-        [HttpPatch("{courseId}/xx")]
-        public async Task<ActionResult> PatchCourse(int courseId, [FromBody] JsonPatchDocument<CourseDto> patchDocument)
-        {
-            if (patchDocument == null)
-            {
-                return BadRequest();
-            }
-
-            return await PatchEntityResponse(_courseService.GetByIdAsync, _courseService.UpdateAsync, courseId, "Course", patchDocument);
-        }
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchCourse(int id, [FromBody] JsonPatchDocument<CourseCreateDto> patchDoc)
         {
             if (patchDoc != null)
             {
                 var courseInDb = await _courseService.GetByIdAsync(id, c => c.LearningItems,
-                                                                       c => c.EnrollmentItems, 
+                                                                       c => c.EnrollmentItems,
                                                                        c => c.EnrollmentItems);
 
                 if (courseInDb == null)

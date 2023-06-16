@@ -80,7 +80,12 @@ namespace MindMission.Infrastructure.Repositories.Base
             if (entity != null)
             {
                 entity.IsDeleted = true;
+                _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"No entity with id {id} found.");
             }
         }
 
