@@ -11,6 +11,7 @@ using MindMission.Application.Services;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
+using System.Collections.Generic;
 
 namespace MindMission.API.Controllers
 {
@@ -281,7 +282,7 @@ namespace MindMission.API.Controllers
             var createdCourse = await _courseService.AddCourseAsync(courseToCreate);
 
             // Map the created course entity back to a DTO.
-            var courseDto = _postCourseMappingService.MapEntityToDto(createdCourse);
+            var courseDto = await _postCourseMappingService.MapEntityToDto(createdCourse);
 
             if (courseDto == null)
                 return NotFound(NotFoundResponse("course"));

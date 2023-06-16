@@ -26,6 +26,7 @@ namespace MindMission.Application.Mapping.Post
         {
             var courseCreateDto = new CourseCreateDto
             {
+                Id = course.Id,
                 Title = course.Title,
                 ShortDescription = course.ShortDescription,
                 Description = course.Description,
