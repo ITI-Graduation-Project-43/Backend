@@ -208,7 +208,6 @@ namespace MindMission.API.Controllers
         #region Add
 
         // POST: api/Course
-
         [HttpPost]
         public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {

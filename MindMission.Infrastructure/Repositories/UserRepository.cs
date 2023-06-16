@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.Context;
 using System.Text;
 
 namespace MindMission.Infrastructure.Repositories
@@ -10,10 +12,12 @@ namespace MindMission.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<User> UserManager;
+        private readonly MindMissionDbContext Context;
 
-        public UserRepository(UserManager<User> _UserManager)
+        public UserRepository(UserManager<User> _UserManager, MindMissionDbContext _Context)
         {
             UserManager = _UserManager;
+            Context = _Context;
         }
 
         public async Task<IdentityResult> RegistrationStudentAsync(User user, string _FirstName, string _LastName)
@@ -66,7 +70,9 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
-            var User = await UserManager.FindByEmailAsync(Email);
+            //var User = await UserManager.FindByEmailAsync(Email);
+            var User = Context.Users.Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();
+
             if (User != null)
             {
                 if (!User.IsBlocked)
@@ -75,10 +81,21 @@ namespace MindMission.Infrastructure.Repositories
                     if (Result)
                     {
                         var role = await UserManager.GetRolesAsync(User);
+                        string FullName = string.Empty;
+                        if (role[0] == "Student")
+                        {
+                            var Student = User.Students.FirstOrDefault();
+                            FullName = Student?.FirstName + " " + Student?.LastName;
+                        }
+                        else
+                        {
+                            var Instructor = User.Instructors.FirstOrDefault();
+                            FullName = Instructor?.FirstName + " " + Instructor?.LastName;
+                        }
                         User.IsActive = true;
                         User.IsDeactivated = false;
                         await UserManager.UpdateAsync(User);
-                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email, Role = role[0] };
+                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email, Role = role[0], FullName = FullName};
                         return SuccessDto;
                     }
                 }
