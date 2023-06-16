@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -15,7 +14,7 @@ namespace MindMission.Application.Services
         {
             _context = context;
         }
-        
+
         public Task<IQueryable<Category>> GetAllAsync()
         {
             return _context.GetAllAsync();
@@ -41,16 +40,23 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Category entity)
+        public Task<Category> UpdateAsync(Category entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public Task<Category> UpdatePartialAsync(int id, Category entity)
+        {
+            return _context.UpdatePartialAsync(id, entity);
         }
 
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
         }
-
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
         public Task<IQueryable<Category>> GetByTypeAsync(CategoryType type)
         {
             return _context.GetByTypeAsync(type);

@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -23,6 +22,10 @@ namespace MindMission.Application.Services
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
+        }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
         }
 
         public Task<IQueryable<Wishlist>> GetAllAsync()
@@ -55,9 +58,13 @@ namespace MindMission.Application.Services
             return _context.GetByIdAsync(id, IncludeProperties);
         }
 
-        public Task UpdateAsync(Wishlist entity)
+        public Task<Wishlist> UpdateAsync(Wishlist entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public async Task<Wishlist> UpdatePartialAsync(int id, Wishlist entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
         }
     }
 }

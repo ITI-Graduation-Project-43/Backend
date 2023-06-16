@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
@@ -273,6 +274,16 @@ namespace MindMission.Infrastructure.Repositories
 
             return instructorCourses.AsQueryable();
         }
+
+        public async Task<Course> GetFeatureThisWeekCourse()
+        {
+            DateTime CutoffDate = DateTime.Now.AddDays(-7);
+
+            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
+                .OrderByDescending(c => c.Enrollments.Count())
+                .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
+        }
+
         public async Task<Course> AddCourseAsync(Course course)
         {
             _context.Courses.Add(course);
@@ -292,23 +303,64 @@ namespace MindMission.Infrastructure.Repositories
                     _context.Entry(requirement).State = EntityState.Added;
                 }
             }
-            if (course.Instructor != null)
-            {
-                _context.Entry(course.Instructor).State = EntityState.Detached;
-            }
 
             await _context.SaveChangesAsync();
 
             return course;
         }
 
-        public async Task<Course> GetFeatureThisWeekCourse()
+        public async Task<Course> UpdateCourseAsync(int id, Course course)
         {
-            DateTime CutoffDate = DateTime.Now.AddDays(-7);
+            var courseInDb = await _context.Courses
+                                        .Include(c => c.LearningItems)
+                                        .Include(c => c.EnrollmentItems)
+                                        .Include(c => c.CourseRequirements)
+                                        .SingleOrDefaultAsync(c => c.Id == id) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Course with id {id}"));
 
-            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
-                .OrderByDescending(c => c.Enrollments.Count())
-                .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
+            _context.Entry(courseInDb).CurrentValues.SetValues(course);
+
+            foreach (var learningItem in courseInDb.LearningItems.ToList())
+            {
+                _context.Entry(learningItem).State = EntityState.Deleted;
+            }
+            courseInDb.LearningItems.Clear();
+            foreach (var learningItem in course.LearningItems)
+            {
+                courseInDb.LearningItems.Add(learningItem);
+            }
+
+            foreach (var enrollmentItem in courseInDb.EnrollmentItems.ToList())
+            {
+                _context.Entry(enrollmentItem).State = EntityState.Deleted;
+            }
+            courseInDb.EnrollmentItems.Clear();
+            foreach (var enrollmentItem in course.EnrollmentItems)
+            {
+                courseInDb.EnrollmentItems.Add(enrollmentItem);
+            }
+
+            if (courseInDb.CourseRequirements != null)
+            {
+                foreach (var requirement in courseInDb.CourseRequirements.ToList())
+                {
+                    _context.Entry(requirement).State = EntityState.Deleted;
+                }
+                courseInDb.CourseRequirements.Clear();
+            }
+            if (course.CourseRequirements != null)
+            {
+                foreach (var requirement in course.CourseRequirements)
+                {
+                    courseInDb.CourseRequirements?.Add(requirement);
+                }
+            }
+
+            _context.Courses.Update(courseInDb);
+            await _context.SaveChangesAsync();
+
+            return courseInDb;
         }
+
+
     }
 }

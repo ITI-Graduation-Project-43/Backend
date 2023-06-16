@@ -23,6 +23,8 @@ namespace MindMission.Application.Repository_Interfaces
         Task<Course> GetFeatureThisWeekCourse();
 
         Task<Course> AddCourseAsync(Course course);
+        Task<Course> UpdateCourseAsync(int id, Course course);
+
 
     }
 }

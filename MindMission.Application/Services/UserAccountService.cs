@@ -23,6 +23,10 @@ namespace MindMission.Application.Services
         {
             return _context.DeleteAsync(id);
         }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
 
         public Task<IQueryable<UserAccount>> GetAllAsync()
         {
@@ -49,9 +53,13 @@ namespace MindMission.Application.Services
             return await _context.GetUserAccountsAsync(id);
         }
 
-        public Task UpdateAsync(UserAccount entity)
+        public Task<UserAccount> UpdateAsync(UserAccount entity)
         {
             return _context.UpdateAsync(entity);
+        }
+        public async Task<UserAccount> UpdatePartialAsync(int id, UserAccount entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
         }
     }
 }

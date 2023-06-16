@@ -2,17 +2,17 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.PostDtos
 {
-    public class CourseCreateDto
+    public class PostCourseDto
     {
         public int Id { get; set; }
         [Required]
-        [StringLength(200)]
+        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters.")]
         public string Title { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(255)]
+        [StringLength(300, ErrorMessage = "Short Description cannot exceed 300 characters.")]
         public string ShortDescription { get; set; } = string.Empty;
 
         [Required]

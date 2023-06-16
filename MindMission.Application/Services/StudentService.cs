@@ -40,14 +40,21 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Student entity)
+        public Task<Student> UpdateAsync(Student entity)
         {
             return _context.UpdateAsync(entity);
         }
-
+        public async Task<Student> UpdatePartialAsync(string id, Student entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(string id)
         {
             return _context.DeleteAsync(id);
+        }
+        public Task SoftDeleteAsync(string id)
+        {
+            return _context.SoftDeleteAsync(id);
         }
 
         public Task<IQueryable<Student>> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)

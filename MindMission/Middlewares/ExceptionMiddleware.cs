@@ -1,5 +1,5 @@
 ﻿using MindMission.Application.Factories;
-using MyOnionApi1.Application.Exceptions;
+using MindMission.Application.Exceptions;
 
 namespace MindMission.API.Middlewares
 {
@@ -26,7 +26,7 @@ namespace MindMission.API.Middlewares
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
-         {
+        {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

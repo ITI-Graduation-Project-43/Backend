@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -30,14 +29,21 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Permission entity)
+        public Task<Permission> UpdateAsync(Permission entity)
         {
             return _context.UpdateAsync(entity);
         }
-
+        public async Task<Permission> UpdatePartialAsync(int id, Permission entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
+        }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
         }
 
         public async Task<IEnumerable<Permission>> GetAllAsync(params Expression<Func<Permission, object>>[] IncludeProperties)

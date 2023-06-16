@@ -169,6 +169,19 @@ namespace MindMission.API.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(15)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
                     b.HasKey("Id");
 
                     b.ToTable("Accounts");
@@ -185,7 +198,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -200,6 +213,9 @@ namespace MindMission.API.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsDeactivated")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -222,7 +238,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -237,10 +253,21 @@ namespace MindMission.API.Migrations
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("GrantedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id", "PermissionId")
                         .HasName("PK__AdminPer__9F658B3A6B1E0167");
@@ -267,7 +294,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
@@ -275,9 +305,12 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "LessonId" }, "idx_articles_lessonid");
 
@@ -295,7 +328,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<byte[]>("FileData")
                         .IsRequired()
@@ -310,15 +343,21 @@ namespace MindMission.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "LessonId" }, "idx_attachments_lessonid");
 
@@ -339,7 +378,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -357,7 +399,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -383,7 +425,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<float>("NoOfHours")
                         .HasColumnType("real");
@@ -400,7 +445,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -432,7 +477,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -452,6 +497,9 @@ namespace MindMission.API.Migrations
                     b.Property<string>("InstructorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Language")
                         .IsRequired()
@@ -510,7 +558,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -538,7 +586,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("FeedbackText")
                         .IsRequired()
@@ -552,9 +600,17 @@ namespace MindMission.API.Migrations
                     b.Property<decimal>("InstructorRating")
                         .HasColumnType("decimal(3,2)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -610,7 +666,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
@@ -622,7 +681,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<int>("Upvotes")
                         .HasColumnType("int");
@@ -653,14 +712,25 @@ namespace MindMission.API.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("EnrollmentDate")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -710,7 +780,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -723,6 +793,9 @@ namespace MindMission.API.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -753,7 +826,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -800,12 +873,15 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsFree")
                         .HasColumnType("bit");
@@ -827,7 +903,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -844,17 +920,30 @@ namespace MindMission.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2048)
                         .IsUnicode(false)
                         .HasColumnType("varchar(2048)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -899,12 +988,15 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
@@ -912,7 +1004,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -932,7 +1024,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
@@ -943,9 +1038,12 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "LessonId" }, "idx_quizzes_lessonid");
 
@@ -965,13 +1063,16 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -993,11 +1094,39 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex(new[] { "CourseId" }, "idx_TimeTracking_courseid");
+
+                    b.ToTable("TimeTrackings");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.User", b =>
@@ -1013,9 +1142,7 @@ namespace MindMission.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1066,9 +1193,7 @@ namespace MindMission.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1101,12 +1226,15 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -1135,7 +1263,10 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
@@ -1143,7 +1274,7 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("VideoUrl")
                         .IsRequired()
@@ -1151,6 +1282,9 @@ namespace MindMission.API.Migrations
                         .HasColumnType("nvarchar(2048)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LessonId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "LessonId" }, "idx_videos_lessonid");
 
@@ -1168,15 +1302,23 @@ namespace MindMission.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("FeedbackText")
                         .IsRequired()
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("Rating")
                         .HasColumnType("decimal(3,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -1198,16 +1340,27 @@ namespace MindMission.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("AddedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -1291,8 +1444,8 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Article", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
-                        .WithMany("Articles")
-                        .HasForeignKey("LessonId")
+                        .WithOne("Article")
+                        .HasForeignKey("MindMission.Domain.Models.Article", "LessonId")
                         .IsRequired()
                         .HasConstraintName("FK__Articles__Lesson__395884C4");
 
@@ -1302,8 +1455,8 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Attachment", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
-                        .WithMany("Attachments")
-                        .HasForeignKey("LessonId")
+                        .WithOne("Attachment")
+                        .HasForeignKey("MindMission.Domain.Models.Attachment", "LessonId")
                         .IsRequired()
                         .HasConstraintName("FK__Attachmen__Lesso__3D2915A8");
 
@@ -1449,7 +1602,7 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Instructor", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Instructors")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1493,8 +1646,8 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Quiz", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
-                        .WithMany("Quizzes")
-                        .HasForeignKey("LessonId")
+                        .WithOne("Quiz")
+                        .HasForeignKey("MindMission.Domain.Models.Quiz", "LessonId")
                         .IsRequired()
                         .HasConstraintName("FK__Quizzes__LessonI__2B0A656D");
 
@@ -1504,12 +1657,33 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.User", "User")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
+                {
+                    b.HasOne("MindMission.Domain.Models.Course", "Course")
+                        .WithMany("TimeTrackings")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__timeTrackings__Cours__59C55456");
+
+                    b.HasOne("MindMission.Domain.Models.Student", "Student")
+                        .WithMany("TimeTrackings")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired()
+                        .HasConstraintName("FK__timeTrackings__Stude__5AB9788F");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.UserAccount", b =>
@@ -1534,8 +1708,8 @@ namespace MindMission.API.Migrations
             modelBuilder.Entity("MindMission.Domain.Models.Video", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
-                        .WithMany("Videos")
-                        .HasForeignKey("LessonId")
+                        .WithOne("Video")
+                        .HasForeignKey("MindMission.Domain.Models.Video", "LessonId")
                         .IsRequired()
                         .HasConstraintName("FK__Videos__LessonId__3587F3E0");
 
@@ -1608,6 +1782,8 @@ namespace MindMission.API.Migrations
 
                     b.Navigation("LearningItems");
 
+                    b.Navigation("TimeTrackings");
+
                     b.Navigation("Wishlists");
                 });
 
@@ -1625,15 +1801,19 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Lesson", b =>
                 {
-                    b.Navigation("Articles");
+                    b.Navigation("Article")
+                        .IsRequired();
 
-                    b.Navigation("Attachments");
+                    b.Navigation("Attachment")
+                        .IsRequired();
 
                     b.Navigation("Discussions");
 
-                    b.Navigation("Quizzes");
+                    b.Navigation("Quiz")
+                        .IsRequired();
 
-                    b.Navigation("Videos");
+                    b.Navigation("Video")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Permission", b =>
@@ -1652,14 +1832,9 @@ namespace MindMission.API.Migrations
 
                     b.Navigation("Enrollments");
 
+                    b.Navigation("TimeTrackings");
+
                     b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("MindMission.Domain.Models.User", b =>
-                {
-                    b.Navigation("Instructors");
-
-                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }

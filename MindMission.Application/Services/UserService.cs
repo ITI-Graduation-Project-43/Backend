@@ -50,6 +50,7 @@ namespace MindMission.Application.Services
                 List<Claim> Claims = new List<Claim>()
                 {
                     new Claim("Id", User.Id),
+                    new Claim("FullName", User.FullName),
                     new Claim("Email", User.Email),
                     new Claim("Role", User.Role),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

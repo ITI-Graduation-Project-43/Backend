@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MindMission.Domain.Models
 {
     [Index(nameof(LessonId), Name = "idx_discussions_lessonid")]
-    public partial class Discussion : IEntity<int>
+    public partial class Discussion : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Discussion()
         {
@@ -27,8 +28,9 @@ namespace MindMission.Domain.Models
         public string Content { get; set; }
 
         public int Upvotes { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public bool IsDeleted { get; set; } = false;
+
+
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }

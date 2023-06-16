@@ -1,5 +1,4 @@
-﻿using MindMission.Application.DTOs;
-using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
@@ -8,58 +7,64 @@ namespace MindMission.Application.Services
 {
     public class DiscussionService : IDiscussionService
     {
-        private readonly IDiscussionRepository Context;
+        private readonly IDiscussionRepository _context;
 
-        public DiscussionService(IDiscussionRepository _Context)
+        public DiscussionService(IDiscussionRepository context)
         {
-            Context = _Context;
+            _context = context;
         }
 
         public Task<IQueryable<Discussion>> GetAllAsync()
         {
-            return Context.GetAllAsync();
+            return _context.GetAllAsync();
         }
 
         public Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
-            return Context.GetAllDiscussionByLessonIdAsync(lessonId);
+            return _context.GetAllDiscussionByLessonIdAsync(lessonId);
         }
 
         public Task<Discussion> GetByIdAsync(int id)
         {
-            return Context.GetByIdAsync(id);
+            return _context.GetByIdAsync(id);
         }
 
         public Task<Discussion> AddAsync(Discussion entity)
         {
-            return Context.AddAsync(entity);
+            return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Discussion entity)
+        public Task<Discussion> UpdateAsync(Discussion entity)
         {
-            return Context.UpdateAsync(entity);
+            return _context.UpdateAsync(entity);
         }
-
+        public async Task<Discussion> UpdatePartialAsync(int id, Discussion entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(int id)
         {
-            return Context.DeleteAsync(id);
+            return _context.DeleteAsync(id);
         }
-
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
         public async Task<IEnumerable<Discussion>> GetAllAsync(params Expression<Func<Discussion, object>>[] IncludeProperties)
         {
-            return await Context.GetAllAsync(IncludeProperties);
+            return await _context.GetAllAsync(IncludeProperties);
         }
 
         public Task<Discussion> GetByIdAsync(int id, params Expression<Func<Discussion, object>>[] IncludeProperties)
         {
-            return Context.GetByIdAsync(id, IncludeProperties);
+            return _context.GetByIdAsync(id, IncludeProperties);
         }
 
         public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
         {
-            return await Context.GetAllDiscussionByParentIdAsync(parentId);
+            return await _context.GetAllDiscussionByParentIdAsync(parentId);
         }
 
-        
+
     }
 }

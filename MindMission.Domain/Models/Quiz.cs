@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
+using MindMission.Domain.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
     [Index(nameof(LessonId), Name = "idx_quizzes_lessonid")]
-    public partial class Quiz : IEntity<int>
+    public partial class Quiz : BaseEntity, IEntity<int>, ISoftDeletable
     {
         public Quiz()
         {
@@ -17,11 +18,11 @@ namespace MindMission.Domain.Models
 
         public int LessonId { get; set; }
         public int NoOfQuestions { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(LessonId))]
-        [InverseProperty("Quizzes")]
+        [InverseProperty("Quiz")]
         public virtual Lesson Lesson { get; set; }
 
         [InverseProperty(nameof(Question.Quiz))]

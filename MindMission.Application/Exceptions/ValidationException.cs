@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace MyOnionApi1.Application.Exceptions
+namespace MindMission.Application.Exceptions
 {
     public class ValidationException : Exception
     {

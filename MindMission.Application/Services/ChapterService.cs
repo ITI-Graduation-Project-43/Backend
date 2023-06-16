@@ -38,8 +38,11 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.AddAsync(entity);
         }
-
-        public Task UpdateAsync(Chapter entity)
+        public Task<Chapter> UpdatePartialAsync(int id, Chapter entity)
+        {
+            return _context.UpdatePartialAsync(id, entity);
+        }
+        public Task<Chapter> UpdateAsync(Chapter entity)
         {
             return _context.UpdateAsync(entity);
         }
@@ -47,6 +50,10 @@ namespace MindMission.Application.Services_Classes
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
+        }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
         }
 
         public Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId)

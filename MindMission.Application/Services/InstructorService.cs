@@ -36,16 +36,22 @@ namespace MindMission.Application.Services
             return _context.AddAsync(entity);
         }
 
-        public Task UpdateAsync(Instructor entity)
+        public Task<Instructor> UpdateAsync(Instructor entity)
         {
             return _context.UpdateAsync(entity);
         }
-
+        public async Task<Instructor> UpdatePartialAsync(string id, Instructor entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
         public Task DeleteAsync(string id)
         {
             return _context.DeleteAsync(id);
         }
-
+        public Task SoftDeleteAsync(string id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
         public async Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber)
         {
             return await _context.GetTopRatedInstructorsAsync(topNumber);

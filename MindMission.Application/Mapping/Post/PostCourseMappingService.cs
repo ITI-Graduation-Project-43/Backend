@@ -1,4 +1,4 @@
-﻿using MindMission.Application.DTOs;
+﻿using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -6,7 +6,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping.Post
 {
-    public class PostCourseMappingService : IMappingService<Course, CourseCreateDto>
+    public class PostCourseMappingService : IMappingService<Course, PostCourseDto>
     {
         private readonly IMappingService<LearningItem, LearningItemCreateDto> _learningItemMappingService;
         private readonly IMappingService<EnrollmentItem, EnrollmentItemCreateDto> _enrollmentItemMappingService;
@@ -22,9 +22,9 @@ namespace MindMission.Application.Mapping.Post
             _courseRequirementMappingService = courseRequirementMappingService;
         }
 
-        public async Task<CourseCreateDto> MapEntityToDto(Course course)
+        public async Task<PostCourseDto> MapEntityToDto(Course course)
         {
-            var courseCreateDto = new CourseCreateDto
+            var courseCreateDto = new PostCourseDto
             {
                 Id = course.Id,
                 Title = course.Title,
@@ -35,9 +35,9 @@ namespace MindMission.Application.Mapping.Post
                 Price = course.Price,
                 InstructorId = course.InstructorId,
                 CourseImage = course.ImageUrl,
-                LearningItems = (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList(),
-                EnrollmentItems = (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList(),
-                CourseRequirements = (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList(),
+                LearningItems = course.LearningItems != null ? (await Task.WhenAll(course.LearningItems.Select(i => _learningItemMappingService.MapEntityToDto(i)))).ToList() : new List<LearningItemCreateDto>(),
+                EnrollmentItems = course.EnrollmentItems != null ? (await Task.WhenAll(course.EnrollmentItems.Select(i => _enrollmentItemMappingService.MapEntityToDto(i)))).ToList() : new List<EnrollmentItemCreateDto>(),
+                CourseRequirements = course.CourseRequirements != null ? (await Task.WhenAll(course.CourseRequirements.Select(i => _courseRequirementMappingService.MapEntityToDto(i)))).ToList() : new List<CourseRequirementCreateDto>(),
                 CategoryId = course.CategoryId,
 
             };
@@ -45,10 +45,11 @@ namespace MindMission.Application.Mapping.Post
             return courseCreateDto;
         }
 
-        public Course MapDtoToEntity(CourseCreateDto courseCreateDto)
+        public Course MapDtoToEntity(PostCourseDto courseCreateDto)
         {
             var course = new Course
             {
+                Id = courseCreateDto.Id,
                 Title = courseCreateDto.Title,
                 ShortDescription = courseCreateDto.ShortDescription,
                 Description = courseCreateDto.Description,

@@ -1,4 +1,6 @@
-﻿using MindMission.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Domain.Common;
+using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
 namespace MindMission.Application.Repository_Interfaces
@@ -15,9 +17,10 @@ namespace MindMission.Application.Repository_Interfaces
 
         Task<TClass> AddAsync(TClass entity);
 
-        Task UpdateAsync(TClass entity);
-
+        Task<TClass> UpdateAsync(TClass entity);
+        Task<TClass> UpdatePartialAsync(TDataType id, TClass entity);
         Task DeleteAsync(TDataType id);
+        Task SoftDeleteAsync(TDataType id);
 
     }
 }
