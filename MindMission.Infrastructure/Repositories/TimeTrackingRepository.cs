@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Application.Interfaces.Repository;
+using MindMission.Domain.Common;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using System.Formats.Asn1;
@@ -13,46 +14,62 @@ namespace MindMission.Infrastructure.Repositories
         {
             _context= context;
         }
-        public async Task<IQueryable<TimeTracking>> GetAll()
+        public async Task<IEnumerable<TimeTracking>> GetAll()
         {
             return await Task.FromResult(_context.Set<TimeTracking>());
         }
         public async Task<TimeTracking> Create(string studentId,int courseId)
         {
-            var timeTracking = new TimeTracking
+            var timeTrack = _context.TimeTrackings
+                .Where(e => e.CourseId == courseId && e.StudentId == studentId && e.EndTime == null).FirstOrDefault();
+            if (timeTrack == null)
             {
-                Id = Guid.NewGuid(),
-                StudentId = studentId,
-                CourseId = courseId,
-                StartTime = DateTime.Now,
-            };
-            _context.TimeTrackings.Add(timeTracking);
-            await _context.SaveChangesAsync();
-            return timeTracking;
+                var timeTracking = new TimeTracking
+                {
+                    Id = Guid.NewGuid(),
+                    StudentId = studentId,
+                    CourseId = courseId,
+                    StartTime = DateTime.Now,
+                };
+                _context.TimeTrackings.Add(timeTracking);
+                await _context.SaveChangesAsync();
+                return timeTracking;
+            }
+            else
+            {
+                timeTrack.StartTime = DateTime.Now;
+                _context.TimeTrackings.Add(timeTrack);
+                await _context.SaveChangesAsync();
+                return timeTrack;
+            }
+             
         }
 
         public async Task<List<Student>> GetLastfourStudentIds()
         {
-            var students = await _context.TimeTrackings.Include(e => e.Student).Where(cv => cv.EndTime != null)
-            .Select(cv => cv.Student)
-            .Distinct()
-            .OrderByDescending(studentId => studentId)
-            .Take(4)
-            .ToListAsync();
-
+            List<Student> students = new List<Student>();
+            var timetracks = await _context.TimeTrackings
+                                .Where(cv => cv.EndTime != null)
+                                .OrderByDescending(s => s.EndTime).ToListAsync();
+            var studentIds= timetracks.Select(cv => cv.StudentId).Distinct().Take(4);
+            foreach (var stdId in studentIds)
+            {
+                Student student = _context.Students.FirstOrDefault(s => s.Id == stdId);
+                 students.Add(student);
+            }
             return students;
         }
 
-        public async Task<IQueryable<TimeTracking>> GetByCourseId(int CourseId)
+        public async Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId)
         {
-            var TimeTrackings = _context.TimeTrackings.Include(e => e.Student).Include(e => e.Course).Where(e => e.CourseId == CourseId);
-            return await (Task<IQueryable<TimeTracking>>)TimeTrackings.AsQueryable();
+            var TimeTrackings = await _context.TimeTrackings.Where(e => e.CourseId == CourseId).ToListAsync();
+            return TimeTrackings;
         }
 
-        public async Task<IQueryable<TimeTracking>> GetByStudentId(string StudentId)
+        public async Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId)
         {
-            var TimeTrackings = _context.TimeTrackings.Include(e => e.Student).Include(e => e.Course).Where(e => e.StudentId == StudentId);
-            return await (Task<IQueryable<TimeTracking>>)TimeTrackings.AsQueryable();
+            var TimeTrackings = await _context.TimeTrackings.Where(e => e.StudentId == StudentId).ToListAsync();
+            return  TimeTrackings;
         }
 
         public async Task<TimeTracking> Update(string studentId, int courseId)
@@ -60,7 +77,7 @@ namespace MindMission.Infrastructure.Repositories
             var timeTracking = await _context.TimeTrackings.FirstOrDefaultAsync(cv =>
             cv.StudentId == studentId &&
             cv.CourseId == courseId &&
-            cv.EndTime == null);
+            cv.EndTime.HasValue == false);
 
             if (timeTracking == null)
             {
@@ -68,6 +85,7 @@ namespace MindMission.Infrastructure.Repositories
             }
 
             timeTracking.EndTime = DateTime.Now;
+            _context.Set<TimeTracking>().Update(timeTracking);
 
             await _context.SaveChangesAsync();
 

@@ -16,31 +16,31 @@ namespace MindMission.API.Controllers
         }
 
         #region Get
-        [HttpGet ("/student/{studentId}")]
-        public async Task<ActionResult<IQueryable<TimeTracking>>> GetAllByStudentId(string studentId)
+        [HttpGet ("student/{studentId}")]
+        public async Task<ActionResult<IEnumerable<TimeTracking>>> GetAllByStudentId(string studentId)
         {
             var courseVisits = await _service.GetByStudentId(studentId);
             return Ok(courseVisits);
         }
-        [HttpGet("/course/{courseId}")]
-        public async Task<ActionResult<IQueryable<TimeTracking>>> GetAllByCourseId(int courseId)
+        [HttpGet("course/{courseId}")]
+        public async Task<ActionResult<IEnumerable<TimeTracking>>> GetAllByCourseId(int courseId)
         {
             var courseVisits = await _service.GetByCourseId(courseId);
             return Ok(courseVisits);
         }
-        [HttpGet ("/recentStudent")]
+        [HttpGet ("recentStudent")]
         public async Task<ActionResult<List<TimeTracking>>> GetRecentStudent()
         {
             var students = await _service.GetLastfourStudentIds();
             return Ok(students);
         }
-        [HttpGet("/CourseCount/{courseId}")]
-        public async Task<ActionResult<IQueryable<Object>>> GetCourseVisitCount(int courseId)
+        [HttpGet("CourseCount/{courseId}")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetCourseVisitCount(int courseId)
         {
             var hourObject = await _service.GetCourseVisitCountByHour(courseId);
                 return Ok(hourObject);
         }
-        [HttpGet("/hours/{instructorId}")]
+        [HttpGet("hours/{instructorId}")]
         public async Task<ActionResult<long>> GetTotalHours(string instructorId)
         {
             long hours = await _service.getTotalHours(instructorId);
@@ -50,20 +50,20 @@ namespace MindMission.API.Controllers
         #endregion
 
         #region Create
-        [HttpPost("/course/{courseId}/student/{studentId}")]
+        [HttpPost("course/{courseId}/student/{studentId}")]
         public async Task<ActionResult> StartTime(string studentId , int courseId)
         {
             var createdCourseVisit = await _service.Create(studentId, courseId);
-            return CreatedAtAction("course page opened", createdCourseVisit);
+            return Ok(createdCourseVisit);
         }
         #endregion
 
         #region update
-        [HttpPut("/course/{courseId}/student/{studentId}")]
+        [HttpPut("course/{courseId}/student/{studentId}")]
         public async Task<ActionResult> EndTime(string studentId, int courseId)
         {
             var createdCourseVisit = await _service.Update(studentId, courseId);
-            return CreatedAtAction("course page closed", createdCourseVisit);
+            return Ok(createdCourseVisit);
         }
         #endregion
 

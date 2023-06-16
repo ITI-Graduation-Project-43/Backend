@@ -14,7 +14,7 @@ namespace MindMission.Application.Services
             _repository = repository;
             _courseRepository = courseRepository;
         }
-        public async Task<IQueryable<TimeTracking>> GetAll()
+        public async Task<IEnumerable<TimeTracking>> GetAll()
         {
             return await _repository.GetAll();
         }
@@ -23,12 +23,12 @@ namespace MindMission.Application.Services
             return await _repository.Create(studentId, courseId);
         }
 
-        public async Task<IQueryable<TimeTracking>> GetByCourseId(int CourseId)
+        public async Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId)
         {
             return await _repository.GetByCourseId(CourseId);
         }
 
-        public async Task<IQueryable<TimeTracking>> GetByStudentId(string StudentId)
+        public async Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId)
         {
             return await _repository.GetByStudentId(StudentId);
         }
@@ -41,7 +41,7 @@ namespace MindMission.Application.Services
         {
             return await _repository.GetLastfourStudentIds();
         }
-        public async Task<IQueryable<object>> GetCourseVisitCountByHour(int courseId)
+        public async Task<IEnumerable<object>> GetCourseVisitCountByHour(int courseId)
         {
             var courseVisits = await _repository.GetAll();
 
@@ -53,11 +53,12 @@ namespace MindMission.Application.Services
         }
         public async Task<long> getTotalHours (string instructorId)
         {
-            long hourSpent = 0;
+            long totalHourSpent = 0;
             var totalCourses = await _courseRepository.GetAllByInstructorAsync(instructorId);
              
             foreach (var course in totalCourses)
             {
+                long hourSpent = 0;
                 var timeTrack = await _repository.GetByCourseId(course.Id);
                 if (timeTrack != null) {
                     foreach (var time in timeTrack)
@@ -66,10 +67,10 @@ namespace MindMission.Application.Services
                         hourSpent += timeSpent;
                     }
                 }
-                hourSpent++;
+                totalHourSpent += hourSpent;
             }
 
-                return hourSpent;
+                return totalHourSpent;
         }
     }
 }

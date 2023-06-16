@@ -131,6 +131,10 @@ builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<WishlistMappingService, WishlistMappingService>();
 builder.Services.AddScoped<IMappingService<Wishlist, WishlistDto>, WishlistMappingService>();
 
+/*TimeTracking Configuration*/
+builder.Services.AddScoped<ITrackingTimeRepository, TimeTrackingRepository>();
+builder.Services.AddScoped<ITimeTrackingService, TimeTrackingService>();
+
 /*Enrollment Configuration*/
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
