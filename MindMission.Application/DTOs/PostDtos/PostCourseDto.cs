@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.PostDtos
 {
-    public class CourseCreateDto
+    public class PostCourseDto
     {
-
+        public int Id { get; set; }
         [Required]
         [StringLength(200)]
         public string Title { get; set; } = string.Empty;

@@ -48,6 +48,10 @@ namespace MindMission.Application.Services_Classes
         {
             return _context.DeleteAsync(id);
         }
+        public Task SoftDeleteAsync(int id)
+        {
+            return _context.SoftDeleteAsync(id);
+        }
 
         public Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId)
         {

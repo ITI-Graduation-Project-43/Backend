@@ -19,11 +19,21 @@ namespace MindMission.Application.Services
         {
             return await _context.GetAllAsync(IncludeProperties);
         }
+        Task<IQueryable<Article>> IRepository<Article, int>.GetAllAsync()
+        {
+            return _context.GetAllAsync();
+        }
+
 
         public Task<Article> GetByIdAsync(int id, params Expression<Func<Article, object>>[] IncludeProperties)
         {
             return _context.GetByIdAsync(id, IncludeProperties);
         }
+        Task<Article> IRepository<Article, int>.GetByIdAsync(int id)
+        {
+            return _context.GetByIdAsync(id);
+        }
+
 
         Task<Article> IRepository<Article, int>.AddAsync(Article entity)
         {
@@ -34,15 +44,9 @@ namespace MindMission.Application.Services
         {
             return _context.DeleteAsync(id);
         }
-
-        Task<IQueryable<Article>> IRepository<Article, int>.GetAllAsync()
+        Task IRepository<Article, int>.SoftDeleteAsync(int id)
         {
-            return _context.GetAllAsync();
-        }
-
-        Task<Article> IRepository<Article, int>.GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
+            return _context.SoftDeleteAsync(id);
         }
 
         Task IRepository<Article, int>.UpdateAsync(Article entity)
