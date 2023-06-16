@@ -11,12 +11,7 @@ namespace MindMission.Domain.Models
     {
         public Course()
         {
-            Chapters = new HashSet<Chapter>();
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Enrollments = new HashSet<Enrollment>();
-            Wishlists = new HashSet<Wishlist>();
-            Instructor = new Instructor();
-            Category = new Category();
+
         }
 
         [Key]
@@ -63,6 +58,12 @@ namespace MindMission.Domain.Models
         public string Level { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(3, 2)")]
+        [Range(0, 1, ErrorMessage = "Discount must be between 0 and 1.")]
+        public decimal? Discount { get; set; }
+
+        #region calculated fields
+
+        [Column(TypeName = "decimal(3, 2)")]
         public decimal? AvgReview { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Number of reviews must be greater than or equal to 0.")]
@@ -71,9 +72,7 @@ namespace MindMission.Domain.Models
         [Range(0, int.MaxValue, ErrorMessage = "Number of students must be greater than or equal to 0.")]
         public int NoOfStudents { get; set; }
 
-        [Column(TypeName = "decimal(3, 2)")]
-        [Range(0, 1, ErrorMessage = "Discount must be between 0 and 1.")]
-        public decimal? Discount { get; set; }
+
 
         [Range(0, int.MaxValue, ErrorMessage = "Chapter count must be greater than or equal to 0.")]
         public int ChapterCount { get; set; }
@@ -97,7 +96,7 @@ namespace MindMission.Domain.Models
         public int NoOfHours { get; set; }
 
 
-
+        #endregion
         public bool Published { get; set; } = false;
         public bool Approved { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -128,7 +127,7 @@ namespace MindMission.Domain.Models
 
         public ICollection<LearningItem> LearningItems { get; set; }
         public ICollection<EnrollmentItem> EnrollmentItems { get; set; }
-        public ICollection<CourseRequirement> CourseRequirements { get; set; }
+        public ICollection<CourseRequirement>? CourseRequirements { get; set; }
     }
 
 
@@ -137,8 +136,8 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public int CourseId { get; set; }
         public Course Course { get; set; }
     }
@@ -147,7 +146,7 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public int CourseId { get; set; }
         public Course Course { get; set; }
     }
@@ -156,8 +155,8 @@ namespace MindMission.Domain.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public int CourseId { get; set; }
         public Course Course { get; set; }
     }

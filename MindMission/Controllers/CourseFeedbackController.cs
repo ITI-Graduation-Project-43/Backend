@@ -4,6 +4,8 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Domain.Models;
+using MindMission.Infrastructure.Repositories;
 
 namespace MindMission.API.Controllers
 {

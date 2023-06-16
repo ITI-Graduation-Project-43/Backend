@@ -12,10 +12,7 @@ namespace MindMission.Domain.Models
     {
         public Student()
         {
-            CourseFeedbacks = new HashSet<CourseFeedback>();
-            Enrollments = new HashSet<Enrollment>();
-            Wishlists = new HashSet<Wishlist>();
-            User = new User();
+
         }
 
         [Key]

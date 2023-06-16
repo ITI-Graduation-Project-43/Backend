@@ -11,7 +11,6 @@ namespace MindMission.Domain.Models
     {
         public Discussion()
         {
-            InverseParentDiscussion = new HashSet<Discussion>();
         }
 
         [Key]

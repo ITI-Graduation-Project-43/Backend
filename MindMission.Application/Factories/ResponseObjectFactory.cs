@@ -4,7 +4,7 @@ namespace MindMission.Application.Factories
 {
     public static class ResponseObjectFactory
     {
-        public static ResponseObject<T> CreateResponseObject<T>(bool success, string message, List<T> items, int pageNumber = 1, int itemsPerPage = 10)
+        public static ResponseObject<T> CreateResponseObject<T>(bool success, string message, List<T> items, int pageNumber = 1, int itemsPerPage = 10, int itemsCount = 1)
         {
             return new ResponseObject<T>
             {
@@ -13,7 +13,7 @@ namespace MindMission.Application.Factories
                 Items = items,
                 PageNumber = pageNumber,
                 ItemsPerPage = itemsPerPage,
-                TotalPages = CalculateTotalPages(items.Count, itemsPerPage)
+                TotalPages = CalculateTotalPages(itemsCount, itemsPerPage)
             };
         }
 

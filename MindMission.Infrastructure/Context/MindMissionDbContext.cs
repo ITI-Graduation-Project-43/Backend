@@ -123,8 +123,6 @@ namespace MindMission.Infrastructure.Context
                 entity.HasIndex(e => e.Name).IsUnique();
             });
 
-
-
             builder.Entity<Chapter>(entity =>
             {
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
@@ -319,19 +317,17 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<User>(entity =>
             {
-                entity.Property(e => e.IsBlocked).HasDefaultValue(false);
-
-                entity.Property(e => e.IsDeactivated).HasDefaultValue(false);
-
-                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+                entity.Ignore(e => e.UserName);
+                
+                entity.Ignore(e => e.NormalizedUserName);
 
                 entity.HasIndex(e => e.Email).IsUnique();
 
                 entity.Property(e => e.Email).IsRequired();
 
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 

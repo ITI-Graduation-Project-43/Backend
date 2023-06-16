@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230615214241_xxx")]
+    partial class xxx
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1000,34 +1002,6 @@ namespace MindMission.API.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex(new[] { "CourseId" }, "idx_TimeTracking_courseid");
-
-                    b.ToTable("TimeTrackings");
-                });
-
             modelBuilder.Entity("MindMission.Domain.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -1540,27 +1514,6 @@ namespace MindMission.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
-                {
-                    b.HasOne("MindMission.Domain.Models.Course", "Course")
-                        .WithMany("TimeTrackings")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__timeTrackings__Cours__59C55456");
-
-                    b.HasOne("MindMission.Domain.Models.Student", "Student")
-                        .WithMany("TimeTrackings")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__timeTrackings__Stude__5AB9788F");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("MindMission.Domain.Models.UserAccount", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Account", "Account")
@@ -1657,8 +1610,6 @@ namespace MindMission.API.Migrations
 
                     b.Navigation("LearningItems");
 
-                    b.Navigation("TimeTrackings");
-
                     b.Navigation("Wishlists");
                 });
 
@@ -1702,8 +1653,6 @@ namespace MindMission.API.Migrations
                     b.Navigation("CourseFeedbacks");
 
                     b.Navigation("Enrollments");
-
-                    b.Navigation("TimeTrackings");
 
                     b.Navigation("Wishlists");
                 });

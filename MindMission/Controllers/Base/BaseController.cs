@@ -14,10 +14,16 @@ namespace MindMission.API.Controllers.Base
     public abstract class BaseController<TEntity, TDto, Type> : ControllerBase where TEntity : class where TDto : class, IDtoWithId<Type>
     {
         private readonly IMappingService<TEntity, TDto> _entityMappingService;
+        public static int EntitiesCount { get; set; }
 
         protected BaseController(IMappingService<TEntity, TDto> entityMappingService)
         {
             _entityMappingService = entityMappingService;
+        }
+
+        static BaseController()
+        {
+            EntitiesCount = 0;
         }
 
         #region Mapping
@@ -25,8 +31,8 @@ namespace MindMission.API.Controllers.Base
         protected async Task<List<TDto>> MapEntitiesToDTOs(IEnumerable<TEntity> entities)
         {
             var dtoResults = new List<TDto>();
-
-            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor))
+            
+            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Wishlist) || typeof(TEntity) == typeof(Enrollment))
             {
                 // Run the mapping sequentially for Student and Instructor types.
                 foreach (var entity in entities)
@@ -60,11 +66,11 @@ namespace MindMission.API.Controllers.Base
 
         #region Responses
 
-        protected ResponseObject<TDto> GenerateResponse(bool success, string message, List<TDto> dtos = null, PaginationDto pagination = null)
+        protected ResponseObject<TDto> GenerateResponse(bool success, string message, List<TDto> dtos = null, PaginationDto pagination = null, int entitiesCount = 1)
         {
             if (pagination != null)
             {
-                return ResponseObjectFactory.CreateResponseObject<TDto>(success, message, dtos, pagination.PageNumber, pagination.PageSize);
+                return ResponseObjectFactory.CreateResponseObject<TDto>(success, message, dtos, pagination.PageNumber, pagination.PageSize, entitiesCount);
             }
 
             return ResponseObjectFactory.CreateResponseObject<TDto>(success, message, dtos ?? new List<TDto>());
@@ -129,10 +135,10 @@ namespace MindMission.API.Controllers.Base
             return GenerateResponse(false, message);
         }
 
-        protected ResponseObject<TDto> RetrieveSuccessResponse(List<TDto> dtos, PaginationDto pagination, string entityType)
+        protected ResponseObject<TDto> RetrieveSuccessResponse(List<TDto> dtos, PaginationDto pagination, string entityType, int entitiesCount)
         {
             string message = string.Format(SuccessMessages.RetrievedSuccessfully, entityType);
-            return GenerateResponse(true, message, dtos, pagination);
+            return GenerateResponse(true, message, dtos, pagination, entitiesCount);
         }
 
         protected ResponseObject<TDto> CreatedSuccessResponse(TDto dto, PaginationDto pagination, string entityType)
@@ -158,11 +164,13 @@ namespace MindMission.API.Controllers.Base
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
 
+            EntitiesCount = entities.Count();
+
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
 
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
 
-            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName, EntitiesCount);
 
             return Ok(response);
         }
@@ -174,12 +182,13 @@ namespace MindMission.API.Controllers.Base
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
 
+            EntitiesCount = entities.Count();
 
             var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
 
             var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
 
-            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName);
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName, EntitiesCount);
 
             return Ok(response);
         }
@@ -194,7 +203,7 @@ namespace MindMission.API.Controllers.Base
             var entityDto = await MapEntityToDTO(entity);
 
 
-            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName, 1);
 
             return Ok(response);
         }
@@ -209,7 +218,7 @@ namespace MindMission.API.Controllers.Base
             var entityDto = await MapEntityToDTO(entity);
 
 
-            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName);
+            var response = RetrieveSuccessResponse(new List<TDto> { entityDto }, new PaginationDto { PageNumber = 1, PageSize = 1 }, entityName, 1);
 
             return Ok(response);
         }

@@ -10,8 +10,7 @@ namespace MindMission.Domain.Models
     {
         public Chapter()
         {
-            Lessons = new HashSet<Lesson>();
-            Course = new Course();
+
         }
 
         [Key]

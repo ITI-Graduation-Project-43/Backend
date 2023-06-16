@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.WebUtilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
-using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 using System.Text;
 
@@ -11,61 +10,56 @@ namespace MindMission.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<User> UserManager;
-        private readonly IStudentService StudentService;
-        public UserRepository(UserManager<User> _UserManager, IStudentService _StudentService)
+
+        public UserRepository(UserManager<User> _UserManager)
         {
             UserManager = _UserManager;
-            StudentService = _StudentService;
         }
 
-        public async Task<IdentityResult> RegistrationStudentAsync(User user, string _FirstName, string _LasName)
+        public async Task<IdentityResult> RegistrationStudentAsync(User user, string _FirstName, string _LastName)
         {
-            var Roles = new List<string>() { "Student" };
             user.Id = Guid.NewGuid().ToString();
-            var Result = await UserManager.CreateAsync(user, user.PasswordHash); // 1
-            if(Result.Succeeded)
+            user.Students.Add(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LastName });
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash);
+            if (Result.Succeeded)
             {
-                var RoleResult = await UserManager.AddToRoleAsync(user, "Student"); // 2
-                if(RoleResult.Succeeded)
+                try
                 {
-                    var ResultOfAddingNewStudent = await StudentService.AddAsync(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LasName }); //3
-                    if(ResultOfAddingNewStudent != null) 
-                    { 
+                    var RoleResult = await UserManager.AddToRoleAsync(user, "Student");
+                    if (RoleResult.Succeeded)
+                    {
                         return IdentityResult.Success;
                     }
-                    await UserManager.RemoveFromRolesAsync(user, Roles);
-                    await UserManager.DeleteAsync(user);
-                    return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
                 }
-                await UserManager.RemoveFromRolesAsync(user, Roles);
-                return RoleResult;
-                
+                catch (Exception ex)
+                {
+                    await UserManager.DeleteAsync(user);
+                    return IdentityResult.Failed(new IdentityError() { Code = "Role Error", Description = ex.Message });
+                }
             }
             return Result;
         }
 
-        public async Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LasName)
+        public async Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LastName)
         {
-            var Roles = new List<string>() { "Student" };
             user.Id = Guid.NewGuid().ToString();
-            var Result = await UserManager.CreateAsync(user, user.PasswordHash); // 1
+            user.Instructors.Add(new Instructor() { Id = user.Id, FirstName = _FirstName, LastName = _LastName });
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash);
             if (Result.Succeeded)
             {
-                var RoleResult = await UserManager.AddToRoleAsync(user, "Student"); // 2
-                if (RoleResult.Succeeded)
+                try
                 {
-                    var ResultOfAddingNewStudent = await StudentService.AddAsync(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LasName }); //3
-                    if (ResultOfAddingNewStudent != null)
+                    var RoleResult = await UserManager.AddToRoleAsync(user, "Instructor");
+                    if (RoleResult.Succeeded)
                     {
                         return IdentityResult.Success;
                     }
-                    await UserManager.RemoveFromRolesAsync(user, Roles);
-                    await UserManager.DeleteAsync(user);
-                    return IdentityResult.Failed(new IdentityError() { Code = "Error", Description = "Something wrong during add new student" });
                 }
-                await UserManager.RemoveFromRolesAsync(user, Roles);
-                return RoleResult;
-
+                catch (Exception ex)
+                {
+                    await UserManager.DeleteAsync(user);
+                    return IdentityResult.Failed(new IdentityError() { Code = "Role Error", Description = ex.Message });
+                }
             }
             return Result;
         }
@@ -80,16 +74,18 @@ namespace MindMission.Infrastructure.Repositories
                     var Result = await UserManager.CheckPasswordAsync(User, Password);
                     if (Result)
                     {
+                        var role = await UserManager.GetRolesAsync(User);
                         User.IsActive = true;
                         User.IsDeactivated = false;
                         await UserManager.UpdateAsync(User);
-                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email };
+                        SuccessLoginDto SuccessDto = new SuccessLoginDto() { Id = User.Id, Email = User.Email, Role = role[0] };
                         return SuccessDto;
                     }
                 }
+                return new SuccessLoginDto() { Id = "blocked" };
             }
             return null;
-        } //No message at blocking
+        }
 
         public async Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password)
         {
@@ -183,7 +179,7 @@ namespace MindMission.Infrastructure.Repositories
                 if (Result)
                 {
                     User.IsDeleted = true;
-                    User.Email = null;
+                    User.Email += "," + User.Id;
                     User.NormalizedEmail = null;
                     User.EmailConfirmed = false;
                     return await UserManager.UpdateAsync(User);

@@ -7,12 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindMission.API.EmailSettings;
 using MindMission.API.Middlewares;
+using MindMission.API.Utilities;
 using MindMission.API.Utilities.Identity.IdentityPolicy;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
+using MindMission.Application.Mapping.Post;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
@@ -28,14 +30,28 @@ string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
 
 #region serilog
-var Logger = new LoggerConfiguration()
-.ReadFrom.Configuration(builder.Configuration)
-.Enrich.FromLogContext()
-.CreateLogger();
+var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Logger);
 #endregion
 
+
+builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddRazorPages();
+
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+
+builder.Services.AddDbContext<MindMissionDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
+        b => b.MigrationsAssembly("MindMission.API"));
+
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    //options.LogTo(Console.WriteLine, LogLevel.Information);
+});
+
+/*JWT Configuration*/
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // To authenticate using token instead of cookie
@@ -55,21 +71,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson();
-
-builder.Services.AddRazorPages();
-
-builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
-
-builder.Services.AddDbContext<MindMissionDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MindMissionDbOnline"),
-        b => b.MigrationsAssembly("MindMission.API"));
-
-    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    options.LogTo(Console.WriteLine, LogLevel.Information);
-});
-
+/*Azure Configuration*/
 builder.Services.AddScoped(x =>
 {
     var configuration = x.GetRequiredService<IConfiguration>();
@@ -105,6 +107,11 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<CourseMappingService, CourseMappingService>();
 builder.Services.AddScoped<IMappingService<Course, CourseDto>, CourseMappingService>();
+builder.Services.AddScoped<IMappingService<Course, CourseCreateDto>, PostCourseMappingService>();
+builder.Services.AddScoped<IMappingService<CourseRequirement, CourseRequirementCreateDto>, CourseRequirementMappingService>();
+builder.Services.AddScoped<IMappingService<EnrollmentItem, EnrollmentItemCreateDto>, EnrollmentItemMappingService>();
+builder.Services.AddScoped<IMappingService<LearningItem, LearningItemCreateDto>, LearningItemMappingService>();
+
 
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
@@ -179,7 +186,6 @@ builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>()
 /*Identity Configuration*/
 builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<MindMissionDbContext>().AddDefaultTokenProviders().AddTokenProvider<DataProtectorTokenProvider<User>>("Default");
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -192,6 +198,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 /*Mail Configuration*/
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 
 /*Stripe Service Configuration*/
@@ -222,6 +229,7 @@ builder.Services.AddSwaggerGen(Swagger =>
             Url = new Uri("https://example.com/contact"),
         }
     });
+
 
     Swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
