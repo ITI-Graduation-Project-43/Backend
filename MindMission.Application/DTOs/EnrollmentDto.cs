@@ -12,14 +12,17 @@ namespace MindMission.Application.DTOs
 
         public string CourseTitle { get; set; } = string.Empty;
         public decimal CoursePrice { get; set; } = 0;
-        public string CourseShortDescription { get; set; } = string.Empty;
+        public string CourseDescription { get; set; } = string.Empty;
         public string CourseImageUrl { get; set; } = string.Empty;
         [Required]
 
         public string StudentId { get; set; } = string.Empty;
         public string StudentName { get; set; } = string.Empty;
 
+		public decimal? CourseAvgReview { get; set; }
+		public string CategoryName { get; set; } = string.Empty;
 
 
-    }
+
+	}
 }

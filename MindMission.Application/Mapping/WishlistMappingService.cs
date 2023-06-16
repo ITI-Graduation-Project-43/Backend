@@ -24,13 +24,16 @@ namespace MindMission.Application.Mapping
                 Id = wishlist.Id,
                 AddedDate = wishlist.AddedDate
             };
-            var course = await _CourseService.GetByIdAsync(wishlist.CourseId);
+            var course = await _CourseService.GetByIdAsync(wishlist.CourseId,crs=>crs.Category);
             if (course != null)
             {
                 wishlistDto.CourseId = course.Id;
                 wishlistDto.CourseTitle = course.Title;
                 wishlistDto.CourseImageUrl = course.ImageUrl;
                 wishlistDto.CoursePrice = course.Price;
+                wishlistDto.CourseDescription = course.Description;
+                wishlistDto.CourseAvgReview = course.AvgReview;
+                wishlistDto.CategoryName = course.Category.Name;
             }
             var student = await _StudentService.GetByIdAsync(wishlist.StudentId);
             if (student != null)

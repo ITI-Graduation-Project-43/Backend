@@ -74,7 +74,7 @@ namespace MindMission.Application.Mapping
             }
 
             // Map the chapters
-            courseDTO.Chapters = course.Chapters.Select(chapter => new CourseChapterDto
+            courseDTO.Chapters = course.Chapters?.Select(chapter => new CourseChapterDto
             {
                 Title = chapter.Title,
                 NoOfLessons = chapter.NoOfLessons,
