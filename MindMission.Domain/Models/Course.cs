@@ -122,6 +122,8 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(Wishlist.Course))]
         public virtual ICollection<Wishlist> Wishlists { get; set; }
+        [InverseProperty(nameof(TimeTracking.Course))]
+        public ICollection<TimeTracking> TimeTrackings { get; set; }
 
 
         public ICollection<LearningItem> LearningItems { get; set; }

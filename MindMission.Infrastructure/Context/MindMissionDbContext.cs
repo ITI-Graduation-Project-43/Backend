@@ -25,11 +25,13 @@ namespace MindMission.Infrastructure.Context
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<Quiz> Quizzes { get; set; }
         public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<TimeTracking> TimeTrackings { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserAccount> UserAccounts { get; set; }
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<WebsiteFeedback> WebsiteFeedbacks { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
+
 
         public MindMissionDbContext(DbContextOptions<MindMissionDbContext> options) : base(options)
         {
@@ -386,6 +388,21 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
+            });
+
+            builder.Entity<TimeTracking>(entity =>
+            {
+                entity.HasOne(d => d.Course)
+                    .WithMany(p => p.TimeTrackings)
+                    .HasForeignKey(d => d.CourseId)
+                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .HasConstraintName("FK__timeTrackings__Cours__59C55456");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.TimeTrackings)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .HasConstraintName("FK__timeTrackings__Stude__5AB9788F");
             });
         }
     }

@@ -57,5 +57,8 @@ namespace MindMission.Domain.Models
 
         [InverseProperty(nameof(Wishlist.Student))]
         public virtual ICollection<Wishlist> Wishlists { get; set; }
+
+        [InverseProperty(nameof(TimeTracking.Student))]
+        public ICollection<TimeTracking> TimeTrackings { get; set; }
     }
 }
