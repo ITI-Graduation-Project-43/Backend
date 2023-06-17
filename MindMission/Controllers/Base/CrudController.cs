@@ -132,7 +132,8 @@ namespace MindMission.API.Controllers.Base
 
             var dtos = _mapper.Map<IEnumerable<TDto>>(entitiesPage).ToList();
 
-            return Ok(RetrieveSuccessResponse(dtos, _entitiesName));
+            return Ok(RetrieveSuccessResponse(dtos, _entitiesName, pagination, EntitiesCount));
+
 
         }
 
@@ -220,7 +221,7 @@ namespace MindMission.API.Controllers.Base
 
             if (entityToUpdateDto == null)
             {
-                return BadRequest(BadRequestResponse("Dto cannot be null."));
+                return BadRequest(BadRequestResponse(string.Format(ErrorMessages.CannotBeNull, "Dto")));
             }
 
             patchDoc.ApplyTo(entityToUpdateDto, ModelState);

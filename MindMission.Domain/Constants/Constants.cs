@@ -15,7 +15,7 @@
         public const string InvalidId = "Provided {0} Id is invalid. It should be a positive integer.";
         public const string InvalidContentLength = $"Content length exceeds the limit of {{0}} characters.";
         public const string InvalidType = "Provided {0} Type is invalid. It should be '{1}'.";
-
+        public const string CannotBeNull = "{0} cannot be null.";
         public const string Required = "{0} is required.";
         public const string LengthExceeded = "field cannot exceed {0} characters.";
     }
