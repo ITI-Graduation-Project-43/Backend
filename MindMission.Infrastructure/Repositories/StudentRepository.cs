@@ -19,7 +19,7 @@ namespace MindMission.Infrastructure.Repositories
         {
             var recentStudents = await _context.Students
                                        .Include(std => std.Enrollments)
-                                       .Where(std => std.Enrollments.Any(enrollment => enrollment.CourseId == courseId) && std.ProfilePicture != null)
+                                       .Where(std => std.Enrollments.Any(enrollment => enrollment.CourseId == courseId) && std.ProfilePicture != null && !std.IsDeleted)
                                        .OrderByDescending(c => c.CreatedAt)
                                        .Take(recentNumber)
                                        .ToListAsync();

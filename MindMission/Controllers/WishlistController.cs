@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -67,11 +68,25 @@ namespace MindMission.API.Controllers
 
         #region Delete
 
-        // DELETE: api/Wishlist/{wishlistId}
-        [HttpDelete("{wishlistId}")]
+        // DELETE: api/Wishlist/Delete/{wishlistId}
+        [HttpDelete("Delete/{wishlistId}")]
         public async Task<IActionResult> DeleteWishlist(int wishlistId)
         {
             return await DeleteEntityResponse(_wishlistService.GetByIdAsync, _wishlistService.DeleteAsync, wishlistId);
+        }
+
+        // DELETE: api/Wishlist/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var course = await _wishlistService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _wishlistService.SoftDeleteAsync(id);
+            return NoContent();
         }
 
         #endregion Delete

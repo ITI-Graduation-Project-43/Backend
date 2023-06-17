@@ -19,13 +19,13 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int CourseId)
         {
-            var Enrollments = await _dbSet.Where(w => w.CourseId == CourseId).ToListAsync();
+            var Enrollments = await _dbSet.Where(w => w.CourseId == CourseId && !w.IsDeleted).ToListAsync();
             return Enrollments.AsQueryable();
         }
 
         public async Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string StudentId)
         {
-            var Enrollments = await _dbSet.Where(w => w.StudentId == StudentId).ToListAsync();
+            var Enrollments = await _dbSet.Where(w => w.StudentId == StudentId && !w.IsDeleted).ToListAsync();
             return Enrollments.AsQueryable();
         }
     }

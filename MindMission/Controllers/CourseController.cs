@@ -286,7 +286,7 @@ namespace MindMission.API.Controllers
         #region Delete
 
         // DELETE: api/Course/delete/{courseId}
-        [HttpDelete("delete/{courseId}")]
+        [HttpDelete("Delete/{courseId}")]
         public async Task<IActionResult> DeleteCourse(int courseId)
         {
 

@@ -28,7 +28,8 @@ namespace MindMission.Infrastructure.Repositories
                         .Include(lesson => lesson.Quiz)
                         .ThenInclude(quiz => quiz.Questions)
                         .Include(lesson => lesson.Video)
-                        .SingleOrDefaultAsync(lesson => lesson.Id == lessonId);
+                        .Where(lesson => lesson.Id == lessonId && !lesson.IsDeleted)
+                        .SingleOrDefaultAsync();
         }
 
 
@@ -37,7 +38,7 @@ namespace MindMission.Infrastructure.Repositories
             var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
-                       .Where(lesson => lesson.ChapterId == chapterId)
+                       .Where(lesson => lesson.ChapterId == chapterId && !lesson.IsDeleted)
                        .ToListAsync();
 
             return lessons.AsQueryable();
@@ -48,7 +49,7 @@ namespace MindMission.Infrastructure.Repositories
             var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
-                       .Where(lesson => lesson.ChapterId == chapterId)
+                       .Where(lesson => lesson.ChapterId == chapterId && !lesson.IsDeleted)
                        .ToListAsync();
 
             return lessons.AsQueryable();
@@ -59,7 +60,7 @@ namespace MindMission.Infrastructure.Repositories
             var lessons = await _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
-                       .Where(lesson => lesson.Chapter.CourseId == courseId)
+                       .Where(lesson => lesson.Chapter.CourseId == courseId && !lesson.IsDeleted)
                        .ToListAsync();
 
             return lessons.AsQueryable();
@@ -70,7 +71,7 @@ namespace MindMission.Infrastructure.Repositories
             var lessons = await _context.Lessons
                .Include(lesson => lesson.Chapter)
                .ThenInclude(chapter => chapter.Course)
-               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.Type == type)
+               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.Type == type && !lesson.IsDeleted)
                .ToListAsync();
 
             return lessons.AsQueryable();
@@ -81,7 +82,7 @@ namespace MindMission.Infrastructure.Repositories
             var lessons = await _context.Lessons
                .Include(lesson => lesson.Chapter)
                .ThenInclude(chapter => chapter.Course)
-               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.IsFree)
+               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.IsFree && !lesson.IsDeleted)
                .ToListAsync();
 
             return lessons.AsQueryable();

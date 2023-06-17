@@ -21,13 +21,13 @@ namespace MindMission.Infrastructure.Repositories.Base
 
         public async Task<IQueryable<TClass>> GetAllAsync()
         {
-            var Query = await _dbSet.ToListAsync();
+            var Query = await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
             return Query.AsQueryable();
         }
 
         public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
         {
-            IQueryable<TClass> Query = _dbSet;
+            IQueryable<TClass> Query = _dbSet.Where(x => !x.IsDeleted);
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             return await Query.ToListAsync();
         }
@@ -39,7 +39,7 @@ namespace MindMission.Infrastructure.Repositories.Base
                 throw new ArgumentNullException(nameof(id));
             }
 
-            var entity = await _dbSet.FindAsync(id);
+            var entity = await _dbSet.Where(x => !x.IsDeleted && x.Id.Equals(id)).FirstOrDefaultAsync();
 
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
@@ -51,9 +51,10 @@ namespace MindMission.Infrastructure.Repositories.Base
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IQueryable<TClass> Query = _dbSet;
+            IQueryable<TClass> Query = _dbSet.Where(x => !x.IsDeleted);
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             var entity = await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
+
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
 
