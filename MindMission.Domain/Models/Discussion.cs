@@ -7,25 +7,27 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents a discussion associated with a lesson, where users can post comments and upvote discussions.
+    /// </summary>
     [Index(nameof(LessonId), Name = "idx_discussions_lessonid")]
     public partial class Discussion : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Discussion()
-        {
-        }
 
         [Key]
         public int Id { get; set; }
+        [Required]
 
         public int LessonId { get; set; }
-        public string UserId { get; set; }
+        [Required]
+        public string UserId { get; set; } = string.Empty;
         [AllowNull]
         public int? ParentDiscussionId { get; set; }
 
         [Required]
         [StringLength(2048)]
         [Unicode(false)]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         public int Upvotes { get; set; }
         public bool IsDeleted { get; set; } = false;
@@ -33,17 +35,17 @@ namespace MindMission.Domain.Models
 
 
         [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; }
+        public virtual User User { get; set; } = null!;
 
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Discussions")]
-        public virtual Lesson Lesson { get; set; }
+        public virtual Lesson Lesson { get; set; } = null!;
 
         [ForeignKey(nameof(ParentDiscussionId))]
         [InverseProperty(nameof(InverseParentDiscussion))]
-        public virtual Discussion ParentDiscussion { get; set; }
+        public virtual Discussion? ParentDiscussion { get; set; }
 
         [InverseProperty(nameof(ParentDiscussion))]
-        public virtual ICollection<Discussion> InverseParentDiscussion { get; set; }
+        public virtual ICollection<Discussion>? InverseParentDiscussion { get; set; }
     }
 }

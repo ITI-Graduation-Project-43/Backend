@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents an admin permission entity that associates an admin with a permission.
+    /// </summary>
     [Index(nameof(Id), Name = "idx_adminpermissions_adminid")]
     public partial class AdminPermission : BaseEntity, IEntity<int>, ISoftDeletable
     {
@@ -20,10 +23,10 @@ namespace MindMission.Domain.Models
 
         [ForeignKey(nameof(Id))]
         [InverseProperty("AdminPermissions")]
-        public virtual Admin Admin { get; set; }
+        public virtual Admin Admin { get; set; } = null!;
 
         [ForeignKey(nameof(PermissionId))]
         [InverseProperty("AdminPermissions")]
-        public virtual Permission Permission { get; set; }
+        public virtual Permission Permission { get; set; } = null!;
     }
 }
