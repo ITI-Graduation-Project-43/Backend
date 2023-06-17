@@ -18,7 +18,7 @@ namespace MindMission.Domain.Models
         [Key]
         public int PermissionId { get; set; }
 
-        public DateTime GrantedAt { get; set; }
+        public DateTime GrantedAt { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(Id))]

@@ -1,21 +1,16 @@
-﻿using MindMission.Application.DTOs.PostDtos;
+﻿using MindMission.Application.DTOs.ArticleDtos;
 using MindMission.Application.Mapping.Base;
-using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MindMission.Application.Mapping.Post
 {
-    public class PostArticleMappingService : IMappingService<Article, PostArticleDto>
+    public class PostArticleMappingService : IMappingService<Article, ArticleCreateDto>
     {
 
-        public async Task<PostArticleDto> MapEntityToDto(Article article)
+        public async Task<ArticleCreateDto> MapEntityToDto(Article article)
         {
-            var postArticleDto = new PostArticleDto
+            var postArticleDto = new ArticleCreateDto
             {
                 Id = article.Id,
                 LessonId = article.LessonId,
@@ -25,7 +20,7 @@ namespace MindMission.Application.Mapping.Post
             return postArticleDto;
         }
 
-        public Article MapDtoToEntity(PostArticleDto postArticleDto)
+        public Article MapDtoToEntity(ArticleCreateDto postArticleDto)
         {
             var article = new Article
             {

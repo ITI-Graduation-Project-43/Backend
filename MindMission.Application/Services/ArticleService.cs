@@ -15,47 +15,48 @@ namespace MindMission.Application.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Article>> GetAllAsync(params Expression<Func<Article, object>>[] IncludeProperties)
+
+        public async Task<IQueryable<Article>> GetAllAsync()
         {
-            return await _context.GetAllAsync(IncludeProperties);
-        }
-        Task<IQueryable<Article>> IRepository<Article, int>.GetAllAsync()
-        {
-            return _context.GetAllAsync();
+            return await _context.GetAllAsync();
         }
 
-
-        public Task<Article> GetByIdAsync(int id, params Expression<Func<Article, object>>[] IncludeProperties)
+        public async Task<IEnumerable<Article>> GetAllAsync(params Expression<Func<Article, object>>[] includeProperties)
         {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
-        Task<Article> IRepository<Article, int>.GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
+            return await _context.GetAllAsync(includeProperties);
         }
 
-
-        Task<Article> IRepository<Article, int>.AddAsync(Article entity)
+        public async Task<Article> GetByIdAsync(int id)
         {
-            return _context.AddAsync(entity);
+            return await _context.GetByIdAsync(id);
         }
 
-        Task IRepository<Article, int>.DeleteAsync(int id)
+        public async Task<Article> GetByIdAsync(int id, params Expression<Func<Article, object>>[] includeProperties)
+        {
+            return await _context.GetByIdAsync(id, includeProperties);
+        }
+
+        public async Task<Article> AddAsync(Article entity)
+        {
+            return await _context.AddAsync(entity);
+        }
+
+        public async Task<Article> UpdateAsync(Article entity)
+        {
+            return await _context.UpdateAsync(entity);
+        }
+        public async Task<Article> UpdatePartialAsync(int id, Article entity)
+        {
+            return await _context.UpdatePartialAsync(id, entity);
+        }
+
+        public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync(id);
         }
-        Task IRepository<Article, int>.SoftDeleteAsync(int id)
+        public Task SoftDeleteAsync(int id)
         {
             return _context.SoftDeleteAsync(id);
-        }
-
-        Task<Article> IRepository<Article, int>.UpdateAsync(Article entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
-        public Task<Article> UpdatePartialAsync(int id, Article entity)
-        {
-            return _context.UpdatePartialAsync(id, entity);
         }
     }
 }

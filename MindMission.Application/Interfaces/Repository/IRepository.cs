@@ -9,11 +9,8 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IQueryable<TClass>> GetAllAsync();
         Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, Object>>[] IncludeProperties);
-
-
         Task<TClass> GetByIdAsync(TDataType id);
         Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, Object>>[] IncludeProperties);
-
 
         Task<TClass> AddAsync(TClass entity);
 

@@ -26,8 +26,7 @@ namespace MindMission.Domain.Models
         [Unicode(false)]
         public string LastName { get; set; } = string.Empty;
 
-        [NotMapped]
-        public string FullName => FirstName + " " + LastName;
+
 
         [Required]
         [StringLength(255)]

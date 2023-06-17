@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
-using MindMission.Application.DTOs.PostDtos;
+using MindMission.Application.DTOs.ArticleDtos;
 using MindMission.Application.Exceptions;
 using MindMission.Application.Interfaces.DtoValidator;
-using MindMission.Application.Interfaces.Patch;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 
 namespace MindMission.Application.CustomValidation
 {
@@ -17,7 +15,7 @@ namespace MindMission.Application.CustomValidation
             _lessonService = lessonService;
         }
 
-        public async Task ValidateAsync(PostArticleDto dto)
+        public async Task ValidateAsync(ArticleCreateDto dto)
         {
             if (dto.LessonId <= 0 || await _lessonService.GetByIdAsync(dto.LessonId) == null)
                 throw new ValidationException("Invalid LessonId");

@@ -28,6 +28,9 @@ using System.Text;
 using MindMission.Application.CustomValidation;
 using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Interfaces.DtoValidator;
+using MindMission.Application.DTOs.ArticleDtos;
+using MindMission.Application.Validator.Base;
+using MindMission.Application.Validator;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +85,7 @@ builder.Services.AddScoped(x =>
     return new BlobServiceClient(connectionString);
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 /*  upload image */
 builder.Services.AddScoped<IUploadImage, UploadImageService>();
 
@@ -96,8 +100,11 @@ builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
-builder.Services.AddScoped<IMappingService<Article, PostArticleDto>, PostArticleMappingService>();
+builder.Services.AddScoped<IMappingService<Article, ArticleCreateDto>, PostArticleMappingService>();
 builder.Services.AddScoped<IArticleDtoValidator, ArticleDtoValidator>();
+builder.Services.AddScoped<IValidatorService<ArticleCreateDto>, ArticleValidatorService>();
+
+
 
 #endregion
 /*Permission Configuration*/

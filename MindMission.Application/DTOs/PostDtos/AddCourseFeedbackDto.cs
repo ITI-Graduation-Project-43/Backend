@@ -1,14 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using MindMission.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MindMission.Application.DTOs
+
+namespace MindMission.Application.DTOs.PostDtos
 {
     public class AddCourseFeedbackDto
     {
