@@ -37,9 +37,9 @@ namespace MindMission.Application.Services
         {
             return await _repository.Update(studentId, courseId);
         }
-        public async Task<List<Student>> GetLastfourStudentIds()
+        public async Task<List<Student>> GetLastfourStudentIds(int courseId)
         {
-            return await _repository.GetLastfourStudentIds();
+            return await _repository.GetLastfourStudentIds(courseId);
         }
         public async Task<IEnumerable<object>> GetCourseVisitCountByHour(int courseId)
         {
