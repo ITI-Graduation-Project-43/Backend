@@ -3,6 +3,9 @@ using MindMission.Domain.Common;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents a user entity with identity information.
+    /// </summary>
     public partial class User : IdentityUser, IEntity<string>
     {
         public bool IsActive { get; set; } = true;

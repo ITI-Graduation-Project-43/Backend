@@ -4,6 +4,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 
@@ -59,6 +60,7 @@ namespace MindMission.API.Controllers
 
         #endregion get
 
+        #region Update
         [HttpPatch("{instructorId}")]
         public async Task<ActionResult> UpdateInstructor(string instructorId, InstructorDto instructorDto)
         {
@@ -96,6 +98,24 @@ namespace MindMission.API.Controllers
 
             return Ok(instructor.ProfilePicture);
         }
+        #endregion
+
+        #region Delete
+        // DELETE: api/Instructor/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+
+            var course = await _instructorService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _instructorService.SoftDeleteAsync(id);
+            return NoContent();
+        }
+
+        #endregion
 
     }
 }

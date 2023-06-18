@@ -19,7 +19,7 @@ namespace MindMission.Infrastructure.Repositories
         {
             var Chapter = await _context.Chapters
                        .Include(chapter => chapter.Lessons)
-                       .Where(chapter => chapter.CourseId == courseId)
+                       .Where(chapter => chapter.CourseId == courseId && !chapter.IsDeleted)
                        .ToListAsync();
 
             return Chapter.AsQueryable();

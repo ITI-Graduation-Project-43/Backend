@@ -12,7 +12,6 @@ namespace MindMission.Application.Mapping
             {
                 Id = quizDto.Id,
                 LessonId = quizDto.LessonId,
-                NoOfQuestions = quizDto.NoOfQuestions
             };
         }
 

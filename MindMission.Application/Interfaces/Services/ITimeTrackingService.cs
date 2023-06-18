@@ -5,8 +5,10 @@ namespace MindMission.Application.Interfaces.Services
 {
     public  interface ITimeTrackingService : ITrackingTimeRepository
     {
-        Task<IEnumerable<object>> GetCourseVisitCountByHour(int courseId);
-        Task<long> getTotalHours(string instructorId);
+        Task<object> GetCourseVisitCount(int courseId);
+        
+        Task<long> GetTotalHours(string instructorId);
+        
     }
 
 }

@@ -21,7 +21,7 @@ namespace MindMission.Infrastructure.Repositories
             var Query = await _context.Categories
                         .Include(category => category.Parent)
                         .ThenInclude(parentCategory => parentCategory.Parent)
-                        .Where(category => category.Type == type)
+                        .Where(category => category.Type == type && !category.IsDeleted)
                         .ToListAsync();
 
             return Query.AsQueryable();
@@ -32,7 +32,7 @@ namespace MindMission.Infrastructure.Repositories
             var Query = await _context.Categories
                         .Include(category => category.Parent)
                         .ThenInclude(parentCategory => parentCategory.Parent)
-                        .Where(category => category.ParentId == parentId)
+                        .Where(category => category.ParentId == parentId && !category.IsDeleted)
                         .ToListAsync();
 
             return Query.AsQueryable();
@@ -42,8 +42,8 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Category> GetParentCategoryById(int parentId)
         {
             return await _context.Categories
-                .Where(category => category.Type == 0)
-                .FirstOrDefaultAsync(category => category.Id == parentId)
+                .Where(category => category.Type == 0 && category.Id == parentId && !category.IsDeleted)
+                .FirstOrDefaultAsync()
                 ?? throw new KeyNotFoundException($"No entity with id {parentId} found."); ;
         }
     }

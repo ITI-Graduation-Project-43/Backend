@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 
@@ -19,6 +20,11 @@ namespace MindMission.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Attachment?> GetAttachmentByIdAsync(int id) => await _context.Attachments.FindAsync(id);
+        public async Task<Attachment?> GetAttachmentByIdAsync(int id)
+        {
+            return await _context.Attachments
+                .Where(a => a.Id == id && !a.IsDeleted)
+                .FirstOrDefaultAsync();
+        }
     }
 }

@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -45,10 +46,24 @@ namespace MindMission.API.Controllers
             return await UpdateEntityResponse(_permissionService.GetByIdAsync, _permissionService.UpdateAsync, permissionId, permissionDto, "Permission");
         }
 
-        [HttpDelete("{permissionId}")]
+        [HttpDelete("Delete/{permissionId}")]
         public async Task<IActionResult> DeletePermission(int permissionId)
         {
             return await DeleteEntityResponse(_permissionService.GetByIdAsync, _permissionService.DeleteAsync, permissionId);
+        }
+
+        // DELETE: api/Permission/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var course = await _permissionService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _permissionService.SoftDeleteAsync(id);
+            return NoContent();
         }
 
 

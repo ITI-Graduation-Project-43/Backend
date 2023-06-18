@@ -1,6 +1,6 @@
 ﻿using MindMission.Application.DTOs.Base;
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.ArticleDtos
 {
     public class ArticleDto : IDtoWithId<int>
     {

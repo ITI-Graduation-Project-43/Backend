@@ -6,34 +6,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents a chapter entity within a course.
+    /// </summary>
     [Index(nameof(CourseId), Name = "idx_chapters_courseid")]
     public partial class Chapter : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Chapter()
-        {
 
-        }
 
         [Key]
         public int Id { get; set; }
-
+        [Required]
         public int CourseId { get; set; }
 
         [Required]
         [StringLength(100)]
         [Unicode(false)]
         public string Title { get; set; } = string.Empty;
-
-        public int NoOfLessons { get; set; }
-        public float NoOfHours { get; set; }
+        [NotMapped]
+        public int NoOfLessons => Lessons?.Count ?? 0;
+        [NotMapped]
+        public float NoOfHours => Lessons?.Sum(lesson => lesson.NoOfHours) ?? 0;
         public bool IsDeleted { get; set; } = false;
 
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Chapters")]
-        public virtual Course Course { get; set; }
+        public virtual Course Course { get; set; } = null!;
 
         [InverseProperty(nameof(Lesson.Chapter))]
-        public virtual ICollection<Lesson> Lessons { get; set; }
+        public virtual ICollection<Lesson> Lessons { get; set; } = null!;
     }
 }

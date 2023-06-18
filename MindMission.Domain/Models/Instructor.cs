@@ -8,12 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents an instructor entity who teaches courses.
+    /// </summary>
     public partial class Instructor : BaseEntity, IEntity<string>, ISoftDeletable
     {
-        public Instructor()
-        {
 
-        }
 
         [Required]
         [Key]
@@ -28,7 +28,8 @@ namespace MindMission.Domain.Models
         [StringLength(50)]
         [Unicode(false)]
         public string LastName { get; set; } = string.Empty;
-
+        [NotMapped]
+        public string FullName => FirstName + " " + LastName;
         [StringLength(1000)]
         [Unicode(false)]
         public string Bio { get; set; } = string.Empty;
@@ -52,21 +53,21 @@ namespace MindMission.Domain.Models
 
         public int NoOfCourses { get; set; }
         public int NoOfStudents { get; set; }
-        public double? AvgRating { get; set; }
         public int NoOfRatings { get; set; }
+        public double? AvgRating { get; set; }
+
         public bool IsDeleted { get; set; } = false;
 
 
         [ForeignKey(nameof(Id))]
-        public virtual User User { get; set; }
+        public virtual User User { get; set; } = null!;
 
         [InverseProperty(nameof(CourseFeedback.Instructor))]
-        public virtual ICollection<CourseFeedback> CourseFeedbacks { get; set; }
+        public virtual ICollection<CourseFeedback>? CourseFeedbacks { get; set; }
 
         [InverseProperty(nameof(Course.Instructor))]
-        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<Course> Courses { get; set; } = null!;
 
-        [NotMapped]
-        public string FullName => FirstName + " " + LastName;
+
     }
 }

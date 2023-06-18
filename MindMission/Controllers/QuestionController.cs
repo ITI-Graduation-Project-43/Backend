@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -45,10 +46,24 @@ namespace MindMission.API.Controllers
             return await UpdateEntityResponse(_questionService.GetByIdAsync, _questionService.UpdateAsync, questionId, questionDto, "Question");
         }
 
-        [HttpDelete("{questionId}")]
+        [HttpDelete("Delete/{questionId}")]
         public async Task<IActionResult> DeleteQuestion(int questionId)
         {
             return await DeleteEntityResponse(_questionService.GetByIdAsync, _questionService.DeleteAsync, questionId);
+        }
+
+        // DELETE: api/Question/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var course = await _questionService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _questionService.SoftDeleteAsync(id);
+            return NoContent();
         }
     }
 }

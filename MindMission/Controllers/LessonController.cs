@@ -552,7 +552,7 @@ namespace MindMission.API.Controllers
         #endregion
         #region Delete
 
-        [HttpDelete("delete/{lessonId}")]
+        [HttpDelete("Delete/{lessonId}")]
         public async Task<IActionResult> DeleteLesson(int lessonId)
         {
             return await DeleteEntityResponse(_lessonService.GetByIdAsync, _lessonService.DeleteAsync, lessonId);
