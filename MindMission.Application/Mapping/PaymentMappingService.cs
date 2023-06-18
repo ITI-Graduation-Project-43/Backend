@@ -27,7 +27,7 @@ namespace MindMission.Application.Mapping
                 dto.Email,
                 dto.Description,
                 "usd",
-                (long)CoursesPrice * 100);
+                (long)(CoursesPrice * 100.00m));
 
             return Payment;
         }

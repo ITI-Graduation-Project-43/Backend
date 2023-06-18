@@ -15,12 +15,16 @@ namespace MindMission.API.Controllers
     {
         private readonly IStripeService _stripeService;
         private readonly IPaymentMappingService _paymentMappingService;
+		private readonly ICouponService _couponService;
 
-        public PaymentController(IStripeService stripeService, IPaymentMappingService paymentMappingService)
+		public PaymentController(IStripeService stripeService, 
+            IPaymentMappingService paymentMappingService,
+            ICouponService couponService)
         {
             _stripeService = stripeService;
             _paymentMappingService = paymentMappingService;
-        }
+			_couponService = couponService;
+		}
 
         //////
         //User API to return the Id of a success payment process
@@ -30,7 +34,7 @@ namespace MindMission.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                long totalPrice = await _stripeService.GetTotalPrice(paymentDto.CoursesIds);
+                long totalPrice = await _stripeService.GetTotalPrice(paymentDto.CoursesIds, paymentDto.Coupon);
 
                     try
                     {

@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Services;
+﻿using MindMission.Application.Interfaces.Repository;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Domain.Stripe.CustomValidationAttributes;
@@ -13,20 +14,23 @@ namespace MindMission.Application.Services
         private readonly CustomerService _customerService;
         private readonly TokenService _tokenService;
         private readonly ICourseRepository _courseRepository;
+		private readonly ICouponRepository _couponRepository;
 
-        //////Injection of Stripe services to be used to implement the two methods
-        public StripeService(
+		//////Injection of Stripe services to be used to implement the two methods
+		public StripeService(
             ChargeService chargeService,
             CustomerService customerService,
             TokenService tokenService,
-            ICourseRepository courseRepository
+            ICourseRepository courseRepository,
+            ICouponRepository couponRepository
             )
         {
             _chargeService = chargeService;
             _customerService = customerService;
             _tokenService = tokenService;
             _courseRepository = courseRepository;
-        }
+			_couponRepository = couponRepository;
+		}
 
         public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
         {
@@ -108,14 +112,43 @@ namespace MindMission.Application.Services
         //////Get Choosed Course to enroll in.
         public async Task<Course> GetEnrolledCourse(int id) => await _courseRepository.GetByIdAsync(id);
 
-        public async Task<long> GetTotalPrice(List<int> coursesIds)
+
+        //////Calc Discount
+        public async Task<long> GetTotalPrice(List<int> coursesIds, string? code)
         {
-            long totalPrice = 0;
-            foreach (int courseId in coursesIds)
+            decimal totalPrice = 0;
+            decimal discount = 0;
+            Course courseWithDiscount = null;
+
+            if(code != null && code.Length >= 5)
             {
-                totalPrice += (long) (await GetEnrolledCourse(courseId)).Price;
-            }
-            return totalPrice;
+				Domain.Models.Coupon coupon = await _couponRepository.getCouponByCode(code);
+				if (coupon != null)
+				{
+					if (coursesIds.IndexOf(coupon.CourseId.Value) != -1)
+					{
+						courseWithDiscount = await GetEnrolledCourse(coupon.CourseId.Value);
+						discount = courseWithDiscount.Price * (coupon.Discount / 100m).Value;
+					}
+				}
+			}
+
+			
+
+			decimal coursePrice = 0;
+			foreach (int courseId in coursesIds)
+            {
+                if(courseWithDiscount != null && courseWithDiscount.Id == courseId)
+                {
+                    coursePrice = courseWithDiscount.Price;
+                }
+                else
+                {
+					coursePrice = (await GetEnrolledCourse(courseId)).Price;
+				}
+				totalPrice += coursePrice;
+			}
+			return (long) (totalPrice - discount);
         }
     }
 }
