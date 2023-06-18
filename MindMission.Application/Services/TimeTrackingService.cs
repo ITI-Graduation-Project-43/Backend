@@ -41,17 +41,29 @@ namespace MindMission.Application.Services
         {
             return await _repository.GetLastfourStudentIds(courseId);
         }
-        public async Task<IEnumerable<object>> GetCourseVisitCountByHour(int courseId)
+        public async Task<object> GetCourseVisitCount(int courseId)
         {
-            var courseVisits = await _repository.GetAll();
+            var courseVisits = await _repository.GetByCourseId(courseId);
+            var hourlyCounts = Enumerable.Range(0, 24)
+            .Select(hour => new { Hour = hour, Count = courseVisits.Count(log => log.StartTime.Value.Hour == hour) })
+            .ToArray();
+            var dailyCounts = new[] { DayOfWeek.Sunday, DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday }
+            .Select(day => new { Day = day.ToString(), Count = courseVisits.Count(log => log.StartTime.Value.DayOfWeek == day) })
+            .ToArray();
+            var monthlyCounts = Enumerable.Range(1, 12)
+            .Select(month => new { Month = month, Count = courseVisits.Count(log => log.StartTime.Value.Month == month) })
+            .ToArray();
 
+            var result = new object[] { hourlyCounts, dailyCounts, monthlyCounts };
+/*
             var countPerHour = courseVisits
-                .Where(cv => cv.CourseId == courseId)
                 .GroupBy(cv => cv.StartTime.Value.Hour)
                 .Select(g => new { Hour = g.Key, Count = g.Count() });
-            return countPerHour;
+*/
+            return result;
         }
-        public async Task<long> getTotalHours (string instructorId)
+        
+        public async Task<long> GetTotalHours (string instructorId)
         {
             long totalHourSpent = 0;
             var totalCourses = await _courseRepository.GetAllByInstructorAsync(instructorId);
@@ -72,5 +84,6 @@ namespace MindMission.Application.Services
 
                 return totalHourSpent;
         }
+        
     }
 }
