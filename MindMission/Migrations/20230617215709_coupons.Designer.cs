@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230617215709_coupons")]
+    partial class coupons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,7 +186,7 @@ namespace MindMission.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Admin", b =>
@@ -242,7 +244,7 @@ namespace MindMission.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.AdminPermission", b =>
@@ -276,7 +278,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "Id" }, "idx_adminpermissions_adminid");
 
-                    b.ToTable("AdminPermissions", (string)null);
+                    b.ToTable("AdminPermissions");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Article", b =>
@@ -314,7 +316,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "LessonId" }, "idx_articles_lessonid");
 
-                    b.ToTable("Articles", (string)null);
+                    b.ToTable("Articles");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Attachment", b =>
@@ -361,7 +363,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "LessonId" }, "idx_attachments_lessonid");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Category", b =>
@@ -408,7 +410,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Chapter", b =>
@@ -451,7 +453,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "CourseId" }, "idx_chapters_courseid");
 
-                    b.ToTable("Chapters", (string)null);
+                    b.ToTable("Chapters");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Coupon", b =>
@@ -464,8 +466,7 @@ namespace MindMission.API.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
@@ -474,23 +475,16 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Discount")
-                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Course", b =>
@@ -605,7 +599,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "InstructorId" }, "idx_courses_instructorid");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.CourseFeedback", b =>
@@ -659,7 +653,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "CourseId" }, "idx_coursefeedback_courseid");
 
-                    b.ToTable("CourseFeedback", (string)null);
+                    b.ToTable("CourseFeedback");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.CourseRequirement", b =>
@@ -685,7 +679,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CourseRequirement", (string)null);
+                    b.ToTable("CourseRequirement");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Discussion", b =>
@@ -737,7 +731,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "LessonId" }, "idx_discussions_lessonid");
 
-                    b.ToTable("Discussions", (string)null);
+                    b.ToTable("Discussions");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Enrollment", b =>
@@ -777,7 +771,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "CourseId" }, "idx_enrollments_courseid");
 
-                    b.ToTable("Enrollments", (string)null);
+                    b.ToTable("Enrollments");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.EnrollmentItem", b =>
@@ -799,7 +793,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("EnrollmentItem", (string)null);
+                    b.ToTable("EnrollmentItem");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Instructor", b =>
@@ -869,7 +863,7 @@ namespace MindMission.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Instructors", (string)null);
+                    b.ToTable("Instructors");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.LearningItem", b =>
@@ -895,7 +889,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("LearningItem", (string)null);
+                    b.ToTable("LearningItem");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Lesson", b =>
@@ -948,7 +942,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "ChapterId" }, "idx_lessons_chapterid");
 
-                    b.ToTable("Lessons", (string)null);
+                    b.ToTable("Lessons");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Permission", b =>
@@ -986,7 +980,7 @@ namespace MindMission.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Question", b =>
@@ -1049,7 +1043,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "QuizId" }, "idx_questions_quizid");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Quiz", b =>
@@ -1086,7 +1080,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "LessonId" }, "idx_quizzes_lessonid");
 
-                    b.ToTable("Quizzes", (string)null);
+                    b.ToTable("Quizzes");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
@@ -1137,7 +1131,7 @@ namespace MindMission.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.TimeTracking", b =>
@@ -1165,7 +1159,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "CourseId" }, "idx_TimeTracking_courseid");
 
-                    b.ToTable("TimeTrackings", (string)null);
+                    b.ToTable("TimeTrackings");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.User", b =>
@@ -1288,7 +1282,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "idx_useraccounts_userid");
 
-                    b.ToTable("UserAccounts", (string)null);
+                    b.ToTable("UserAccounts");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Video", b =>
@@ -1327,7 +1321,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "LessonId" }, "idx_videos_lessonid");
 
-                    b.ToTable("Videos", (string)null);
+                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.WebsiteFeedback", b =>
@@ -1367,7 +1361,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "idx_websitefeedback_userid");
 
-                    b.ToTable("WebsiteFeedback", (string)null);
+                    b.ToTable("WebsiteFeedback");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Wishlist", b =>
@@ -1407,7 +1401,7 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex(new[] { "CourseId" }, "idx_wishlists_courseid");
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

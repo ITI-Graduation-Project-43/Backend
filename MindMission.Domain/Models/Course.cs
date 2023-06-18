@@ -129,6 +129,7 @@ namespace MindMission.Domain.Models
         public ICollection<LearningItem> LearningItems { get; set; }
         public ICollection<EnrollmentItem> EnrollmentItems { get; set; }
         public ICollection<CourseRequirement>? CourseRequirements { get; set; }
+        public ICollection<Coupon> Coupons { get; set; }
     }
 
 
