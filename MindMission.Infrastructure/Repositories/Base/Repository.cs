@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Domain.Common;
-using MindMission.Domain.Models;
+using MindMission.Domain.Constants;
 using MindMission.Infrastructure.Context;
-using Stripe;
 using System.Linq.Expressions;
 
 namespace MindMission.Infrastructure.Repositories.Base
@@ -12,6 +11,7 @@ namespace MindMission.Infrastructure.Repositories.Base
     {
         private readonly MindMissionDbContext _context;
         private readonly DbSet<TClass> _dbSet;
+        public DbContext Context => _context;
 
         public Repository(MindMissionDbContext context)
         {
@@ -84,7 +84,18 @@ namespace MindMission.Infrastructure.Repositories.Base
             _dbSet.Remove(await GetByIdAsync(id));
             await _context.SaveChangesAsync();
         }
-
+        public async Task DeleteAsync(TClass entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
+            }
+        }
         public async Task SoftDeleteAsync(TDataType id)
         {
             var entity = await _context.Set<TClass>().FindAsync(id);
@@ -96,10 +107,24 @@ namespace MindMission.Infrastructure.Repositories.Base
             }
             else
             {
-                throw new KeyNotFoundException($"No entity with id {id} found.");
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
             }
         }
 
+        public async Task SoftDeleteAsync(TClass entity)
+        {
+
+            if (entity != null)
+            {
+                entity.IsDeleted = true;
+                _context.Entry(entity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
+            }
+        }
 
     }
 }

@@ -4,7 +4,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Interfaces.Services
 {
-    public interface IArticleService : IService<Article, int>
+    public interface IArticleService : IService<Article, int>, IArticleRepository
     {
     }
 }
