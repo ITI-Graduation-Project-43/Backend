@@ -15,7 +15,7 @@ namespace MindMission.Application.Interfaces.Services
 
         Task<Course> GetEnrolledCourse(int id);
 
-        Task<long> GetTotalPrice(List<int> coursesIds);
+        Task<long> GetTotalPrice(List<int> coursesIds, string? coupon);
 
 	}
 }
