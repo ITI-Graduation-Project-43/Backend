@@ -4,24 +4,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Application.CustomValidation.DataAnnotation
 {
-    public class MaxLengthAttribute : ValidationAttribute
+    /// <summary>
+    /// Validation attribute that checks if a string is under a certain length.
+    /// </summary>
+    public class MaxStringLengthAttribute : ValidationAttribute
     {
         private readonly int _maxLength;
 
-        public MaxLengthAttribute(int maxLength)
+        public MaxStringLengthAttribute(int maxLength)
         {
             _maxLength = maxLength;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
-            if (value is string content && content.Length > _maxLength)
+            if (value is string str && str.Length > _maxLength)
             {
-                var errorMessage = string.Format(ErrorMessages.LengthExceeded, _maxLength);
+                var errorMessage = string.Format(ErrorMessages.LengthAboveMaximum, _maxLength);
                 return new ValidationResult(errorMessage);
             }
 
-            return ValidationResult.Success;
+            return ValidationResult.Success!;
         }
     }
+
 }

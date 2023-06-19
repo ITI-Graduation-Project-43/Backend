@@ -7,7 +7,6 @@ namespace MindMission.Infrastructure.Repositories
 {
     public class QuizRepository : Repository<Quiz, int>, IQuizRepository
     {
-        private readonly MindMissionDbContext _context;
         public QuizRepository(MindMissionDbContext context) : base(context)
         {
         }

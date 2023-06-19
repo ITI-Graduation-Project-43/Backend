@@ -7,11 +7,9 @@ namespace MindMission.Infrastructure.Repositories
 {
     public class ArticleRepository : Repository<Article, int>, IArticleRepository
     {
-        private readonly MindMissionDbContext _context;
 
         public ArticleRepository(MindMissionDbContext context) : base(context)
         {
-            _context = context;
         }
     }
 }

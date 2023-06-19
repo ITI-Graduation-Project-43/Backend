@@ -1,69 +1,97 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
-using MindMission.Application.Mapping;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
+using MindMission.Application.DTOs.QuestionDtos;
+using MindMission.Application.Service.Interfaces;
+using MindMission.Application.Validator.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionController : BaseController<Question, QuestionDto, int>
+    public class QuestionController : BaseController<Question, QuestionDto, QuestionCreateDto, int>
     {
         private readonly IQuestionService _questionService;
-        private readonly QuestionMappingService _questionMappingService;
 
-        public QuestionController(IQuestionService questionService, QuestionMappingService questionMappingService) :
-            base(questionMappingService)
+
+        public QuestionController(IQuestionService questionService,
+                                IValidatorService<QuestionCreateDto> _validatorService,
+                                IMapper mapper)
+                                                                            : base(mapper, _validatorService, "Question", "Questions")
         {
-            _questionService = questionService ?? throw new ArgumentNullException(nameof(questionService));
-            _questionMappingService = questionMappingService ?? throw new ArgumentNullException(nameof(questionMappingService));
+            _questionService = questionService;
+
         }
 
+
+
+        #region GET
+
+        // GET: api/Question
         [HttpGet]
-        public async Task<ActionResult<IQueryable<QuestionDto>>> GetAllQuestions([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult> GetAllQuestion([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_questionService.GetAllAsync, pagination, "Questions");
+            return await GetAll(_questionService.GetAllAsync, pagination, question => question.Quiz);
         }
-
+        // GET: api/Question/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<QuestionDto>> GetQuestionById(int id)
+        public async Task<ActionResult> GetQuestionById(int id)
         {
-            return await GetEntityResponse(() => _questionService.GetByIdAsync(id), "Question");
+            return await GetById(() => _questionService.GetByIdAsync(id, question => question.Quiz));
         }
 
-        [HttpPost("question")]
-        public async Task<ActionResult<QuestionDto>> AddQuestion([FromBody] QuestionDto questionDto)
+        #endregion GET
+
+        #region Add
+        // POST: api/Question/Add
+        [HttpPost]
+        public async Task<ActionResult> AddQuestion([FromBody] QuestionCreateDto questionCreateDto)
         {
-            return await AddEntityResponse(_questionService.AddAsync, questionDto, "Question", nameof(GetQuestionById));
+            return await Create(_questionService.AddAsync, questionCreateDto, nameof(GetQuestionById));
         }
 
-        [HttpPut("{questionId}")]
-        public async Task<ActionResult> UpdateQuestion(int questionId, QuestionDto questionDto)
-        {
-            return await UpdateEntityResponse(_questionService.GetByIdAsync, _questionService.UpdateAsync, questionId, questionDto, "Question");
-        }
+        #endregion Add
 
-        [HttpDelete("Delete/{questionId}")]
-        public async Task<IActionResult> DeleteQuestion(int questionId)
-        {
-            return await DeleteEntityResponse(_questionService.GetByIdAsync, _questionService.DeleteAsync, questionId);
-        }
+        #region Delete
+        // DELETE: api/Question/Delete/{id}
 
+        [HttpDelete("Delete/{id}")]
+        public async Task<ActionResult> DeleteQuestion(int id)
+        {
+            return await Delete(_questionService.GetByIdAsync, _questionService.DeleteAsync, id);
+        }
         // DELETE: api/Question/{id}
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> SoftDeleteQuestion(int id)
         {
-
-            var course = await _questionService.GetByIdAsync(id);
-
-            if (course == null)
-                return NotFound(NotFoundResponse("Course"));
-            await _questionService.SoftDeleteAsync(id);
-            return NoContent();
+            return await Delete(_questionService.GetByIdAsync, _questionService.SoftDeleteAsync, id);
         }
+
+
+        #endregion Delete
+
+        #region Edit Put
+
+        // PUT: api/Question/{id}
+        [HttpPut("{id}")]
+
+        public async Task<ActionResult> UpdateQuestion(int id, [FromBody] QuestionCreateDto questionUpdateDto)
+        {
+            return await Update(_questionService.GetByIdAsync, _questionService.UpdateAsync, id, questionUpdateDto);
+        }
+
+
+        // PATCH: api/Question/{id}
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchQuestion(int id, [FromBody] JsonPatchDocument<QuestionCreateDto> patchDoc)
+        {
+            return await Patch(_questionService.GetByIdAsync, _questionService.UpdatePartialAsync, id, patchDoc);
+        }
+
+        #endregion Edit Put
     }
 }

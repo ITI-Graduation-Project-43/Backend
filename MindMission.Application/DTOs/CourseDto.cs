@@ -50,33 +50,33 @@ namespace MindMission.Application.DTOs
         public int InstructorNoOfRatings { get; set; }
         public ICollection<CourseChapterDto> Chapters { get; set; } = new List<CourseChapterDto>();
 
-        public IList<LearningItemDto> LearningItems { get; set; }
-        public IList<EnrollmentItemDto> EnrollmentItems { get; set; }
-        public IList<CourseRequirementDto> CourseRequirements { get; set; }
+        public IList<LearningItemDto> LearningItems { get; set; } = null!;
+        public IList<EnrollmentItemDto> EnrollmentItems { get; set; } = null!;
+        public IList<CourseRequirementDto> CourseRequirements { get; set; } = null!;
 
 
     }
     public class LearningItemDto
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 
     public class EnrollmentItemDto
     {
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 
     public class CourseRequirementDto
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 
 
     public class CourseChapterDto
     {
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         public int NoOfLessons { get; set; }
         public float NoOfHours { get; set; }
     }

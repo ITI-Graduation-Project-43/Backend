@@ -75,72 +75,34 @@ namespace MindMission.Domain.Models
 
         public int NoOfStudents { get; set; }
 
-        [NotMapped]
 
         [Range(0, int.MaxValue)]
         public int ChapterCount { get; set; }
-        /*
-        public int ChapterCount
-        {
-            get { return Chapters?.Count ?? 0; }
-        }*/
-        [NotMapped]
+
 
         [Range(0, int.MaxValue)]
         public int LessonCount { get; set; }
-        /*
-        public int LessonCount
-        {
-            get { return Chapters?.Sum(c => c.Lessons.Count) ?? 0; }
-        }*/
-        [NotMapped]
+
 
         [Range(0, int.MaxValue)]
         public int NoOfVideos { get; set; }
-        /*
-        public int NoOfVideos
-        {
-            get { return Chapters?.Sum(c => c.Lessons.Count(l => l.Type == LessonType.Video)) ?? 0; }
-        }*/
-        [NotMapped]
+
 
         [Range(0, int.MaxValue)]
         public int NoOfArticles { get; set; }
-        /*
-        public int NoOfArticles
-        {
-            get { return Chapters?.Sum(c => c.Lessons.Count(l => l.Type == LessonType.Article)) ?? 0; }
-        }*/
-        [NotMapped]
+
 
         [Range(0, int.MaxValue)]
-        public int NoOfQuizzes { get; set; }    
-        /*
-        public int NoOfQuizzes
-        {
-            get { return Chapters?.Sum(c => c.Lessons.Count(l => l.Type == LessonType.Quiz)) ?? 0; }
-        }*/
+        public int NoOfQuizzes { get; set; }
 
-        [NotMapped]
 
         [Range(0, int.MaxValue)]
         public int NoOfAttachments { get; set; }
-        /*
-        public int NoOfAttachments
-        {
-            get { return Chapters?.Sum(c => c.Lessons.Sum(l => l.Attachment != null ? 1 : 0)) ?? 0; }
 
-        }*/
-        [NotMapped]
 
         [Range(0, int.MaxValue)]
         public float NoOfHours { get; set; }
-        /*
-        public float NoOfHours
-        {
-            get { return Chapters?.Sum(c => c.NoOfHours) ?? 0; }
-        }
-        */
+
 
 
         #endregion
@@ -175,6 +137,7 @@ namespace MindMission.Domain.Models
         public ICollection<LearningItem> LearningItems { get; set; } = null!;
         public ICollection<EnrollmentItem> EnrollmentItems { get; set; } = null!;
         public ICollection<CourseRequirement>? CourseRequirements { get; set; }
+        public ICollection<Coupon> Coupons { get; set; }
     }
 
 
