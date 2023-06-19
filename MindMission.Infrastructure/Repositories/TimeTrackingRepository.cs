@@ -59,7 +59,11 @@ namespace MindMission.Infrastructure.Repositories
             }
             return students;
         }
-
+        public async Task<IEnumerable<TimeTracking>> GetByCourseIds(List<int> courseIds)
+        {
+            var timeTrackings = await _context.TimeTrackings.Where(e => courseIds.Contains(e.CourseId)).ToListAsync();
+            return timeTrackings;
+        }
         public async Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId)
         {
             var TimeTrackings = await _context.TimeTrackings.Where(e => e.CourseId == CourseId).ToListAsync();
