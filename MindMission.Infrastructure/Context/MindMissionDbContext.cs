@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Domain.Models.Base;
-using System.Reflection.Emit;
 
 namespace MindMission.Infrastructure.Context
 {
@@ -33,11 +32,11 @@ namespace MindMission.Infrastructure.Context
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<WebsiteFeedback> WebsiteFeedbacks { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
-		public virtual DbSet<Coupon> Coupons { get; set; }
+        public virtual DbSet<Coupon> Coupons { get; set; }
 
 
 
-		public MindMissionDbContext(DbContextOptions<MindMissionDbContext> options) : base(options)
+        public MindMissionDbContext(DbContextOptions<MindMissionDbContext> options) : base(options)
         {
         }
 
