@@ -32,9 +32,8 @@ namespace MindMission.Infrastructure.Context
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<WebsiteFeedback> WebsiteFeedbacks { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
-		    public virtual DbSet<Coupon> Coupons { get; set; }
+		public virtual DbSet<Coupon> Coupons { get; set; }
         public virtual DbSet<SiteCoupon> SiteCoupons { get; set; }
-        public virtual DbSet<Coupon> Coupons { get; set; }
 
 
 
