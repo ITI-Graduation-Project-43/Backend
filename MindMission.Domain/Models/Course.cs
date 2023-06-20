@@ -100,8 +100,8 @@ namespace MindMission.Domain.Models
         public int NoOfAttachments { get; set; }
 
 
-        [Range(0, int.MaxValue)]
-        public float NoOfHours { get; set; }
+        //[Range(0, int.MaxValue)]
+        public int NoOfHours { get; set; }
 
 
 
