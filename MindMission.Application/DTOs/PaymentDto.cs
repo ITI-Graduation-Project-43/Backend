@@ -32,9 +32,17 @@ namespace MindMission.Application.DTOs
         [StringLength(100, ErrorMessage = "Description maximum length is 100 characters")]
         public string Description { get; set; } = string.Empty;
 
-        public string? Coupon { get; set; } = string.Empty;
+        public string? SiteCoupon { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Courses Ids list is required")]
         public List<int> CoursesIds { get; set; } = new List<int>();
+
+        public List<CourseCoupon> CoursesCoupons { get; set; } = new List<CourseCoupon>();
+    }
+
+    public class CourseCoupon
+    {
+        public int CourseId { get; set; }
+        public string CouponCode { get; set; } = string.Empty;
     }
 }
