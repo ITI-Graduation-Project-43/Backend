@@ -14,7 +14,7 @@ namespace MindMission.Application.Services
         private readonly CustomerService _customerService;
         private readonly TokenService _tokenService;
         private readonly ICourseRepository _courseRepository;
-		private readonly ICouponRepository _couponRepository;
+		private readonly ISiteCouponRepository _siteCouponRepository;
 
 		//////Injection of Stripe services to be used to implement the two methods
 		public StripeService(
@@ -22,14 +22,14 @@ namespace MindMission.Application.Services
             CustomerService customerService,
             TokenService tokenService,
             ICourseRepository courseRepository,
-            ICouponRepository couponRepository
+            ISiteCouponRepository siteCouponRepository
             )
         {
             _chargeService = chargeService;
             _customerService = customerService;
             _tokenService = tokenService;
             _courseRepository = courseRepository;
-			_couponRepository = couponRepository;
+			_siteCouponRepository = siteCouponRepository;
 		}
 
         public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
@@ -118,37 +118,35 @@ namespace MindMission.Application.Services
         {
             decimal totalPrice = 0;
             decimal discount = 0;
-            Course courseWithDiscount = null;
+            SiteCoupon? siteCoupon = null;
 
-            if(code != null && code.Length >= 5)
+            if(code != null)
             {
-				Domain.Models.Coupon coupon = await _couponRepository.getCouponByCode(code);
-				if (coupon != null)
-				{
-					if (coursesIds.IndexOf(coupon.CourseId.Value) != -1)
-					{
-						courseWithDiscount = await GetEnrolledCourse(coupon.CourseId.Value);
-						discount = courseWithDiscount.Price * (coupon.Discount / 100m).Value;
-					}
-				}
-			}
+                try
+                {
+                    siteCoupon = await _siteCouponRepository.GetByCode(code);
 
-			
+                }
+                catch (KeyNotFoundException)
+                {
+                    siteCoupon = null;
+                }
+            }
+            
 
-			decimal coursePrice = 0;
+            if(siteCoupon != null)
+            {
+                if(siteCoupon.Discount != null)
+                    discount = siteCoupon.Discount.Value / 100m;
+            }
+
+
 			foreach (int courseId in coursesIds)
             {
-                if(courseWithDiscount != null && courseWithDiscount.Id == courseId)
-                {
-                    coursePrice = courseWithDiscount.Price;
-                }
-                else
-                {
-					coursePrice = (await GetEnrolledCourse(courseId)).Price;
-				}
-				totalPrice += coursePrice;
+				totalPrice += (await GetEnrolledCourse(courseId)).Price;
 			}
-			return (long) (totalPrice - discount);
+
+			return (long) (totalPrice - (totalPrice * discount));
         }
     }
 }

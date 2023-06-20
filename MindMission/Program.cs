@@ -205,8 +205,11 @@ builder.Services.AddScoped<IVideoLessonPatchValidator, VideoLessonPatchValidator
 /*Coupon Configuration*/
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<ICouponService, MindMission.Application.Services.CouponService>();
-builder.Services.AddScoped<IMappingService<MindMission.Domain.Models.Coupon, CouponDto>, CouponMappingService>();
+builder.Services.AddScoped<IMappingService<MindMission.Domain.Models.Coupon, CouponDto>, SiteCouponMappingService>();
 
+/*Site Coupon Configuration*/
+builder.Services.AddScoped<ISiteCouponRepository, SiteCouponRepository>();
+builder.Services.AddScoped<ISiteCouponService, SiteCouponService>();
 
 /*Attachment Configuration*/
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();

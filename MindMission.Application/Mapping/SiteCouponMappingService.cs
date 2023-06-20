@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.Mapping
 {
-	public class CouponMappingService : IMappingService<Coupon, CouponDto>
+	public class SiteCouponMappingService : IMappingService<Coupon, CouponDto>
 	{
 		public Coupon MapDtoToEntity(CouponDto dto)
 		{

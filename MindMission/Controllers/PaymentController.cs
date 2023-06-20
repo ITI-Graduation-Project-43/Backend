@@ -34,7 +34,7 @@ namespace MindMission.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                long totalPrice = await _stripeService.GetTotalPrice(paymentDto.CoursesIds, paymentDto.Coupon);
+                long totalPrice = await _stripeService.GetTotalPrice(paymentDto.CoursesIds, paymentDto.SiteCoupon);
 
                     try
                     {
