@@ -1,4 +1,5 @@
 using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Repository_Interfaces
@@ -24,7 +25,6 @@ namespace MindMission.Application.Repository_Interfaces
 
         Task<Course> AddCourseAsync(Course course);
         Task<Course> UpdateCourseAsync(int id, Course course);
-        Task<Course> UpdateCoursePartialAsync(int id, Course course);
 
 
     }

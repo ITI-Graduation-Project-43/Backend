@@ -34,10 +34,8 @@ namespace MindMission.Application.Services
             var FileContent = new MemoryStream(attachment.FileData);
             var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "Downloaded Files", attachment.FileName);
 
-            using (var Stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-            {
-                await FileContent.CopyToAsync(Stream);
-            }
+            using var Stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write);
+            await FileContent.CopyToAsync(Stream);
         }
 
         public async Task<Lesson> GetAttachmentLessonByIdAsync(int id)

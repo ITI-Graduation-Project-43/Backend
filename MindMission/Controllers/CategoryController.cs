@@ -155,13 +155,26 @@ namespace MindMission.API.Controllers
 
         #region Delete
 
-        // DELETE: api/Category/{categoryId}
-        [HttpDelete("{categoryId}")]
+        // DELETE: api/Category/Delete/{categoryId}
+        [HttpDelete("Delete/{categoryId}")]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             return await DeleteEntityResponse(_categoryService.GetByIdAsync, _categoryService.DeleteAsync, categoryId);
         }
 
+        // DELETE: api/Category/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var article = await _categoryService.GetByIdAsync(id);
+
+            if (article == null)
+                return NotFound(NotFoundResponse("Article"));
+            await _categoryService.SoftDeleteAsync(id);
+            return NoContent();
+        }
         #endregion Delete
 
         #region Edit Patch/Put

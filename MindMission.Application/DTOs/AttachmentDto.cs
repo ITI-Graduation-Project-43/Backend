@@ -7,7 +7,7 @@ namespace MindMission.Application.DTOs
     public class AttachmentDto
     {
         [Required]
-        public IFormFile File { get; set; }
+        public IFormFile File { get; set; } = null!;
 
         [Required]
         public FileType FileType { get; set; }

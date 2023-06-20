@@ -1,57 +1,73 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using MindMission.Application.Exceptions;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
-using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services.Base;
+using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
-using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
-    public class ArticleService : IArticleService
+    public class ArticleService : Service<Article, int>, IArticleService
     {
-        private readonly IArticleRepository _context;
 
-        public ArticleService(IArticleRepository context)
+        private readonly IArticleRepository _context;
+        private readonly ILessonService _lessonService;
+        private const string entity = "Article";
+
+        public ArticleService(IArticleRepository context, ILessonService lessonService) : base(context)
         {
+            _lessonService = lessonService;
             _context = context;
         }
 
-        public async Task<IEnumerable<Article>> GetAllAsync(params Expression<Func<Article, object>>[] IncludeProperties)
+        public override async Task DeleteAsync(Article article)
         {
-            return await _context.GetAllAsync(IncludeProperties);
+
+            if (article != null)
+            {
+                using var transaction = _context.Context.Database.BeginTransaction();
+                try
+                {
+                    await base.DeleteAsync(article);
+                    await _lessonService.DeleteAsync(article.LessonId);
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, entity));
+            }
         }
-        Task<IQueryable<Article>> IRepository<Article, int>.GetAllAsync()
+        public override async Task SoftDeleteAsync(Article article)
         {
-            return _context.GetAllAsync();
+            if (article != null)
+            {
+                using var transaction = _context.Context.Database.BeginTransaction();
+                try
+                {
+                    await _lessonService.SoftDeleteAsync(article.LessonId);
+                    await base.SoftDeleteAsync(article);
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, entity));
+            }
         }
 
-
-        public Task<Article> GetByIdAsync(int id, params Expression<Func<Article, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
-        Task<Article> IRepository<Article, int>.GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
-        }
-
-
-        Task<Article> IRepository<Article, int>.AddAsync(Article entity)
-        {
-            return _context.AddAsync(entity);
-        }
-
-        Task IRepository<Article, int>.DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
-        Task IRepository<Article, int>.SoftDeleteAsync(int id)
-        {
-            return _context.SoftDeleteAsync(id);
-        }
-
-        Task IRepository<Article, int>.UpdateAsync(Article entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
     }
 }

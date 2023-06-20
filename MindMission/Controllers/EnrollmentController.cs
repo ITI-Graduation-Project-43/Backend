@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -46,7 +47,7 @@ namespace MindMission.API.Controllers
         }
 
         // GET: api/Enrollment/{EnrollmentId}
-        [HttpGet("{EnrollmentId}")]
+        [HttpGet("{EnrollmentId}", Name = "GetEnrollmentById")]
         public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int EnrollmentId)
         {
             return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(EnrollmentId), "Enrollment");
@@ -60,18 +61,38 @@ namespace MindMission.API.Controllers
         [HttpPost]
         public async Task<ActionResult<EnrollmentDto>> AddEnrollment([FromBody] EnrollmentDto EnrollmentDTO)
         {
-            return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
+            var enrollment = _EnrollmentMappingService.MapDtoToEntity(EnrollmentDTO);
+            var addedEnrollment = _EnrollmentService.AddAsync(enrollment);
+            return Ok(new
+            {
+                EnrollmentId = addedEnrollment.Id
+            });
+            //return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
         }
 
         #endregion Add
 
         #region Delete
 
-        // DELETE: api/Enrollment/{EnrollmentId}
-        [HttpDelete("{EnrollmentId}")]
+        // DELETE: api/Enrollment/Delete/{EnrollmentId}
+        [HttpDelete("Delete/{EnrollmentId}")]
         public async Task<IActionResult> DeleteEnrollment(int EnrollmentId)
         {
             return await DeleteEntityResponse(_EnrollmentService.GetByIdAsync, _EnrollmentService.DeleteAsync, EnrollmentId);
+        }
+
+        // DELETE: api/Enrollment/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var course = await _EnrollmentService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _EnrollmentService.SoftDeleteAsync(id);
+            return NoContent();
         }
 
         #endregion Delete

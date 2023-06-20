@@ -6,28 +6,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents a wishlist item that includes a course added by a student.
+    /// </summary>
     [Index(nameof(CourseId), Name = "idx_wishlists_courseid")]
     public partial class Wishlist : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Wishlist()
-        {
 
-        }
 
         [Key]
         public int Id { get; set; }
-
+        [Required]
         public int CourseId { get; set; }
-        public string StudentId { get; set; }
+        [Required]
+        public string StudentId { get; set; } = string.Empty;
         public DateTime AddedDate { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Wishlists")]
-        public virtual Course Course { get; set; }
+        public virtual Course Course { get; set; } = null!;
 
         [ForeignKey(nameof(StudentId))]
         [InverseProperty("Wishlists")]
-        public virtual Student Student { get; set; }
+        public virtual Student Student { get; set; } = null!;
     }
 }

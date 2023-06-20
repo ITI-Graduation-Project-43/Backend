@@ -12,8 +12,8 @@ namespace MindMission.Application.DTOs
         public decimal CoursePrice { get; set; }
         public string CourseImageUrl { get; set; } = string.Empty;
         public string StudentId { get; set; } = string.Empty;
-
-
-
+        public decimal? CourseAvgReview { get; set; }
+        public string CourseDescription { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

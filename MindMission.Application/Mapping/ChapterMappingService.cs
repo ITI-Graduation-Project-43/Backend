@@ -13,8 +13,7 @@ namespace MindMission.Application.Mapping
                 Id = chapterDto.Id,
                 CourseId = chapterDto.CourseId,
                 Title = chapterDto.Title,
-                NoOfLessons = chapterDto.NoOfLessons,
-                NoOfHours = chapterDto.NoOfHours
+
             };
         }
 

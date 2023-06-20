@@ -6,26 +6,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents a quiz entity associated with a lesson.
+    /// </summary>
     [Index(nameof(LessonId), Name = "idx_quizzes_lessonid")]
     public partial class Quiz : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Quiz()
-        {
-        }
+
 
         [Key]
         public int Id { get; set; }
-
+        [Required]
         public int LessonId { get; set; }
-        public int NoOfQuestions { get; set; }
+        [NotMapped]
+        public int NoOfQuestions
+        {
+            get; set;
+        }
 
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(LessonId))]
-        [InverseProperty("Quizzes")]
-        public virtual Lesson Lesson { get; set; }
+        [InverseProperty("Quiz")]
+        public virtual Lesson Lesson { get; set; } = null!;
 
         [InverseProperty(nameof(Question.Quiz))]
-        public virtual ICollection<Question> Questions { get; set; }
+        public virtual ICollection<Question> Questions { get; set; } = null!;
     }
 }

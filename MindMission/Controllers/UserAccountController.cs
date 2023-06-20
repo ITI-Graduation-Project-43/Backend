@@ -13,12 +13,10 @@ namespace MindMission.API.Controllers
     {
         private readonly IUserAccountService _context;
         private readonly UserAccountMappingService _UserAccountMappingService;
-        private readonly IUserService _userService;
 
-        public UserAccountController(IUserAccountService context, IUserService userService, UserAccountMappingService userAccountMappingService) : base(userAccountMappingService)
+        public UserAccountController(IUserAccountService context, UserAccountMappingService userAccountMappingService) : base(userAccountMappingService)
         {
             _context = context;
-            _userService = userService;
             _UserAccountMappingService = userAccountMappingService;
         }
 
@@ -29,5 +27,7 @@ namespace MindMission.API.Controllers
             await _context.AddAsync(newAccount);
             return Ok(newAccount);
         }
+
+
     }
 }

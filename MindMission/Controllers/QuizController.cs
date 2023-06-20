@@ -1,54 +1,93 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
-using MindMission.Application.Mapping;
-using MindMission.Application.Service_Interfaces;
+using MindMission.Application.DTOs.QuizDtos;
+using MindMission.Application.Service.Interfaces;
+using MindMission.Application.Validator.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuizController : BaseController<Quiz, QuizDto, int>
+    public class QuizController : BaseController<Quiz, QuizDto, QuizCreateDto, int>
     {
         private readonly IQuizService _quizService;
-        private readonly QuizMappingService _quizMappingService;
 
-        public QuizController(IQuizService quizService, QuizMappingService quizMappingService) :
-            base(quizMappingService)
+        public QuizController(IQuizService quizService,
+                              IValidatorService<QuizCreateDto> _validatorService,
+                              IMapper mapper)
+                                                                       : base(mapper, _validatorService, "Quiz", "Quizzes")
         {
-            _quizService = quizService ?? throw new ArgumentNullException(nameof(quizService));
-            _quizMappingService = quizMappingService ?? throw new ArgumentNullException(nameof(quizMappingService));
+            _quizService = quizService;
+
         }
 
+        #region GET
+
+        // GET: api/Quiz
         [HttpGet]
-        public async Task<ActionResult<IQueryable<QuizDto>>> GetAllQuiz([FromQuery] PaginationDto pagination)
+        public async Task<ActionResult> GetAllQuiz([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_quizService.GetAllAsync, pagination, "Quiz");
+            return await GetAll(_quizService.GetAllAsync, pagination, quiz => quiz.Lesson, Quiz => Quiz.Questions);
         }
-
+        // GET: api/Quiz/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<QuizDto>> GetQuizById(int id)
+        public async Task<ActionResult> GetQuizById(int id)
         {
-            return await GetEntityResponse(() => _quizService.GetByIdAsync(id, q => q.Questions), "Quiz");
+            return await GetById(() => _quizService.GetByIdAsync(id, quiz => quiz.Lesson, Quiz => Quiz.Questions));
         }
 
-        [HttpPost("Quiz")]
-        public async Task<ActionResult<QuizDto>> AddQuiz([FromBody] QuizDto quizDto)
+        #endregion GET
+
+        #region Add
+        // POST: api/Quiz/Add
+        [HttpPost]
+        public async Task<ActionResult> AddQuiz([FromBody] QuizCreateDto quizCreateDto)
         {
-            return await AddEntityResponse(_quizService.AddAsync, quizDto, "Quiz", nameof(GetQuizById));
+            return await Create(_quizService.AddAsync, quizCreateDto, nameof(GetQuizById));
         }
 
-        [HttpPut("{quizId}")]
-        public async Task<ActionResult> UpdateQuiz(int quizId, QuizDto quizDto)
+        #endregion Add
+
+        #region Delete
+        // DELETE: api/Quiz/Delete/{id}
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<ActionResult> DeleteQuiz(int id)
         {
-            return await UpdateEntityResponse(_quizService.GetByIdAsync, _quizService.UpdateAsync, quizId, quizDto, "Quiz");
+            return await Delete(_quizService.GetByIdAsync, _quizService.DeleteAsync, id);
+        }
+        // DELETE: api/Quiz/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> SoftDeleteQuiz(int id)
+        {
+            return await Delete(_quizService.GetByIdAsync, _quizService.SoftDeleteAsync, id);
         }
 
-        [HttpDelete("{quizId}")]
-        public async Task<IActionResult> DeleteQuiz(int quizId)
+
+        #endregion Delete
+
+        #region Edit Put
+        // PUT: api/Quiz/{id}
+
+        [HttpPut("{id}")]
+
+        public async Task<ActionResult> UpdateQuiz(int id, [FromBody] QuizCreateDto quizUpdateDto)
         {
-            return await DeleteEntityResponse(_quizService.GetByIdAsync, _quizService.DeleteAsync, quizId);
+            return await Update(_quizService.GetByIdAsync, _quizService.UpdateAsync, id, quizUpdateDto);
         }
+        // PATCH: api/Quiz/{id}
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchQuiz(int id, [FromBody] JsonPatchDocument<QuizCreateDto> patchDoc)
+        {
+            return await Patch(_quizService.GetByIdAsync, _quizService.UpdatePartialAsync, id, patchDoc);
+        }
+
+        #endregion Edit Put
     }
 }

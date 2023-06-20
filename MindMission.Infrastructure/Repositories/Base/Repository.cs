@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Domain.Common;
+using MindMission.Domain.Constants;
 using MindMission.Infrastructure.Context;
 using System.Linq.Expressions;
 
@@ -10,6 +11,7 @@ namespace MindMission.Infrastructure.Repositories.Base
     {
         private readonly MindMissionDbContext _context;
         private readonly DbSet<TClass> _dbSet;
+        public DbContext Context => _context;
 
         public Repository(MindMissionDbContext context)
         {
@@ -19,13 +21,13 @@ namespace MindMission.Infrastructure.Repositories.Base
 
         public async Task<IQueryable<TClass>> GetAllAsync()
         {
-            var Query = await _dbSet.ToListAsync();
+            var Query = await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
             return Query.AsQueryable();
         }
 
         public async Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties)
         {
-            IQueryable<TClass> Query = _dbSet;
+            IQueryable<TClass> Query = _dbSet.Where(x => !x.IsDeleted);
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             return await Query.ToListAsync();
         }
@@ -37,7 +39,7 @@ namespace MindMission.Infrastructure.Repositories.Base
                 throw new ArgumentNullException(nameof(id));
             }
 
-            var entity = await _dbSet.FindAsync(id);
+            var entity = await _dbSet.Where(x => !x.IsDeleted && x.Id.Equals(id)).FirstOrDefaultAsync();
 
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
@@ -49,9 +51,10 @@ namespace MindMission.Infrastructure.Repositories.Base
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IQueryable<TClass> Query = _dbSet;
+            IQueryable<TClass> Query = _dbSet.Where(x => !x.IsDeleted);
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             var entity = await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
+
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
 
@@ -62,18 +65,37 @@ namespace MindMission.Infrastructure.Repositories.Base
             return entity;
         }
 
-        public async Task UpdateAsync(TClass entity)
+        public async Task<TClass> UpdateAsync(TClass entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
+        public async Task<TClass> UpdatePartialAsync(TDataType id, TClass entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
 
         public async Task DeleteAsync(TDataType id)
         {
             _dbSet.Remove(await GetByIdAsync(id));
             await _context.SaveChangesAsync();
         }
-
+        public async Task DeleteAsync(TClass entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
+            }
+        }
         public async Task SoftDeleteAsync(TDataType id)
         {
             var entity = await _context.Set<TClass>().FindAsync(id);
@@ -85,10 +107,24 @@ namespace MindMission.Infrastructure.Repositories.Base
             }
             else
             {
-                throw new KeyNotFoundException($"No entity with id {id} found.");
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
             }
         }
 
+        public async Task SoftDeleteAsync(TClass entity)
+        {
+
+            if (entity != null)
+            {
+                entity.IsDeleted = true;
+                _context.Entry(entity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
+            }
+        }
 
     }
 }

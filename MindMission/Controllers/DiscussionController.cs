@@ -47,10 +47,24 @@ namespace MindMission.API.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete("{DisussionId}")]
+        [HttpDelete("Delete/{DisussionId}")]
         public async Task<ActionResult> DeleteDiscussion(int DisussionId)
         {
             return await DeleteEntityResponse(_discussionService.GetByIdAsync, _discussionService.DeleteAsync, DisussionId);
+        }
+
+        // DELETE: api/Discussion/{id}
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var article = await _discussionService.GetByIdAsync(id);
+
+            if (article == null)
+                return NotFound(NotFoundResponse("Article"));
+            await _discussionService.SoftDeleteAsync(id);
+            return NoContent();
         }
         #endregion
 

@@ -2,39 +2,22 @@
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services.Base;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
-    public class CourseService : ICourseService
+    public class CourseService : Service<Course, int>, ICourseService
     {
         private readonly ICourseRepository _context;
 
-        public CourseService(ICourseRepository context)
+        public CourseService(ICourseRepository context) : base(context)
         {
             _context = context;
         }
+
         #region Get
-        public Task<IQueryable<Course>> GetAllAsync()
-        {
-            return _context.GetAllAsync();
-        }
-
-        public async Task<IEnumerable<Course>> GetAllAsync(params Expression<Func<Course, object>>[] IncludeProperties)
-        {
-            return await _context.GetAllAsync(IncludeProperties);
-        }
-
-        public Task<Course> GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
-        }
-
-        public Task<Course> GetByIdAsync(int id, params Expression<Func<Course, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
 
 
         public async Task<Course> GetByNameAsync(string name)
@@ -93,24 +76,7 @@ namespace MindMission.Application.Services
         }
         #endregion
 
-        public Task<Course> AddAsync(Course entity)
-        {
-            return _context.AddAsync(entity);
-        }
 
-        public Task UpdateAsync(Course entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
-        public Task SoftDeleteAsync(int id)
-        {
-            return _context.SoftDeleteAsync(id);
-        }
 
         public async Task<Course> AddCourseAsync(Course course)
         {
@@ -120,10 +86,8 @@ namespace MindMission.Application.Services
         {
             return await _context.UpdateCourseAsync(id, course);
         }
-        public async Task<Course> UpdateCoursePartialAsync(int id, Course course)
-        {
-            return await _context.UpdateCoursePartialAsync(id, course);
-        }
+
+
     }
 }
 

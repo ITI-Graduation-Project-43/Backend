@@ -28,25 +28,26 @@ namespace MindMission.API.Controllers
             var courseVisits = await _service.GetByCourseId(courseId);
             return Ok(courseVisits);
         }
-        [HttpGet ("recentStudent")]
-        public async Task<ActionResult<List<TimeTracking>>> GetRecentStudent()
+        [HttpGet ("recentStudent/{courseId}")]
+        public async Task<ActionResult<List<TimeTracking>>> GetRecentStudent(int courseId)
         {
-            var students = await _service.GetLastfourStudentIds();
+            var students = await _service.GetLastfourStudentIds(courseId);
             return Ok(students);
         }
         [HttpGet("CourseCount/{courseId}")]
-        public async Task<ActionResult<IEnumerable<Object>>> GetCourseVisitCount(int courseId)
+        public async Task<ActionResult<Object>> GetCourseVisitCount(int courseId)
         {
-            var hourObject = await _service.GetCourseVisitCountByHour(courseId);
+            var hourObject = await _service.GetCourseVisitCount(courseId);
                 return Ok(hourObject);
         }
+        
         [HttpGet("hours/{instructorId}")]
         public async Task<ActionResult<long>> GetTotalHours(string instructorId)
         {
-            long hours = await _service.getTotalHours(instructorId);
+            long hours = await _service.GetTotalHours(instructorId);
             return Ok(hours);
         }
-
+        
         #endregion
 
         #region Create

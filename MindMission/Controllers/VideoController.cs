@@ -11,15 +11,11 @@ namespace MindMission.API.Controllers
     public class VideoController : Controller
     {
         private readonly MindMissionDbContext dbContext;
-        private readonly BlobServiceClient blobServiceClient;
         private readonly BlobContainerClient containerClient;
-        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public VideoController(MindMissionDbContext dbContext, BlobServiceClient blobServiceClient, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        public VideoController(MindMissionDbContext dbContext, BlobServiceClient blobServiceClient, IConfiguration configuration)
         {
             this.dbContext = dbContext;
-            this.blobServiceClient = blobServiceClient;
-            this.hostingEnvironment = hostingEnvironment;
 
             string containerName = configuration["AzureStorage:ContainerName1"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);

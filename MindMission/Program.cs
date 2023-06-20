@@ -27,6 +27,13 @@ using Stripe;
 using System.Text;
 using MindMission.Application.CustomValidation;
 using MindMission.Application.DTOs.PostDtos;
+using MindMission.Application.Validator.Base;
+using MindMission.Application.Validator;
+using MindMission.Application.DTOs.QuizDtos;
+using MindMission.Application.DTOs.ArticleDtos;
+using MindMission.Application.DTOs.VideoDtos;
+using MindMission.Application.Service.Interfaces;
+using MindMission.Application.DTOs.QuestionDtos;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -80,6 +87,7 @@ builder.Services.AddScoped(x =>
     return new BlobServiceClient(connectionString);
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 /*  upload image */
 builder.Services.AddScoped<IUploadImage, UploadImageService>();
 
@@ -87,6 +95,37 @@ builder.Services.AddScoped<IUploadImage, UploadImageService>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
+
+
+#region Article 
+/*Article Configuration*/
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IValidatorService<ArticleCreateDto>, ArticleValidatorService>();
+#endregion
+
+#region Video 
+/*Video Configuration*/
+builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<IValidatorService<VideoCreateDto>, VideoValidatorService>();
+#endregion
+
+#region Quiz 
+/*Quiz Configuration*/
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IValidatorService<QuizCreateDto>, QuizValidatorService>();
+
+#endregion
+
+#region Question 
+/*Question Configuration*/
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IValidatorService<QuestionCreateDto>, QuestionValidatorService>();
+#endregion
+
 
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
@@ -145,11 +184,7 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<EnrollmentMappingService, EnrollmentMappingService>();
 builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, EnrollmentMappingService>();
 
-/*Article Configuration*/
-builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
-builder.Services.AddScoped<IArticleService, ArticleService>();
-builder.Services.AddScoped<ArticleMappingService, ArticleMappingService>();
-builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
+
 
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -157,23 +192,14 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
 builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
 
-/*Question Configuration*/
-builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-builder.Services.AddScoped<IQuestionService, QuestionService>();
-builder.Services.AddScoped<QuestionMappingService, QuestionMappingService>();
-builder.Services.AddScoped<IMappingService<Question, QuestionDto>, QuestionMappingService>();
 
-/*Quiz Configuration*/
-builder.Services.AddScoped<IQuizRepository, QuizRepository>();
-builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddScoped<QuizMappingService, QuizMappingService>();
-builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>();
+
 
 /*Chapter Configuration*/
 builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
 builder.Services.AddScoped<IChapterService, ChapterService>();
-builder.Services.AddScoped<ChapterMappingService, ChapterMappingService>();
 builder.Services.AddScoped<IMappingService<Chapter, ChapterDto>, ChapterMappingService>();
+builder.Services.AddScoped<IMappingService<Chapter, PostChapterDto>, PostChapterMappingService>();
 
 /*Lesson Configuration*/
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
@@ -186,6 +212,11 @@ builder.Services.AddScoped<IMappingService<Lesson, PostVideoLessonDto>, PostVide
 builder.Services.AddScoped<IArticleLessonPatchValidator, ArticleLessonPatchValidator>();
 builder.Services.AddScoped<IQuizLessonPatchValidator, QuizLessonPatchValidator>();
 builder.Services.AddScoped<IVideoLessonPatchValidator, VideoLessonPatchValidator>();
+
+/*Coupon Configuration*/
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddScoped<ICouponService, MindMission.Application.Services.CouponService>();
+builder.Services.AddScoped<IMappingService<MindMission.Domain.Models.Coupon, CouponDto>, CouponMappingService>();
 
 /*Attachment Configuration*/
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();

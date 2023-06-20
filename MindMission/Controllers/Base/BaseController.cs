@@ -208,7 +208,7 @@ namespace MindMission.API.Controllers.Base
             return Ok(response);
         }
 
-        protected async Task<ActionResult> GetEntityResponseWithInclude(Func<Task<TEntity>> serviceMethod, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        protected async Task<ActionResult> GetEntityResponseWithInclude(Func<Task<TEntity>> serviceMethod, string entityName)
         {
             var entity = await serviceMethod.Invoke();
 

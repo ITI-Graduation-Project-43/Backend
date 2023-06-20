@@ -5,9 +5,14 @@ namespace MindMission.Application.DTOs.PostDtos.Base
 {
     public abstract class LessonDtoBase
     {
+        [Required]
+
+        public int ChapterId { get; set; }
         public int LessonId { get; set; }
 
         [Required(ErrorMessage = "Title is required.")]
+        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters.")]
+
         public string Title { get; set; } = string.Empty;
 
         [StringLength(2048, ErrorMessage = "Description cannot exceed 2048 characters.")]

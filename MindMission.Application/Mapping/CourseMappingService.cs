@@ -32,9 +32,7 @@ namespace MindMission.Application.Mapping
                 LessonCount = course.LessonCount,
                 NoOfVideos = course.NoOfVideos,
                 NoOfArticles = course.NoOfArticles,
-                NoOfQuizes = course.NoOfQuizes,
                 NoOfAttachments = course.NoOfAttachments,
-                NoOfHours = course.NoOfHours,
                 Published = course.Published,
                 Approved = course.Approved,
                 CreatedAt = course.CreatedAt,
@@ -74,7 +72,7 @@ namespace MindMission.Application.Mapping
             }
 
             // Map the chapters
-            courseDTO.Chapters = course.Chapters.Select(chapter => new CourseChapterDto
+            courseDTO.Chapters = course.Chapters?.Select(chapter => new CourseChapterDto
             {
                 Title = chapter.Title,
                 NoOfLessons = chapter.NoOfLessons,
@@ -104,13 +102,6 @@ namespace MindMission.Application.Mapping
                 NoOfReviews = courseDTO.NoOfReviews,
                 NoOfStudents = courseDTO.NoOfStudents,
                 Discount = courseDTO.Discount,
-                ChapterCount = courseDTO.ChapterCount,
-                LessonCount = courseDTO.LessonCount,
-                NoOfVideos = courseDTO.NoOfVideos,
-                NoOfArticles = courseDTO.NoOfArticles,
-                NoOfAttachments = courseDTO.NoOfAttachments,
-                NoOfQuizes = courseDTO.NoOfQuizes,
-                NoOfHours = courseDTO.NoOfHours,
                 Published = courseDTO.Published,
                 Approved = courseDTO.Approved,
                 CreatedAt = DateTime.Now,

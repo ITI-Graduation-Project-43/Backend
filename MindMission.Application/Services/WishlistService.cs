@@ -1,42 +1,21 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services.Base;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
-    public class WishlistService : IWishlistService
+    public class WishlistService : Service<Wishlist, int>, IWishlistService
     {
         private readonly IWishlistRepository _context;
 
-        public WishlistService(IWishlistRepository context)
+        public WishlistService(IWishlistRepository context) : base(context)
         {
             _context = context;
         }
 
-        public Task<Wishlist> AddAsync(Wishlist entity)
-        {
-            return _context.AddAsync(entity);
-        }
 
-        public Task DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
-        public Task SoftDeleteAsync(int id)
-        {
-            return _context.SoftDeleteAsync(id);
-        }
-
-        public Task<IQueryable<Wishlist>> GetAllAsync()
-        {
-            return _context.GetAllAsync();
-        }
-
-        public async Task<IEnumerable<Wishlist>> GetAllAsync(params Expression<Func<Wishlist, object>>[] IncludeProperties)
-        {
-            return await _context.GetAllAsync(IncludeProperties);
-        }
 
         public Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId)
         {
@@ -48,19 +27,6 @@ namespace MindMission.Application.Services
             return _context.GetAllByStudentIdAsync(studentId);
         }
 
-        public Task<Wishlist> GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
-        }
 
-        public Task<Wishlist> GetByIdAsync(int id, params Expression<Func<Wishlist, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
-
-        public Task UpdateAsync(Wishlist entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
     }
 }

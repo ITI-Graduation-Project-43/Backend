@@ -1,8 +1,10 @@
-﻿using MindMission.Application.Repository_Interfaces;
+﻿using MindMission.Application.Interfaces.Services.Base;
+using MindMission.Application.Repository_Interfaces;
+using MindMission.Domain.Models;
 
-namespace MindMission.Application.Service_Interfaces
+namespace MindMission.Application.Service.Interfaces
 {
-    public interface IQuestionService : IQuestionRepository
+    public interface IQuestionService : IService<Question, int>, IQuestionRepository
     {
     }
 }

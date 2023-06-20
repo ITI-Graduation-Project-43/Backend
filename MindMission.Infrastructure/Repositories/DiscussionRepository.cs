@@ -17,15 +17,15 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
-            return (IQueryable<Discussion>) await Context.Discussions.Include(d=>d.ParentDiscussion).Where(e => e.LessonId == lessonId).OrderByDescending(d=>d.CreatedAt).ToListAsync();  
+            return (IQueryable<Discussion>)await Context.Discussions.Include(d => d.ParentDiscussion).Where(e => e.LessonId == lessonId && !e.IsDeleted).OrderByDescending(d => d.CreatedAt).ToListAsync();
         }
 
         public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
         {
-            
-            return (IQueryable<Discussion>) await Context.Discussions.Include(d=>d.ParentDiscussion).Where(d=>d.ParentDiscussionId==parentId).OrderByDescending(d => d.CreatedAt).ToListAsync();
+
+            return (IQueryable<Discussion>)await Context.Discussions.Include(d => d.ParentDiscussion).Where(d => d.ParentDiscussionId == parentId && !d.IsDeleted).OrderByDescending(d => d.CreatedAt).ToListAsync();
         }
 
-       
+
     }
 }

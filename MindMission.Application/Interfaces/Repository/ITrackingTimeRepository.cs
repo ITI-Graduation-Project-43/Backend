@@ -10,6 +10,6 @@ namespace MindMission.Application.Interfaces.Repository
         Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId);
         Task<TimeTracking> Create(string studentId, int courseId);
         Task<TimeTracking> Update(string studentId, int courseId);
-        Task<List<Student>> GetLastfourStudentIds();
+        Task<List<Student>> GetLastfourStudentIds(int courseId);
     }
 }

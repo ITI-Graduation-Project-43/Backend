@@ -7,12 +7,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+
+    /// <summary>
+    /// Represents a category entity that categorizes courses. It can be either a category, subcategory, or topic.
+    /// Courses are associated with topics.
+    /// </summary>
     public partial class Category : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Category()
-        {
-
-        }
 
         [Key]
         public int Id { get; set; }
@@ -26,18 +27,18 @@ namespace MindMission.Domain.Models
         public CategoryType Type { get; set; }
 
         public int? ParentId { get; set; }
-        public bool Approved { get; set; }
+        public bool Approved { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
 
 
         [ForeignKey(nameof(ParentId))]
         [InverseProperty(nameof(InverseParent))]
-        public virtual Category Parent { get; set; }
+        public virtual Category Parent { get; set; } = null!;
 
         [InverseProperty(nameof(Course.Category))]
-        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<Course>? Courses { get; set; }
 
         [InverseProperty(nameof(Parent))]
-        public virtual ICollection<Category> InverseParent { get; set; }
+        public virtual ICollection<Category>? InverseParent { get; set; }
     }
 }

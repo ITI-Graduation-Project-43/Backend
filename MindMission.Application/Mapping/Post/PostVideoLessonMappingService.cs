@@ -11,12 +11,13 @@ namespace MindMission.Application.Mapping.Post
         {
             var postVideoLessonDto = new PostVideoLessonDto
             {
+                ChapterId = lesson.ChapterId,
                 LessonId = lesson.Id,
                 Title = lesson.Title,
                 Description = lesson.Description,
                 NoOfHours = lesson.NoOfHours,
                 IsFree = lesson.IsFree,
-                VideoUrl = lesson.Videos?.FirstOrDefault()?.VideoUrl ?? string.Empty
+                VideoUrl = lesson.Video?.VideoUrl ?? string.Empty
             };
 
             return postVideoLessonDto;
@@ -26,6 +27,7 @@ namespace MindMission.Application.Mapping.Post
         {
             var lesson = new Lesson
             {
+                ChapterId = postVideoLessonDto.ChapterId,
                 Id = postVideoLessonDto.LessonId,
                 Title = postVideoLessonDto.Title,
                 Description = postVideoLessonDto.Description,
@@ -40,7 +42,7 @@ namespace MindMission.Application.Mapping.Post
                 {
                     VideoUrl = postVideoLessonDto.VideoUrl
                 };
-                lesson.Videos = new List<Video> { video };
+                lesson.Video = video;
             }
 
             return lesson;

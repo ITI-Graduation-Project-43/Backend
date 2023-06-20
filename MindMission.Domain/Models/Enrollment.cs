@@ -6,29 +6,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
+    /// <summary>
+    /// Represents an enrollment of a student in a course.
+    /// </summary>
     [Index(nameof(CourseId), Name = "idx_enrollments_courseid")]
     public partial class Enrollment : BaseEntity, IEntity<int>, ISoftDeletable
     {
-        public Enrollment()
-        {
 
-        }
 
         [Key]
         public int Id { get; set; }
-
+        [Required]
         public int CourseId { get; set; }
-        public string StudentId { get; set; }
+        [Required]
+
+        public string StudentId { get; set; } = string.Empty;
         public DateTime EnrollmentDate { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; } = false;
 
 
         [ForeignKey(nameof(CourseId))]
         [InverseProperty("Enrollments")]
-        public virtual Course Course { get; set; }
+        public virtual Course Course { get; set; } = null!;
 
         [ForeignKey(nameof(StudentId))]
         [InverseProperty("Enrollments")]
-        public virtual Student Student { get; set; }
+        public virtual Student Student { get; set; } = null!;
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
-using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure.Context;
 
 namespace MindMission.API.Controllers
 {
@@ -67,13 +66,25 @@ namespace MindMission.API.Controllers
 
         #region Delete
 
-        // DELETE: api/Admin/{AdminId}
-        [HttpDelete("{AdminId}")]
+        // DELETE: api/Admin/Delete/{AdminId}
+        [HttpDelete("Delete/{AdminId}")]
         public async Task<IActionResult> DeleteAdmin(int AdminId)
         {
             return await DeleteEntityResponse(_adminService.GetByIdAsync, _adminService.DeleteAsync, AdminId);
         }
+        // DELETE: api/Admin/{id}
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+
+            var article = await _adminService.GetByIdAsync(id);
+
+            if (article == null)
+                return NotFound(NotFoundResponse("Article"));
+            await _adminService.SoftDeleteAsync(id);
+            return NoContent();
+        }
         #endregion Delete
 
         #region Edit Put

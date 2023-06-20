@@ -45,11 +45,11 @@ namespace MindMission.Infrastructure.Repositories
              
         }
 
-        public async Task<List<Student>> GetLastfourStudentIds()
+        public async Task<List<Student>> GetLastfourStudentIds(int courseId )
         {
             List<Student> students = new List<Student>();
             var timetracks = await _context.TimeTrackings
-                                .Where(cv => cv.EndTime != null)
+                                .Where(cv => cv.CourseId == courseId && cv.EndTime != null)
                                 .OrderByDescending(s => s.EndTime).ToListAsync();
             var studentIds= timetracks.Select(cv => cv.StudentId).Distinct().Take(4);
             foreach (var stdId in studentIds)

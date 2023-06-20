@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 

@@ -17,7 +17,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<UserAccount>> GetUserAccountsAsync(string id)
         {
-            var userAccounts = await _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id).ToListAsync();
+            var userAccounts = await _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id && !i.IsDeleted).ToListAsync();
             return userAccounts.AsQueryable();
         }
 

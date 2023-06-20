@@ -5,6 +5,7 @@ using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -13,11 +14,11 @@ namespace MindMission.API.Controllers
     [ApiController]
     public class StudentController : BaseController<Student, StudentDto, string>
     {
-        private readonly IStudentService _StudentService;
+        private readonly IStudentService _studentService;
 
         public StudentController(IStudentService studentService, StudentMappingService studentMappingService) : base(studentMappingService)
         {
-            _StudentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
+            _studentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
         }
 
         [HttpGet]
@@ -25,7 +26,7 @@ namespace MindMission.API.Controllers
         {
 
             return await GetEntitiesResponseWithInclude(
-              _StudentService.GetAllAsync,
+              _studentService.GetAllAsync,
               pagination,
               "Students",
               student => student.User
@@ -36,7 +37,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<InstructorDto>> GetById(string StudentID)
         {
             return await GetEntityResponseWithInclude(
-                    () => _StudentService.GetByIdAsync(StudentID,
+                    () => _studentService.GetByIdAsync(StudentID,
                         instructor => instructor.User),
                      "Student");
 
@@ -46,14 +47,26 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/students/{recentNumber}")]
         public async Task<ActionResult<IQueryable<StudentDto>>> GetRecentStudents(int recentNumber, int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _StudentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), pagination, "Students");
+            return await GetEntitiesResponse(() => _studentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), pagination, "Students");
         }
 
         [HttpPatch("{StudnetId}")]
         public async Task<ActionResult> UpdateInstructor(string StudnetId, StudentDto StudentDto)
         {
-            return await UpdateEntityResponse(_StudentService.GetByIdAsync, _StudentService.UpdateAsync, StudnetId, StudentDto, "Student");
+            return await UpdateEntityResponse(_studentService.GetByIdAsync, _studentService.UpdateAsync, StudnetId, StudentDto, "Student");
         }
+        // DELETE: api/Student/{id}
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+
+            var course = await _studentService.GetByIdAsync(id);
+
+            if (course == null)
+                return NotFound(NotFoundResponse("Course"));
+            await _studentService.SoftDeleteAsync(id);
+            return NoContent();
+        }
     }
 }

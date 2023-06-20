@@ -8,6 +8,8 @@ using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Patch;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services;
+using MindMission.Application.Services_Classes;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -20,6 +22,7 @@ namespace MindMission.API.Controllers
     public class LessonController : BaseController<Lesson, LessonDto, int>
     {
         private readonly ILessonService _lessonService;
+        private readonly IChapterService _chapterService;
         private readonly IMappingService<Lesson, PostArticleLessonDto> _postArticleLessonMappingService;
         private readonly IMappingService<Lesson, PostQuizLessonDto> _postQuizLessonMappingService;
         private readonly IMappingService<Lesson, PostVideoLessonDto> _postVideoLessonMappingService;
@@ -29,6 +32,7 @@ namespace MindMission.API.Controllers
 
 
         public LessonController(ILessonService lessonService,
+                                IChapterService chapterService,
                                IMappingService<Lesson, LessonDto> lessonMappingService,
                                IMappingService<Lesson, PostArticleLessonDto> postArticleLessonMappingService,
                                IMappingService<Lesson, PostQuizLessonDto> postQuizLessonMappingService,
@@ -39,6 +43,7 @@ namespace MindMission.API.Controllers
             base(lessonMappingService)
         {
             _lessonService = lessonService ?? throw new ArgumentNullException(nameof(lessonService));
+            _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
             _postArticleLessonMappingService = postArticleLessonMappingService ?? throw new ArgumentNullException(nameof(postArticleLessonMappingService));
             _postQuizLessonMappingService = postQuizLessonMappingService ?? throw new ArgumentNullException(nameof(postQuizLessonMappingService));
             _postVideoLessonMappingService = postVideoLessonMappingService ?? throw new ArgumentNullException(nameof(postVideoLessonMappingService));
@@ -78,39 +83,41 @@ namespace MindMission.API.Controllers
                 Type = lesson.Type
             };
 
-            switch (lesson.Type)
+            if (lesson.Article != null && lesson.Type == LessonType.Article)
             {
-                case LessonType.Article:
-                    lessonDto.Article = new CustomArticleDto
-                    {
-                        Id = lesson.Articles.First().Id,
-                        Content = lesson.Articles.First().Content
-                    };
-                    break;
-                case LessonType.Quiz:
-                    lessonDto.Quiz = new CustomQuizDto
-                    {
-                        Id = lesson.Quizzes.First().Id,
-                        Questions = lesson.Quizzes.First().Questions.Select(q => new CustomQuestionDto
-                        {
-                            Id = q.Id,
-                            QuestionText = q.QuestionText,
-                            ChoiceA = q.ChoiceA,
-                            ChoiceB = q.ChoiceB,
-                            ChoiceC = q.ChoiceC,
-                            ChoiceD = q.ChoiceD,
-                            CorrectAnswer = q.CorrectAnswer
-                        }).ToList()
-                    };
-                    break;
-                case LessonType.Video:
-                    lessonDto.Video = new CustomVideoDto
-                    {
-                        Id = lesson.Videos.First().Id,
-                        VideoUrl = lesson.Videos.First().VideoUrl
-                    };
-                    break;
+                lessonDto.Article = new CustomArticleDto
+                {
+                    Id = lesson.Article.Id,
+                    Content = lesson.Article.Content
+                };
             }
+            else if (lesson.Quiz != null && lesson.Type == LessonType.Quiz)
+            {
+                lessonDto.Quiz = new CustomQuizDto
+                {
+                    Id = lesson.Quiz.Id,
+                    Questions = lesson.Quiz.Questions.Select(q => new CustomQuestionDto
+                    {
+                        Id = q.Id,
+                        QuestionText = q.QuestionText,
+                        ChoiceA = q.ChoiceA,
+                        ChoiceB = q.ChoiceB,
+                        ChoiceC = q.ChoiceC,
+                        ChoiceD = q.ChoiceD,
+                        CorrectAnswer = q.CorrectAnswer
+                    }).ToList()
+                };
+            }
+            else if (lesson.Video != null && lesson.Type == LessonType.Video)
+            {
+                lessonDto.Video = new CustomVideoDto
+                {
+                    Id = lesson.Video.Id,
+                    VideoUrl = lesson.Video.VideoUrl
+                };
+            }
+
+
 
             var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Lesson"), new List<CustomLessonDto> { lessonDto });
             return Ok(response);
@@ -177,7 +184,11 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest(InvalidDataResponse());
             }
-
+            var chapter = await _chapterService.GetByIdAsync(postArticleLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
+            }
 
             var lessonToCreate = _postArticleLessonMappingService.MapDtoToEntity(postArticleLessonDto);
             var createdLesson = await _lessonService.AddArticleLessonAsync(lessonToCreate);
@@ -202,7 +213,11 @@ namespace MindMission.API.Controllers
                 return BadRequest(InvalidDataResponse());
             }
 
-
+            var chapter = await _chapterService.GetByIdAsync(postQuizLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
+            }
             var lessonToCreate = _postQuizLessonMappingService.MapDtoToEntity(postQuizLessonDto);
             var createdLesson = await _lessonService.AddQuizLessonAsync(lessonToCreate);
             var lessonDto = await _postQuizLessonMappingService.MapEntityToDto(createdLesson);
@@ -224,7 +239,11 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest(InvalidDataResponse());
             }
-
+            var chapter = await _chapterService.GetByIdAsync(postVideoLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
+            }
 
             var lessonToCreate = _postVideoLessonMappingService.MapDtoToEntity(postVideoLessonDto);
             var createdLesson = await _lessonService.AddVideoLessonAsync(lessonToCreate);
@@ -252,7 +271,7 @@ namespace MindMission.API.Controllers
         [HttpPut("Article/{id}")]
         public async Task<IActionResult> PutArticleLesson(int id, [FromBody] PostArticleLessonDto postArticleLessonDto)
         {
-            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Articles);
+            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Article);
 
             if (existingLesson == null)
             {
@@ -262,6 +281,11 @@ namespace MindMission.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(InvalidDataResponse());
+            }
+            var chapter = await _chapterService.GetByIdAsync(postArticleLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
             }
 
             postArticleLessonDto.LessonId = id;
@@ -285,7 +309,7 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> PutQuizLesson(int id, [FromBody] PostQuizLessonDto postQuizLessonDto)
         {
 
-            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Quizzes);
+            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Quiz);
 
             if (existingLesson == null)
             {
@@ -297,7 +321,11 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest(InvalidDataResponse());
             }
-
+            var chapter = await _chapterService.GetByIdAsync(postQuizLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
+            }
             if (postQuizLessonDto.Questions == null || !postQuizLessonDto.Questions.Any() || postQuizLessonDto.Questions.Any(item => string.IsNullOrWhiteSpace(item.QuestionText) || string.IsNullOrWhiteSpace(item.ChoiceA) || string.IsNullOrWhiteSpace(item.ChoiceB) || string.IsNullOrWhiteSpace(item.ChoiceC) || string.IsNullOrWhiteSpace(item.ChoiceD) || string.IsNullOrWhiteSpace(item.CorrectAnswer)))
             {
                 return BadRequest(ValidationFailedResponse());
@@ -323,7 +351,7 @@ namespace MindMission.API.Controllers
         public async Task<IActionResult> PutVideoLesson(int id, [FromBody] PostVideoLessonDto postVideoLessonDto)
         {
 
-            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Videos);
+            var existingLesson = await _lessonService.GetByIdAsync(id, lesson => lesson.Video);
 
             if (existingLesson == null)
             {
@@ -332,6 +360,11 @@ namespace MindMission.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(InvalidDataResponse());
+            }
+            var chapter = await _chapterService.GetByIdAsync(postVideoLessonDto.ChapterId);
+            if (chapter == null)
+            {
+                return BadRequest(NotFoundResponse("Chapter"));
             }
             postVideoLessonDto.LessonId = id;
             var lessonToUpdate = _postVideoLessonMappingService.MapDtoToEntity(postVideoLessonDto);
@@ -359,7 +392,7 @@ namespace MindMission.API.Controllers
         {
             if (patchDoc != null)
             {
-                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Articles);
+                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Article);
 
                 if (lessonInDb == null)
                 {
@@ -413,7 +446,7 @@ namespace MindMission.API.Controllers
         {
             if (patchDoc != null)
             {
-                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Videos);
+                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Video);
 
                 if (lessonInDb == null)
                 {
@@ -467,7 +500,7 @@ namespace MindMission.API.Controllers
         {
             if (patchDoc != null)
             {
-                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Articles);
+                var lessonInDb = await _lessonService.GetByIdAsync(id, lesson => lesson.Article);
 
                 if (lessonInDb == null)
                 {
@@ -518,7 +551,8 @@ namespace MindMission.API.Controllers
         }
         #endregion
         #region Delete
-        [HttpDelete("delete/{lessonId}")]
+
+        [HttpDelete("Delete/{lessonId}")]
         public async Task<IActionResult> DeleteLesson(int lessonId)
         {
             return await DeleteEntityResponse(_lessonService.GetByIdAsync, _lessonService.DeleteAsync, lessonId);
