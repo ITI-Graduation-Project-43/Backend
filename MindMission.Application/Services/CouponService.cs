@@ -1,5 +1,6 @@
 ﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Services.Base;
 using MindMission.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -10,44 +11,13 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
-	public class CouponService : ICouponService
+	public class CouponService : Service<Coupon, int>, ICouponService
 	{
 		private readonly ICouponRepository _context;
 
-		public CouponService(ICouponRepository context)
+		public CouponService(ICouponRepository context):base(context)
 		{
 			_context = context;
-		}
-
-		public async Task<Coupon> AddAsync(Coupon entity)
-		{
-			await _context.AddAsync(entity);
-			return entity;
-		}
-
-		public async Task DeleteAsync(int id)
-		{
-			await _context.DeleteAsync(id);
-		}
-
-		public async Task<IQueryable<Coupon>> GetAllAsync()
-		{
-			return await _context.GetAllAsync();
-		}
-
-		public async Task<IEnumerable<Coupon>> GetAllAsync(params Expression<Func<Coupon, object>>[] IncludeProperties)
-		{
-			return await _context.GetAllAsync(IncludeProperties);
-		}
-
-		public async Task<Coupon> GetByIdAsync(int id)
-		{
-			return await _context.GetByIdAsync(id);
-		}
-
-		public async Task<Coupon> GetByIdAsync(int id, params Expression<Func<Coupon, object>>[] IncludeProperties)
-		{
-			return await _context.GetByIdAsync(id, IncludeProperties);
 		}
 
 		public async Task<Coupon> getCouponByCode(string code)
@@ -65,19 +35,6 @@ namespace MindMission.Application.Services
 			return await _context.getCouponsByCourse(courseId);
 		}
 
-		public async Task SoftDeleteAsync(int id)
-		{
-			await _context.SoftDeleteAsync(id);
-		}
 
-		public async Task<Coupon> UpdateAsync(Coupon entity)
-		{
-			return await _context.UpdateAsync(entity);
-		}
-
-		public async Task<Coupon> UpdatePartialAsync(int id, Coupon entity)
-		{
-			return await _context.UpdatePartialAsync(id, entity);
-		}
 	}
 }
