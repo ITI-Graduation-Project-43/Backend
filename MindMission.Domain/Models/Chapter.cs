@@ -23,10 +23,8 @@ namespace MindMission.Domain.Models
         [StringLength(100)]
         [Unicode(false)]
         public string Title { get; set; } = string.Empty;
-        [NotMapped]
-        public int NoOfLessons => Lessons?.Count ?? 0;
-        [NotMapped]
-        public float NoOfHours => Lessons?.Sum(lesson => lesson.NoOfHours) ?? 0;
+        public int NoOfLessons { get; set; }
+        public float NoOfHours { get; set; }
         public bool IsDeleted { get; set; } = false;
 
 
