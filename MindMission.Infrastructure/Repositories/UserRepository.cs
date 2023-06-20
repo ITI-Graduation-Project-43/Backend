@@ -70,8 +70,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
-            //var User = await UserManager.FindByEmailAsync(Email);
-            var User = Context.Users.Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();
+            var User = Context.Users.AsSplitQuery().Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();
 
             if (User != null)
             {
@@ -79,7 +78,7 @@ namespace MindMission.Infrastructure.Repositories
                 {
                     var Result = await UserManager.CheckPasswordAsync(User, Password);
                     if (Result)
-                    {
+                    {  
                         var role = await UserManager.GetRolesAsync(User);
                         string FullName = string.Empty;
                         if (role[0] == "Student")

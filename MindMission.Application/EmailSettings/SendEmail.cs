@@ -2,6 +2,7 @@
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.Net.Sockets;
 
 namespace MindMission.API.EmailSettings
 {
@@ -30,7 +31,7 @@ namespace MindMission.API.EmailSettings
 
                 using (SmtpClient MailClient = new SmtpClient())
                 {
-                    MailClient.Connect(MailSettings.Server, MailSettings.Port, SecureSocketOptions.StartTls);
+                    MailClient.Connect(MailSettings.Server, MailSettings.Port, SecureSocketOptions.SslOnConnect);
                     MailClient.Timeout = 6000;
                     MailClient.Authenticate(MailSettings.UserName, MailSettings.Password);
                     MailClient.Send(EmailMessage);
