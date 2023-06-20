@@ -1,39 +1,20 @@
 ﻿using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
+using MindMission.Application.Services.Base;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
-using System.Linq.Expressions;
 
 namespace MindMission.Application.Services_Classes
 {
-    public class LessonService : ILessonService
+    public class LessonService : Service<Lesson, int>, ILessonService
     {
         private readonly ILessonRepository _context;
 
-        public LessonService(ILessonRepository context)
+        public LessonService(ILessonRepository context) : base(context)
         {
             _context = context;
         }
         #region Get
-        public Task<IQueryable<Lesson>> GetAllAsync()
-        {
-            return _context.GetAllAsync();
-        }
-
-        public async Task<IEnumerable<Lesson>> GetAllAsync(params Expression<Func<Lesson, object>>[] IncludeProperties)
-        {
-            return await _context.GetAllAsync(IncludeProperties);
-        }
-
-        public Task<Lesson> GetByIdAsync(int id)
-        {
-            return _context.GetByIdAsync(id);
-        }
-
-        public Task<Lesson> GetByIdAsync(int id, params Expression<Func<Lesson, object>>[] IncludeProperties)
-        {
-            return _context.GetByIdAsync(id, IncludeProperties);
-        }
 
         public Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId)
         {
@@ -65,28 +46,7 @@ namespace MindMission.Application.Services_Classes
             return _context.GetByLessonIdAsync(lessonId);
         }
         #endregion
-        public Task<Lesson> AddAsync(Lesson entity)
-        {
-            return _context.AddAsync(entity);
-        }
 
-        public Task<Lesson> UpdateAsync(Lesson entity)
-        {
-            return _context.UpdateAsync(entity);
-        }
-        public async Task<Lesson> UpdatePartialAsync(int id, Lesson entity)
-        {
-            return await _context.UpdatePartialAsync(id, entity);
-        }
-        public Task DeleteAsync(int id)
-        {
-            return _context.DeleteAsync(id);
-        }
-
-        public Task SoftDeleteAsync(int id)
-        {
-            return _context.SoftDeleteAsync(id);
-        }
 
         public async Task<Lesson> AddArticleLessonAsync(Lesson lesson)
         {

@@ -27,10 +27,13 @@ using Stripe;
 using System.Text;
 using MindMission.Application.CustomValidation;
 using MindMission.Application.DTOs.PostDtos;
-using MindMission.Application.Interfaces.DtoValidator;
-using MindMission.Application.DTOs.ArticleDtos;
 using MindMission.Application.Validator.Base;
 using MindMission.Application.Validator;
+using MindMission.Application.DTOs.QuizDtos;
+using MindMission.Application.DTOs.ArticleDtos;
+using MindMission.Application.DTOs.VideoDtos;
+using MindMission.Application.Service.Interfaces;
+using MindMission.Application.DTOs.QuestionDtos;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -44,8 +47,6 @@ builder.Logging.AddSerilog(Logger);
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
-builder.Services.AddRazorPages();
-
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
@@ -54,6 +55,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution); // To prevent create 2 copy for the same object at one-to-many relationship case which make the memory more better but decrease in the performance due to it check if the object is created before or not
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -99,14 +101,32 @@ builder.Services.AddScoped<AdminMappingService, AdminMappingService>();
 /*Article Configuration*/
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
-builder.Services.AddScoped<IMappingService<Article, ArticleDto>, ArticleMappingService>();
-builder.Services.AddScoped<IMappingService<Article, ArticleCreateDto>, PostArticleMappingService>();
-builder.Services.AddScoped<IArticleDtoValidator, ArticleDtoValidator>();
 builder.Services.AddScoped<IValidatorService<ArticleCreateDto>, ArticleValidatorService>();
+#endregion
 
+#region Video 
+/*Video Configuration*/
+builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<IValidatorService<VideoCreateDto>, VideoValidatorService>();
+#endregion
 
+#region Quiz 
+/*Quiz Configuration*/
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IValidatorService<QuizCreateDto>, QuizValidatorService>();
 
 #endregion
+
+#region Question 
+/*Question Configuration*/
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IValidatorService<QuestionCreateDto>, QuestionValidatorService>();
+#endregion
+
+
 /*Permission Configuration*/
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
@@ -172,17 +192,8 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
 builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
 
-/*Question Configuration*/
-builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-builder.Services.AddScoped<IQuestionService, QuestionService>();
-builder.Services.AddScoped<QuestionMappingService, QuestionMappingService>();
-builder.Services.AddScoped<IMappingService<Question, QuestionDto>, QuestionMappingService>();
 
-/*Quiz Configuration*/
-builder.Services.AddScoped<IQuizRepository, QuizRepository>();
-builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddScoped<QuizMappingService, QuizMappingService>();
-builder.Services.AddScoped<IMappingService<Quiz, QuizDto>, QuizMappingService>();
+
 
 /*Chapter Configuration*/
 builder.Services.AddScoped<IChapterRepository, ChapterRepository>();
@@ -335,8 +346,6 @@ app.UseCors(TextCore);
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.MapRazorPages();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

@@ -12,11 +12,11 @@ namespace MindMission.Application.DTOs
         [Required]
         [StringLength(100)]
         [Unicode(false)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [StringLength(2048)]
         [Unicode(false)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public List<int> AdminIds { get; set; } = new List<int>();
     }

@@ -21,7 +21,7 @@ namespace MindMission.Domain.Models
         [NotMapped]
         public int NoOfQuestions
         {
-            get { return Questions?.Count ?? 0; }
+            get; set;
         }
 
         public bool IsDeleted { get; set; } = false;

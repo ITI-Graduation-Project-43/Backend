@@ -10,6 +10,7 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Responses;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MindMission.API.Controllers.Base
 {
@@ -57,7 +58,17 @@ namespace MindMission.API.Controllers.Base
         {
             return GenerateResponse(false, message);
         }
+        protected ResponseObject<TDto> BadRequestResponse(ModelStateDictionary modelState)
+        {
+            var errors = modelState.SelectMany(x => x.Value.Errors.Select(p => p.ErrorMessage)).ToList();
+            var errorString = string.Join("; ", errors);
 
+            return GenerateResponse(false, errorString);
+        }
+        protected ResponseObject<TDto> NullResponse(string entity)
+        {
+            return GenerateResponse(false, string.Format(ErrorMessages.CannotBeNull, entity));
+        }
         protected ResponseObject<TDto> UnauthorizedResponse()
         {
             return GenerateResponse(false, ErrorMessages.UnauthorizedAccess);
@@ -72,7 +83,11 @@ namespace MindMission.API.Controllers.Base
             string message = string.Format(ErrorMessages.Conflict, entityName);
             return GenerateResponse(false, message);
         }
-
+        protected ResponseObject<TDto> DatabaseErrorResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.DatabaseError, entityName);
+            return GenerateResponse(false, message);
+        }
         protected ResponseObject<TDto> ServerErrorResponse()
         {
             return GenerateResponse(false, ErrorMessages.ServerError);
@@ -122,141 +137,223 @@ namespace MindMission.API.Controllers.Base
         #endregion
         protected async Task<ActionResult> GetAll(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, params Expression<Func<TEntity, object>>[] IncludeProperties)
         {
-            var entities = await serviceMethod.Invoke(IncludeProperties);
-            if (entities == null)
-                return NotFound(NotFoundResponse(_entitiesName));
+            try
+            {
+                var entities = await serviceMethod.Invoke(IncludeProperties);
+                if (!entities.Any())
+                {
+                    return NotFound(NotFoundResponse(_entitiesName));
+                }
 
-            EntitiesCount = entities.Count();
+                EntitiesCount = entities.Count();
 
-            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+                var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
 
-            var dtos = _mapper.Map<IEnumerable<TDto>>(entitiesPage).ToList();
+                var dtos = _mapper.Map<IEnumerable<TDto>>(entitiesPage).ToList();
 
-            return Ok(RetrieveSuccessResponse(dtos, _entitiesName, pagination, EntitiesCount));
-
-
+                return Ok(RetrieveSuccessResponse(dtos, _entitiesName, pagination, EntitiesCount));
+            }
+            catch (Exception)
+            {
+                return BadRequest(DatabaseErrorResponse(_entitiesName));
+            }
         }
 
         protected async Task<ActionResult> GetById(Func<Task<TEntity>> serviceMethod)
         {
-            var entity = await serviceMethod.Invoke();
-            if (entity == null)
+            try
             {
-                return NotFound(NotFoundResponse(_entityName));
+                var entity = await serviceMethod.Invoke();
+                if (entity == null)
+                {
+                    return NotFound(NotFoundResponse(_entityName));
+                }
+                var dto = _mapper.Map<TDto>(entity);
+                return Ok(RetrieveSuccessResponse(new List<TDto> { dto }, _entityName));
             }
-            var dto = _mapper.Map<TDto>(entity);
-            return Ok(RetrieveSuccessResponse(new List<TDto> { dto }, _entityName));
+            catch (Exception)
+            {
+                return BadRequest(DatabaseErrorResponse(_entityName));
+            }
 
         }
 
         protected async Task<ActionResult> Create(Func<TEntity, Task<TEntity>> serviceAddMethod, TCreateDto createDto, string actionName)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(InvalidDataResponse());
-            }
             try
             {
-                await _validatorService.ValidateAsync(createDto);
+                if (createDto == null)
+                {
+                    return BadRequest(NullResponse(_entityName));
+                }
+
+
+                if (typeof(TKey) == typeof(int))
+                {
+                    if (int.TryParse(createDto.Id.ToString(), out int id) && id != 0)
+                    {
+                        createDto.Id = (TKey)(object)0;
+                    }
+                }
+                else if (typeof(TKey) == typeof(string) && !string.IsNullOrEmpty(createDto.Id as string))
+                {
+                    createDto.Id = (TKey)(object)string.Empty;
+                }
+                else if (!string.IsNullOrEmpty(createDto.Id as string))
+                {
+                    createDto.Id = (TKey)(object)string.Empty;
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(BadRequestResponse(ModelState));
+                }
+
+                var validationError = await _validatorService.ValidateAsync(createDto, true);
+                if (validationError != null)
+                {
+                    return BadRequest(BadRequestResponse(validationError));
+                }
+
+
+
+                var entity = _mapper.Map<TEntity>(createDto);
+                var createdEntity = await serviceAddMethod.Invoke(entity);
+
+                var dto = _mapper.Map<TDto>(createdEntity);
+                if (dto == null)
+                    return NotFound(NotFoundResponse(_entityName));
+                return CreatedAtAction(actionName, new { id = dto.Id }, CreatedSuccessResponse(dto, _entityName));
             }
-            catch (ValidationException ex)
+            catch (Exception)
             {
-                return BadRequest(BadRequestResponse(ex.Message));
+                return BadRequest(DatabaseErrorResponse(_entityName));
             }
-
-            var entity = _mapper.Map<TEntity>(createDto);
-            var createdEntity = await serviceAddMethod.Invoke(entity);
-
-            var dto = _mapper.Map<TDto>(createdEntity);
-            if (dto == null)
-                return NotFound(NotFoundResponse(_entityName));
-            return CreatedAtAction(actionName, new { id = dto.Id }, CreatedSuccessResponse(dto, _entityName));
         }
 
         protected async Task<ActionResult> Update(Func<TKey, Task<TEntity>> serviceGetMethod, Func<TEntity, Task<TEntity>> serviceUpdateMethod, TKey id, TCreateDto updateDto)
         {
-            if (!id.Equals(updateDto.Id))
-            {
-                return BadRequest(IdMismatchResponse(_entityName));
-            }
-
-            var existingEntity = await serviceGetMethod.Invoke(id);
-            if (existingEntity == null)
-            {
-                return NotFound(NotFoundResponse(_entityName));
-            }
-
             try
             {
-                await _validatorService.ValidateAsync(updateDto);
+                if (updateDto == null)
+                {
+                    return BadRequest(NullResponse(_entityName));
+                }
+                if (!id.Equals(updateDto.Id))
+                {
+                    return BadRequest(IdMismatchResponse(_entityName));
+                }
+
+                var existingEntity = await serviceGetMethod.Invoke(id);
+                if (existingEntity == null)
+                {
+                    return NotFound(NotFoundResponse(_entityName));
+                }
+
+
+                var validationError = await _validatorService.ValidateAsync(updateDto, false);
+                if (validationError != null)
+                {
+                    return BadRequest(BadRequestResponse(validationError));
+                }
+                _mapper.Map(updateDto, existingEntity);
+                var updatedEntity = await serviceUpdateMethod.Invoke(existingEntity);
+
+                var dto = _mapper.Map<TDto>(updatedEntity);
+                return Ok(UpdatedSuccessResponse(dto, _entityName));
             }
-            catch (ValidationException ex)
+            catch (Exception)
             {
-                return BadRequest(BadRequestResponse(ex.Message));
+                return BadRequest(DatabaseErrorResponse(_entityName));
             }
-
-            _mapper.Map(updateDto, existingEntity);
-            var updatedEntity = await serviceUpdateMethod.Invoke(existingEntity);
-
-            var dto = _mapper.Map<TDto>(updatedEntity);
-            return Ok(UpdatedSuccessResponse(dto, _entityName));
         }
-
 
         protected async Task<ActionResult> Patch(Func<TKey, Task<TEntity>> serviceGetMethod, Func<TKey, TEntity, Task<TEntity>> serviceUpdateMethod, TKey id, JsonPatchDocument<TCreateDto> patchDoc)
         {
-            if (patchDoc == null || patchDoc.Operations.Count == 0)
+            try
             {
-                return BadRequest(ModelState);
+                if (patchDoc == null || patchDoc.Operations.Count == 0)
+                {
+                    return BadRequest(BadRequestResponse(ModelState));
+                }
+
+                var entityInDb = await serviceGetMethod.Invoke(id);
+
+                if (entityInDb == null)
+                {
+                    return NotFound(NotFoundResponse(_entityName));
+                }
+
+                var entityToUpdateDto = _mapper.Map<TCreateDto>(entityInDb);
+
+                if (entityToUpdateDto == null)
+                {
+                    return BadRequest(BadRequestResponse(string.Format(ErrorMessages.CannotBeNull, "entity")));
+                }
+
+                patchDoc.ApplyTo(entityToUpdateDto, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(BadRequestResponse(ModelState));
+                }
+
+
+                var validationError = await _validatorService.ValidateAsync(entityToUpdateDto, false);
+                if (validationError != null)
+                {
+                    return BadRequest(BadRequestResponse(validationError));
+                }
+                _mapper.Map(entityToUpdateDto, entityInDb);
+
+                var updatedEntity = await serviceUpdateMethod.Invoke(id, entityInDb);
+
+                var dto = _mapper.Map<TDto>(updatedEntity);
+
+                return Ok(UpdatedSuccessResponse(dto, _entityName));
             }
-
-            var entityInDb = await serviceGetMethod.Invoke(id);
-
-            if (entityInDb == null)
+            catch (Exception)
             {
-                return NotFound(NotFoundResponse(_entityName));
+                return BadRequest(DatabaseErrorResponse(_entityName));
             }
-
-            var entityToUpdateDto = _mapper.Map<TCreateDto>(entityInDb);
-
-            if (entityToUpdateDto == null)
-            {
-                return BadRequest(BadRequestResponse(string.Format(ErrorMessages.CannotBeNull, "Dto")));
-            }
-
-            patchDoc.ApplyTo(entityToUpdateDto, ModelState);
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(InvalidDataResponse());
-            }
-
-            var validationResult = await _validatorService.ValidateAsync(entityToUpdateDto);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(BadRequestResponse(string.Join("; ", validationResult.Errors)));
-            }
-            _mapper.Map(entityToUpdateDto, entityInDb);
-
-            var updatedEntity = await serviceUpdateMethod.Invoke(id, entityInDb);
-
-            var dto = _mapper.Map<TDto>(updatedEntity);
-
-            return Ok(UpdatedSuccessResponse(dto, _entityName));
         }
-        protected async Task<ActionResult> Delete(Func<TKey, Task<TEntity>> serviceGetMethod, Func<TKey, Task> serviceDeleteMethod, TKey id)
+        protected async Task<ActionResult> Delete(Func<TKey, Task<TEntity>> serviceGetMethod, Func<TEntity, Task> serviceDeleteMethod, TKey id)
         {
-            var entity = await serviceGetMethod.Invoke(id);
-            if (entity == null)
+            try
+            {
+                var entity = await serviceGetMethod.Invoke(id);
+                if (entity == null)
+                {
+                    return NotFound(NotFoundResponse(_entityName));
+                }
+
+                await serviceDeleteMethod.Invoke(entity);
+                return Ok(GenerateResponse(true, string.Format(SuccessMessages.DeletedSuccessfully, _entityName)));
+            }
+            catch (Exception)
+            {
+                return BadRequest(DatabaseErrorResponse(_entityName));
+            }
+        }
+        protected async Task<ActionResult> Delete(Func<TKey, Task> serviceDeleteMethod, TKey id)
+        {
+
+            try
+            {
+                await serviceDeleteMethod.Invoke(id);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound(NotFoundResponse(_entityName));
-            }
 
-            await serviceDeleteMethod.Invoke(id);
+            }
+            catch
+            {
+                return BadRequest(DatabaseErrorResponse(_entityName));
+            }
             return Ok(GenerateResponse(true, string.Format(SuccessMessages.DeletedSuccessfully, _entityName)));
 
         }
-
     }
 
 

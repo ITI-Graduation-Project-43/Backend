@@ -1,21 +1,20 @@
-﻿using MindMission.Application.DTOs.Base;
-using MindMission.Domain.Constants;
-using System.ComponentModel.DataAnnotations;
-
+﻿using MindMission.Application.CustomValidation.DataAnnotation;
+using MindMission.Application.DTOs.Base;
 
 namespace MindMission.Application.DTOs.ArticleDtos
 {
+    /// <summary>
+    /// Represents a Data Transfer Object (DTO) for creating, updating, editing an article.
+    /// </summary>
     public class ArticleCreateDto : IDtoWithId<int>
     {
-        [Required(ErrorMessage = ErrorMessages.Required)]
-
         public int Id { get; set; }
 
-        [Required(ErrorMessage = ErrorMessages.Required)]
+        [RequiredInteger("Lesson Id")]
         public int LessonId { get; set; }
 
-        [Required(ErrorMessage = ErrorMessages.Required)]
-        [MaxLength(30000, ErrorMessage = ErrorMessages.LengthExceeded)]
-        public string? Content { get; set; }
+        [RequiredField("Content")]
+        [MinStringLength(100)]
+        public string Content { get; set; } = string.Empty;
     }
 }

@@ -4,8 +4,11 @@ namespace MindMission.Domain.DTOs
 {
     public class ResetPasswordDto
     {
+        [Required(ErrorMessage = "Required*")]
         public string Token { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Required*")]
+        [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Required*")]
@@ -14,10 +17,5 @@ namespace MindMission.Domain.DTOs
         [MinLength(8, ErrorMessage = "Must be 8 characters at least")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Required*")]
-        [Compare(nameof(Password), ErrorMessage = "Not matched")]
-        [DataType(DataType.Password)]
-        public string ConfirmedPassword { get; set; } = string.Empty;
     }
 }

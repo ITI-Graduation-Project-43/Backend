@@ -90,7 +90,7 @@ namespace MindMission.Application.Services
                     EmailTo = Email,
                     EmailToName = Email,
                     EmailSubject = "Reset Your Password",
-                    EmailBody = $"Click to the following link to reset your password \n {Configuration["Server:URL"]}/ResetPassword?Email={Email}&Token={Result}",
+                    EmailBody = $"Click to the following link to reset your password \n {Configuration["Server:URL"]}/login/resetpassword?Email={Email}&Token={Result}",
                 };
                 if (MailService.SendMail(mailData))
                 {
