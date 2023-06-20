@@ -10,6 +10,7 @@ namespace MindMission.Domain.Models
     /// Represents the feedback provided by students for a course, including ratings and comments.
     /// </summary>
     [Index(nameof(CourseId), Name = "idx_coursefeedback_courseid")]
+    [Table("CourseFeedbacks")]
     public partial class CourseFeedback : BaseEntity, IEntity<int>, ISoftDeletable
     {
         [Key]
