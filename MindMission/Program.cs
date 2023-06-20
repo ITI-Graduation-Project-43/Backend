@@ -34,6 +34,7 @@ using MindMission.Application.DTOs.ArticleDtos;
 using MindMission.Application.DTOs.VideoDtos;
 using MindMission.Application.Service.Interfaces;
 using MindMission.Application.DTOs.QuestionDtos;
+using MindMission.Application.DTOs.UserDtos;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -231,6 +232,9 @@ builder.Services.AddScoped<IAttachmentMappingService, AttachmentMappingService>(
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>();
+/*Message Configuration*/
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 /*Identity Configuration*/
 builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();

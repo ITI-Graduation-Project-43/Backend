@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
-using MindMission.Domain.DTOs;
 using MindMission.Domain.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -108,6 +108,21 @@ namespace MindMission.API.Controllers
             {
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
             }
+        }
+
+        [HttpPost("Email")]
+        public async Task<IActionResult> ChangeEmailAsync([EmailAddress] string Email = null)
+        {
+            if (ModelState.IsValid || Email != null)
+            {
+                var Result = await UserService.ChangeEmailFoundAsync(Email);
+                if (Result)
+                {
+                    return Ok(ResponseObjectFactory.CreateResponseObject(false, "This email is already used", new List<string>()));
+                }
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is not found", new List<string>()));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "Invalid Email", new List<string>()));
         }
 
         [HttpPost("Change/Password")]

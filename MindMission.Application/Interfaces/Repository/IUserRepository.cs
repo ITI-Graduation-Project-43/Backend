@@ -12,6 +12,8 @@ namespace MindMission.Application.Interfaces.Repository
         
         Task<SuccessLoginDto?> LoginAsync(string Email, string Password);
 
+        Task<bool> ChangeEmailFoundAsync(string Email);
+
         Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password);
 
         Task<IdentityResult> ChangePasswordAsync(string Email, string CurrentPassword, string NewPassword);

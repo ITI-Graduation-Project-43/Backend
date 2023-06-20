@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MindMission.Domain.DTOs
+namespace MindMission.Application.DTOs.UserDtos
 {
     public class ChangePasswordDto
     {

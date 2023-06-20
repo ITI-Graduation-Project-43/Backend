@@ -35,7 +35,7 @@ namespace MindMission.Infrastructure.Context
 		public virtual DbSet<Coupon> Coupons { get; set; }
         public virtual DbSet<SiteCoupon> SiteCoupons { get; set; }
 
-
+        public virtual DbSet<Messages> Messages { get; set; }
 
         public MindMissionDbContext(DbContextOptions<MindMissionDbContext> options) : base(options)
         {
