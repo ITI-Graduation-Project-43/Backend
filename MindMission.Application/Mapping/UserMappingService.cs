@@ -1,4 +1,4 @@
-﻿using MindMission.Application.DTOs;
+﻿using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 

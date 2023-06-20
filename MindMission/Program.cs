@@ -34,6 +34,7 @@ using MindMission.Application.DTOs.ArticleDtos;
 using MindMission.Application.DTOs.VideoDtos;
 using MindMission.Application.Service.Interfaces;
 using MindMission.Application.DTOs.QuestionDtos;
+using MindMission.Application.DTOs.UserDtos;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.UserDtos
 {
     public class UserDto
     {

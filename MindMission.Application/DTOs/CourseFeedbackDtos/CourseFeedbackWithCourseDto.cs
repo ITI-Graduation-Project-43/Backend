@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MindMission.Application.DTOs
+namespace MindMission.Application.DTOs.CourseFeedbackDtos
 {
     public class CourseFeedbackWithCourseDto
     {
