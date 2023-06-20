@@ -110,7 +110,7 @@ namespace MindMission.API.Controllers
             }
         }
 
-        [HttpGet("Email")]
+        [HttpPost("Email")]
         public async Task<IActionResult> ChangeEmailAsync([EmailAddress] string Email = null)
         {
             if (ModelState.IsValid || Email != null)
