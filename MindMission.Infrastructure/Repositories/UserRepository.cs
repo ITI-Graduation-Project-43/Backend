@@ -68,6 +68,16 @@ namespace MindMission.Infrastructure.Repositories
             return Result;
         }
 
+        public async Task<bool> ChangeEmailFoundAsync(string Email)
+        {
+            var User = await UserManager.FindByEmailAsync(Email);
+            if (User != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
             var User = Context.Users.AsSplitQuery().Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();

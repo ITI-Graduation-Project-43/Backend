@@ -69,6 +69,11 @@ namespace MindMission.Application.Services
             }
             return User;
         }
+       
+        public async Task<bool> ChangeEmailFoundAsync(string Email)
+        {
+            return await UserManager.ChangeEmailFoundAsync(Email);
+        }
 
         public async Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password)
         {
