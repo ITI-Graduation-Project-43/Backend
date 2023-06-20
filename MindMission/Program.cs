@@ -40,8 +40,6 @@ builder.Logging.AddSerilog(Logger);
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
-builder.Services.AddRazorPages();
-
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
@@ -50,6 +48,7 @@ builder.Services.AddDbContext<MindMissionDbContext>(options =>
         b => b.MigrationsAssembly("MindMission.API"));
 
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution); // To prevent create 2 copy for the same object at one-to-many relationship case which make the memory more better but decrease in the performance due to it check if the object is created before or not
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -188,8 +187,6 @@ builder.Services.AddScoped<IArticleLessonPatchValidator, ArticleLessonPatchValid
 builder.Services.AddScoped<IQuizLessonPatchValidator, QuizLessonPatchValidator>();
 builder.Services.AddScoped<IVideoLessonPatchValidator, VideoLessonPatchValidator>();
 
-
-
 /*Attachment Configuration*/
 builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 builder.Services.AddScoped<IAttachmentService, AttachmentService>();
@@ -314,8 +311,6 @@ app.UseCors(TextCore);
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.MapRazorPages();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

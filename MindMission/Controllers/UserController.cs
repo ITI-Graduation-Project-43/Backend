@@ -128,7 +128,7 @@ namespace MindMission.API.Controllers
 
         [HttpPost]
         [Route("ForgetPassword")]
-        public async Task<IActionResult> ForgetPasswordAsync([FromBody] [EmailAddress] string Email)
+        public async Task<IActionResult> ForgetPasswordAsync([EmailAddress] string Email)
         {
             if (Email != null)
             {
@@ -143,8 +143,28 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost]
+        [Route("ValidateToken")]
+        public async Task<IActionResult> ValidateTokenAsync([EmailAddress] string Email, string Token)
+        {
+            if (Email != null && Token != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    var Result = await UserService.ValidateTokenAsync(Email, Token);
+                    if(Result)
+                    {
+                        return Ok(ResponseObjectFactory.CreateResponseObject(Result, "The token is valid", new List<string>()));
+                    }
+                    return Ok(ResponseObjectFactory.CreateResponseObject(Result, "The token is expired", new List<string>()));
+                }
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "The email or token is missed", new List<string>()));
+        }
+
+        [HttpPost]
         [Route("ResetPassword")]
-        public async Task<IActionResult> ConfirmResetPasswordAsync([FromForm] ResetPasswordDto ResetPasswordDto)
+        public async Task<IActionResult> ConfirmResetPasswordAsync(ResetPasswordDto ResetPasswordDto)
         {
             if (ResetPasswordDto != null)
             {
@@ -153,7 +173,7 @@ namespace MindMission.API.Controllers
                     var Result = await UserService.ResetPasswordAsync(ResetPasswordDto.Email, ResetPasswordDto.Token, ResetPasswordDto.Password);
                     if (Result.Succeeded)
                     {
-                        return Ok(ResponseObjectFactory.CreateResponseObject(true, "Password has been reset successfully", new List<string>()));
+                        return Ok(ResponseObjectFactory.CreateResponseObject(true, "Password is reset successfully", new List<string>()));
                     }
                     string Errors = string.Empty;
                     foreach (var Error in Result.Errors)

@@ -267,7 +267,7 @@ namespace MindMission.API.Controllers
 
             // Map the created course entity back to a DTO.
             var courseDto = await _postCourseMappingService.MapEntityToDto(createdCourse);
-
+    
             if (courseDto == null)
                 return NotFound(NotFoundResponse("Course"));
             // Return the created course.
