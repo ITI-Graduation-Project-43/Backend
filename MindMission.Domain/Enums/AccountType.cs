@@ -4,6 +4,8 @@
     {
         GitHub,
         Linkedin,
-        Twitter
+        Twitter,
+        Youtube,
+        Other
     }
 }

@@ -3,6 +3,7 @@ using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -13,6 +14,7 @@ namespace MindMission.API.Controllers
     {
         private readonly IUserAccountService _context;
         private readonly UserAccountMappingService _UserAccountMappingService;
+        private readonly UserAccountService _userAccountService;
 
         public UserAccountController(IUserAccountService context, UserAccountMappingService userAccountMappingService) : base(userAccountMappingService)
         {
@@ -26,6 +28,13 @@ namespace MindMission.API.Controllers
             var newAccount = _UserAccountMappingService.MapDtoToEntity(UserAccountDTO);
             await _context.AddAsync(newAccount);
             return Ok(newAccount);
+        }
+
+        [HttpGet("UserAccount/{UserId}")]
+        public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetAccountsByUserId(string UserId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _context.GetAllByUserIdAsync(UserId), pagination, "UserAccounts");
+            
         }
 
 
