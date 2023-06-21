@@ -1,5 +1,9 @@
-﻿using MindMission.Application.DTOs;
+﻿using Microsoft.Identity.Client;
+using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
+using MindMission.Application.Service_Interfaces;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
@@ -11,8 +15,8 @@ namespace MindMission.Application.Mapping
             return new UserAccount
             {
                 UserId = dto.UserId,
-                AccountId = dto.accountId,
-                AccountLink = dto.accountLink,
+                AccountId = dto.AccountId,
+                AccountLink = dto.AccountLink,
             };
         }
 
@@ -21,9 +25,11 @@ namespace MindMission.Application.Mapping
             var accountDto = new UserAccountDto()
             {
                 UserId = entity.UserId,
-                accountId = entity.AccountId,
-                accountLink = entity.AccountLink,
+                AccountId = entity.AccountId,
+                AccountLink = entity.AccountLink,
+                AccountName = entity.Account.AccountType
             };
+            
             return accountDto;
         }
     }

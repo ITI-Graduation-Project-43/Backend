@@ -7,6 +7,7 @@ namespace MindMission.Application.Interfaces.Repository
     public interface IUserAccountRepository : IRepository<UserAccount, int>
     {
         Task<IQueryable<UserAccount>> GetUserAccountsAsync(string id);
+        Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string UserId);
 
     }
 }

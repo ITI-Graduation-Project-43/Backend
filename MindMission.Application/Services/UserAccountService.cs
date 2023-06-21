@@ -21,7 +21,11 @@ namespace MindMission.Application.Services
         {
             return await _context.GetUserAccountsAsync(id);
         }
+        public Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string userId)
+        {
+            return _context.GetAllByUserIdAsync(userId);
+        }
 
-
+        
     }
 }
