@@ -67,13 +67,15 @@ namespace MindMission.Application.Services
         {
             long totalHourSpent = 0;
             var totalCourses = await _courseRepository.GetAllByInstructorAsync(instructorId);
-             
+            var courseIds = totalCourses.Select(course => course.Id).ToList();
+            var timeTracks = await _repository.GetByCourseIds(courseIds);
+
             foreach (var course in totalCourses)
             {
                 long hourSpent = 0;
-                var timeTrack = await _repository.GetByCourseId(course.Id);
-                if (timeTrack != null) {
-                    foreach (var time in timeTrack)
+                var courseTimeTracks = timeTracks.Where(track => track.CourseId == course.Id);
+                if (courseTimeTracks != null) {
+                    foreach (var time in courseTimeTracks)
                     {
                         long timeSpent = ((time.EndTime.Value.Hour - time.StartTime.Value.Hour)*60 + (time.EndTime.Value.Minute - time.StartTime.Value.Minute))/60;
                         hourSpent += timeSpent;
@@ -84,6 +86,10 @@ namespace MindMission.Application.Services
 
                 return totalHourSpent;
         }
-        
+
+        public async Task<IEnumerable<TimeTracking>> GetByCourseIds(List<int> courseIds)
+        {
+            return await _repository.GetByCourseIds(courseIds);
+        }
     }
 }

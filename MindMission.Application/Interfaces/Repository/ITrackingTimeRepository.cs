@@ -6,6 +6,7 @@ namespace MindMission.Application.Interfaces.Repository
     public interface ITrackingTimeRepository
     {
         Task<IEnumerable<TimeTracking>> GetAll();
+        Task<IEnumerable<TimeTracking>> GetByCourseIds(List<int> courseIds);
         Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId);
         Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId);
         Task<TimeTracking> Create(string studentId, int courseId);
