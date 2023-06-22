@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
@@ -74,11 +75,11 @@ namespace MindMission.API.Controllers
             Instructor instructor = await _instructorService.GetByIdAsync(instructorId);
             if (instructor == null)
             {
-                return NotFound("Instructor not found.");
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "This instructor doesn't exist", new List<string>()));
             }
             if (ProfilePictureFile == null || ProfilePictureFile.Length == 0)
             {
-                return BadRequest("No file was uploaded.");
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "invalid image", new List<string>()));
             }
 
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ProfilePictureFile.FileName);
@@ -92,11 +93,12 @@ namespace MindMission.API.Controllers
             instructor.ProfilePicture = blobClient.Uri.ToString();
 
             _context.Entry(instructor).Property(x => x.ProfilePicture).IsModified = true;
-
-            // Save the updated entity
-            await _context.SaveChangesAsync();
-
-            return Ok(instructor.ProfilePicture);
+            var result = await _context.SaveChangesAsync();
+            if (instructor.ProfilePicture != null && result > 0)
+            {
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "The image is updated successfully", new List<string>()));
+            }
+            return Ok(ResponseObjectFactory.CreateResponseObject(false, "Some wrong during saving your image", new List<string>()));
         }
         #endregion
 
