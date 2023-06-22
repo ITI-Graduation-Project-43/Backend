@@ -1,40 +1,44 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MindMission.API.Controllers.Base;
+using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
+using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MessageController : ControllerBase
+    public class MessageController : BaseController<Messages, MessageDto, int>
     {
         private readonly IMessageService _messageService;
-        public MessageController(IMessageService messageService)
+        private readonly MessageMappingService _messageMappingService;
+        public MessageController(IMessageService messageService, MessageMappingService messageMappingService) : base(messageMappingService)
         {
             _messageService = messageService;
+            _messageMappingService = messageMappingService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<DiscussionDto>>> GetAllMessages([FromQuery] PaginationDto pagination)
         {
-            var messages= await _messageService.GetAllAsync();
-            return Ok(messages);
+            return await GetEntitiesResponseWithInclude(_messageService.GetAllAsync, pagination, "Messages");
+        }
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<DiscussionDto>> GetMessageById(int Id)
+        {
+            return await GetEntityResponseWithInclude(() => _messageService.GetByIdAsync(Id), "Message");
         }
 
         [HttpPost]
-        public IActionResult PostMessage(Messages message)
+        public async Task<ActionResult> AddMessage([FromBody] MessageDto messageDTO)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            else
-            {
-                _messageService.AddAsync(message);
-                return Ok();
-            }
+            return await AddEntityResponse(_messageService.AddAsync, messageDTO, "Message", nameof(GetMessageById));
         }
+
+
     }
 }

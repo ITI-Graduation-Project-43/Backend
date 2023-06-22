@@ -235,6 +235,8 @@ builder.Services.AddScoped<IMappingService<User, UserDto>, UserMappingService>()
 /*Message Configuration*/
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<MessageMappingService, MessageMappingService>();
+builder.Services.AddScoped<IMappingService<Messages, MessageDto>, MessageMappingService>();
 
 /*Identity Configuration*/
 builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
