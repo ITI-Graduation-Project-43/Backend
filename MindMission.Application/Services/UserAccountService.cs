@@ -1,6 +1,9 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Services.Base;
+using MindMission.Domain.Common;
 using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
@@ -25,7 +28,9 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllByUserIdAsync(userId);
         }
-
-        
+        public async Task<UserAccountDto> UpdateUserAccount(string userId, int accountId, string accountLink)
+        {
+            return await _context.UpdateUserAccount(userId, accountId,accountLink);
+        }
     }
 }
