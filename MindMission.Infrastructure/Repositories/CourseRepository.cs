@@ -367,5 +367,40 @@ namespace MindMission.Infrastructure.Repositories
         }
 
 
+        //to be replaced by filter later
+        public async Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId)
+        {
+            var courses = await _context.Courses
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted && c.Approved)
+                         .ToListAsync();
+
+            return courses.AsQueryable();
+        }
+
+        public async Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId)
+        {
+            var courses = await _context.Courses
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted && !c.Approved)
+                         .ToListAsync();
+
+            return courses.AsQueryable();
+        }
+
     }
 }

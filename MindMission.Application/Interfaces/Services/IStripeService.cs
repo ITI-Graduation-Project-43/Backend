@@ -1,4 +1,5 @@
-﻿using MindMission.Domain.Models;
+﻿using MindMission.Application.DTOs;
+using MindMission.Domain.Models;
 using MindMission.Domain.Stripe.StripeModels;
 
 namespace MindMission.Application.Interfaces.Services
@@ -15,7 +16,7 @@ namespace MindMission.Application.Interfaces.Services
 
         Task<Course> GetEnrolledCourse(int id);
 
-        Task<long> GetTotalPrice(List<int> coursesIds, string? coupon);
+        Task<long> GetTotalPrice(List<int> coursesIds, string? coupon, List<CourseCoupon>? courseCoupons);
 
 	}
 }

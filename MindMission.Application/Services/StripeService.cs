@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Repository;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
@@ -15,14 +16,16 @@ namespace MindMission.Application.Services
         private readonly TokenService _tokenService;
         private readonly ICourseRepository _courseRepository;
 		private readonly ISiteCouponRepository _siteCouponRepository;
+        private readonly ICouponService _couponService;
 
-		//////Injection of Stripe services to be used to implement the two methods
-		public StripeService(
+        //////Injection of Stripe services to be used to implement the two methods
+        public StripeService(
             ChargeService chargeService,
             CustomerService customerService,
             TokenService tokenService,
             ICourseRepository courseRepository,
-            ISiteCouponRepository siteCouponRepository
+            ISiteCouponRepository siteCouponRepository,
+            ICouponService couponService
             )
         {
             _chargeService = chargeService;
@@ -30,7 +33,8 @@ namespace MindMission.Application.Services
             _tokenService = tokenService;
             _courseRepository = courseRepository;
 			_siteCouponRepository = siteCouponRepository;
-		}
+            _couponService = couponService;
+        }
 
         public async Task<StripeCustomer> AddStripeCustomerAsync(AddStripeCustomer customer)
         {
@@ -114,13 +118,19 @@ namespace MindMission.Application.Services
 
 
         //////Calc Discount
-        public async Task<long> GetTotalPrice(List<int> coursesIds, string? code)
+        public async Task<long> GetTotalPrice(List<int> coursesIds, string? code, List<CourseCoupon>? courseCoupons)
         {
             decimal totalPrice = 0;
             decimal discount = 0;
+            decimal coursesDiscount = 0;
+            var coursesIdsWithDiscount = new List<int>();
+            var couponsCodes = new List<string>();
             SiteCoupon? siteCoupon = null;
+            MindMission.Domain.Models.Coupon? coupon = null;
 
-            if(code != null)
+
+            #region Site Coupon
+            if (code != null)
             {
                 try
                 {
@@ -132,21 +142,54 @@ namespace MindMission.Application.Services
                     siteCoupon = null;
                 }
             }
-            
 
-            if(siteCoupon != null)
+
+            if (siteCoupon != null)
             {
-                if(siteCoupon.Discount != null)
+                if (siteCoupon.Discount != null)
                     discount = siteCoupon.Discount.Value / 100m;
+            } 
+            #endregion
+
+            if(courseCoupons != null)
+            {
+                foreach (var couponItem in courseCoupons)
+                {
+                    coursesIdsWithDiscount.Add(couponItem.CourseId);
+                    couponsCodes.Add(couponItem.CouponCode);
+                }
             }
 
 
-			foreach (int courseId in coursesIds)
+            foreach (int courseId in coursesIds)
             {
-				totalPrice += (await GetEnrolledCourse(courseId)).Price;
+                var course = await GetEnrolledCourse(courseId);
+
+                #region Courses Coupons
+                if (coursesIdsWithDiscount.IndexOf(courseId) != -1)
+                {
+                    int index = coursesIdsWithDiscount.IndexOf(courseId);
+                    try
+                    {
+                        coupon = await _couponService.getCouponByCodeAndCourse(couponsCodes[index], coursesIdsWithDiscount[index]);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        coupon = null;
+                    }
+
+                    if (coupon != null)
+                    {
+                        if (coupon.Discount != null)
+                            coursesDiscount += course.Price * (coupon.Discount.Value / 100m);
+                    }
+                } 
+                #endregion
+
+                totalPrice += (course).Price;
 			}
 
-			return (long) (totalPrice - (totalPrice * discount));
+			return (long) ((totalPrice - (totalPrice * discount)) - coursesDiscount);
         }
     }
 }

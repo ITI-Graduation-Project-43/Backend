@@ -53,6 +53,12 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(EnrollmentId), "Enrollment");
         }
 
+        [HttpGet("Student/{StudentId}/Course/{CourseId}")]
+        public async Task<ActionResult<EnrollmentDto>> GetEnrollmentsByStudentAndCourse(string StudentId, int CourseId)
+        {
+            return await GetEntityResponse(() => _EnrollmentService.GetByStudentAndCourseAsync(StudentId, CourseId), "Enrollments");
+        }
+
         #endregion GET
 
         #region Add

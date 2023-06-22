@@ -27,5 +27,10 @@ namespace MindMission.Application.Repository_Interfaces
         Task<Course> UpdateCourseAsync(int id, Course course);
 
 
+
+        //to be replaced by filter later
+        Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId);
+        Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId);
+
     }
 }

@@ -27,5 +27,9 @@ namespace MindMission.Application.Services
             return _context.GetAllByStudentIdAsync(studentId);
         }
 
+        public async Task<Enrollment> GetByStudentAndCourseAsync(string StudentId, int courseId)
+        {
+            return await _context.GetByStudentAndCourseAsync(StudentId, courseId);
+        }
     }
 }

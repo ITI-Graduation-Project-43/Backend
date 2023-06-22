@@ -28,5 +28,11 @@ namespace MindMission.Infrastructure.Repositories
             var Enrollments = await _dbSet.Where(w => w.StudentId == StudentId && !w.IsDeleted).ToListAsync();
             return Enrollments.AsQueryable();
         }
+
+        public async Task<Enrollment> GetByStudentAndCourseAsync(string StudentId, int CourseId)
+        {
+            return await _dbSet.Where(w => w.StudentId == StudentId && w.CourseId == CourseId && !w.IsDeleted).FirstOrDefaultAsync()
+                ?? throw new KeyNotFoundException($"There is no enrollment with courseId {CourseId} and studentId {StudentId}");
+        }
     }
 }
