@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Services;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.Repositories;
 
 namespace MindMission.API.Controllers
 {
@@ -33,10 +35,15 @@ namespace MindMission.API.Controllers
         [HttpGet("UserAccount/{UserId}")]
         public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetAccountsByUserId(string UserId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _context.GetAllByUserIdAsync(UserId), pagination, "UserAccounts");
-            
+            return await GetEntitiesResponse(() => _context.GetAllByUserIdAsync(UserId), pagination, "UserAccounts");          
         }
 
+        [HttpPut("useraccounts/{userId}/{accountId}")]
+        public async Task<IActionResult> UpdateUserAccount(string userId, int accountId, string AccountLink)
+        {
+            UserAccountDto userAccount = await _context.UpdateUserAccount(userId, accountId, AccountLink);
 
+            return Ok(userAccount);
+        }
     }
 }
