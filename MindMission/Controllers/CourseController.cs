@@ -440,5 +440,17 @@ namespace MindMission.API.Controllers
         }
 
         #endregion Edit Patch/Put
+
+        [HttpGet("instructor/approved/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _courseService.GetApprovedCoursesByInstructorAsync(instructorId), pagination, "Courses");
+        }
+
+        [HttpGet("instructor/waiting/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponse(() => _courseService.GetNonApprovedCoursesByInstructorAsync(instructorId), pagination, "Courses");
+        }
     }
 }

@@ -87,7 +87,15 @@ namespace MindMission.Application.Services
             return await _context.UpdateCourseAsync(id, course);
         }
 
+        public async Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId)
+        {
+            return await _context.GetApprovedCoursesByInstructorAsync(instructorId);
+        }
 
+        public async Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId)
+        {
+            return await _context.GetNonApprovedCoursesByInstructorAsync(instructorId);
+        }
     }
 }
 
