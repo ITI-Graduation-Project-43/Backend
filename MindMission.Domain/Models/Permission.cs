@@ -23,8 +23,8 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         [Unicode(false)]
         public string Description { get; set; } = string.Empty;
+     
         public bool IsDeleted { get; set; } = false;
-
 
         [InverseProperty(nameof(AdminPermission.Permission))]
         public virtual ICollection<AdminPermission>? AdminPermissions { get; set; }

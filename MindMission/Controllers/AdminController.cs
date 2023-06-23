@@ -12,7 +12,7 @@ namespace MindMission.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class AdminController : BaseController<Admin, AdminDto, int>
+    public class AdminController : BaseController<Admin, AdminDto, string>
     {
         private readonly IAdminService _adminService;
         private readonly ILogger<AdminController> _logger;
@@ -22,12 +22,8 @@ namespace MindMission.API.Controllers
             _logger = logger;
         }
 
-
-
-
         #region GET
 
-        // GET: api/Admin
         [HttpGet]
         public async Task<ActionResult<IQueryable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
         {
@@ -39,74 +35,37 @@ namespace MindMission.API.Controllers
             );
         }
 
-        // GET: api/Admin/{Id}
         [HttpGet("{Id}")]
         public async Task<ActionResult<AdminDto>> GetAdminById(int Id)
         {
-            return await GetEntityResponseWithInclude(
-                    () => _adminService.GetByIdAsync(Id,
-                        admin => admin.AdminPermissions
-                    ),
-                    "Admin"
-                );
+            //return await GetEntityResponseWithInclude(
+            //        () => _adminService.GetByIdAsync(Id,
+            //            admin => admin.AdminPermissions
+            //        ),
+            //        "Admin"
+            //    );
+            return Ok();
         }
 
         #endregion GET
 
-        #region Add
-
-        // POST: api/Admin
-        [HttpPost]
-        public async Task<ActionResult<AdminDto>> AddAdmin([FromBody] AdminDto adminDTO)
-        {
-            return await AddEntityResponse(_adminService.AddAsync, adminDTO, "Admin", nameof(GetAdminById));
-        }
-
-        #endregion Add
-
-        #region Delete
-
-        // DELETE: api/Admin/Delete/{AdminId}
-        [HttpDelete("Delete/{AdminId}")]
-        public async Task<IActionResult> DeleteAdmin(int AdminId)
-        {
-            return await DeleteEntityResponse(_adminService.GetByIdAsync, _adminService.DeleteAsync, AdminId);
-        }
-        // DELETE: api/Admin/{id}
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-
-            var article = await _adminService.GetByIdAsync(id);
-
-            if (article == null)
-                return NotFound(NotFoundResponse("Article"));
-            await _adminService.SoftDeleteAsync(id);
-            return NoContent();
-        }
-        #endregion Delete
-
         #region Edit Put
-
-        // PUT: api/Admin/{AdminId}
         [HttpPut("{AdminId}")]
         public async Task<ActionResult> UpdateAdmin(int AdminId, AdminDto adminDto)
         {
-            return await UpdateEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, adminDto, "Admin");
+            //return await UpdateEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, adminDto, "Admin");
+            return Ok();
         }
 
-        // PATCH: api/Admin/{AdminId}
         [HttpPatch("{AdminId}")]
         public async Task<ActionResult> PartiallyUpdateAdmin(int AdminId, [FromBody] JsonPatchDocument<AdminDto> patchDoc)
         {
 
-            return await PatchEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, "Admin", patchDoc);
-
+            //return await PatchEntityResponse(_adminService.GetByIdAsync, _adminService.UpdateAsync, AdminId, "Admin", patchDoc);
+            return Ok();
         }
 
         #endregion Edit Put
-
 
     }
 }

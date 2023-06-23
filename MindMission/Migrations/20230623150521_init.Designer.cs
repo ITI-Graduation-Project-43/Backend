@@ -12,8 +12,8 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    [Migration("20230617220914_couponsCode")]
-    partial class couponsCode
+    [Migration("20230623150521_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -191,22 +191,13 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Admin", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -226,11 +217,6 @@ namespace MindMission.API.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
-
                     b.Property<string>("ProfilePicture")
                         .IsRequired()
                         .HasMaxLength(2048)
@@ -249,8 +235,8 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.AdminPermission", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
@@ -458,8 +444,16 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Coupon", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("Code")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
@@ -468,12 +462,19 @@ namespace MindMission.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Discount")
+                        .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Code");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("CourseId");
 
@@ -507,9 +508,9 @@ namespace MindMission.API.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(2048)
+                        .HasMaxLength(10000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(2048)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<decimal?>("Discount")
                         .HasColumnType("decimal(3,2)");
@@ -551,7 +552,7 @@ namespace MindMission.API.Migrations
                     b.Property<int>("NoOfHours")
                         .HasColumnType("int");
 
-                    b.Property<int>("NoOfQuizes")
+                    b.Property<int>("NoOfQuizzes")
                         .HasColumnType("int");
 
                     b.Property<int>("NoOfReviews")
@@ -644,9 +645,9 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex(new[] { "CourseId" }, "idx_coursefeedback_courseid");
+                    b.HasIndex(new[] { "CourseId" }, "idx_coursefeedbacks_courseid");
 
-                    b.ToTable("CourseFeedback");
+                    b.ToTable("CourseFeedbacks");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.CourseRequirement", b =>
@@ -701,7 +702,6 @@ namespace MindMission.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("ParentDiscussionId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -876,7 +876,8 @@ namespace MindMission.API.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -936,6 +937,44 @@ namespace MindMission.API.Migrations
                     b.HasIndex(new[] { "ChapterId" }, "idx_lessons_chapterid");
 
                     b.ToTable("Lessons");
+                });
+
+            modelBuilder.Entity("MindMission.Domain.Models.Messages", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Permission", b =>
@@ -1074,6 +1113,37 @@ namespace MindMission.API.Migrations
                     b.HasIndex(new[] { "LessonId" }, "idx_quizzes_lessonid");
 
                     b.ToTable("Quizzes");
+                });
+
+            modelBuilder.Entity("MindMission.Domain.Models.SiteCoupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Discount")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteCoupons");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Student", b =>
@@ -1448,6 +1518,17 @@ namespace MindMission.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MindMission.Domain.Models.Admin", b =>
+                {
+                    b.HasOne("MindMission.Domain.Models.User", "User")
+                        .WithMany("Admins")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MindMission.Domain.Models.AdminPermission", b =>
                 {
                     b.HasOne("MindMission.Domain.Models.Admin", "Admin")
@@ -1587,8 +1668,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Discussion", "ParentDiscussion")
                         .WithMany("InverseParentDiscussion")
                         .HasForeignKey("ParentDiscussionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__Discussio__Paren__42E1EEFE");
 
                     b.HasOne("MindMission.Domain.Models.User", "User")
@@ -1838,19 +1917,15 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.Lesson", b =>
                 {
-                    b.Navigation("Article")
-                        .IsRequired();
+                    b.Navigation("Article");
 
-                    b.Navigation("Attachment")
-                        .IsRequired();
+                    b.Navigation("Attachment");
 
                     b.Navigation("Discussions");
 
-                    b.Navigation("Quiz")
-                        .IsRequired();
+                    b.Navigation("Quiz");
 
-                    b.Navigation("Video")
-                        .IsRequired();
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("MindMission.Domain.Models.Permission", b =>
@@ -1876,6 +1951,8 @@ namespace MindMission.API.Migrations
 
             modelBuilder.Entity("MindMission.Domain.Models.User", b =>
                 {
+                    b.Navigation("Admins");
+
                     b.Navigation("Instructors");
 
                     b.Navigation("Students");

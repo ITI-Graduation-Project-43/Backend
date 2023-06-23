@@ -1,8 +1,10 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
+using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
@@ -62,17 +64,31 @@ namespace MindMission.API.Controllers
         #endregion get
 
         #region Update
-        [HttpPatch("{instructorId}")]
-        public async Task<ActionResult> UpdateInstructor(string instructorId, InstructorDto instructorDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateInstructorAsync(string id, InstructorDto InstructorDto)
         {
-            return await UpdateEntityResponse(_instructorService.GetByIdAsync, _instructorService.UpdateAsync, instructorId, instructorDto, "instructor");
+            if (ModelState.IsValid)
+            {
+                var Instructor = await _instructorService.GetByIdAsync(id);
+                if (Instructor != null)
+                {
+                    Instructor.FirstName = InstructorDto.FirstName;
+                    Instructor.LastName = InstructorDto.LastName;
+                    Instructor.Bio = InstructorDto.Bio;
+                    Instructor.Title = InstructorDto.Title;
+                    Instructor.Description = InstructorDto.Description;
+                    await _instructorService.UpdatePartialAsync(id, Instructor);
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This instructor is updated successfully", new List<string>()));
+                }
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "This instructor is not found", new List<string>()));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<string>()));
         }
 
-
         [HttpPost("UploadImage")]
-        public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string instructorId)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string id)
         {
-            Instructor instructor = await _instructorService.GetByIdAsync(instructorId);
+            Instructor instructor = await _instructorService.GetByIdAsync(id);
             if (instructor == null)
             {
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "This instructor doesn't exist", new List<string>()));
@@ -96,7 +112,8 @@ namespace MindMission.API.Controllers
             var result = await _context.SaveChangesAsync();
             if (instructor.ProfilePicture != null && result > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, "The image is updated successfully", new List<string>()));
+                var link = new List<string>() { instructor.ProfilePicture };
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "The image is updated successfully", link));
             }
             return Ok(ResponseObjectFactory.CreateResponseObject(false, "Some wrong during saving your image", new List<string>()));
         }

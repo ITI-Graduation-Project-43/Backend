@@ -4,7 +4,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Interfaces.Services
 {
-    public interface IAdminService : IService<Admin, int>, IAdminRepository
+    public interface IAdminService : IService<Admin, string>, IAdminRepository
     {
 
     }

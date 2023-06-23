@@ -1,33 +1,30 @@
 ﻿using MindMission.Application.CustomValidation.DataAnnotation;
 using MindMission.Application.DTOs.Base;
-
-
+using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Application.DTOs.AdminDtos
 {
-    public class AdminCreateDto : IDtoWithId<int>
+    public class AdminCreateDto
     {
-        public int Id { get; set; }
-        [RequiredField("First Name")]
-        [RangeValueAttribute(2, 50)]
-        [Alphabetic]
+        [Required(ErrorMessage = "The FirstName is required")]
+        [MinLength(3, ErrorMessage = "FirstName Should be 3 characters at least")]
+        [MaxLength(30, ErrorMessage = "FirstName Should be 10 characters at Most")]
         public string FirstName { get; set; } = string.Empty;
 
-        [RequiredField("Last Name")]
-        [RangeValueAttribute(2, 50)]
-        [Alphabetic]
+        [Required(ErrorMessage = "The LastName is required")]
+        [MinLength(3, ErrorMessage = "LastName Should be 3 characters at least")]
+        [MaxLength(30, ErrorMessage = "LastName Should be 10 characters at Most")]
         public string LastName { get; set; } = string.Empty;
 
-        [RequiredField("Email")]
-        [CustomEmailAddress]
+        [Required(ErrorMessage = "The email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email")]
         public string Email { get; set; } = string.Empty;
 
-        [ImageFileAttribute]
-        public string ProfilePicture { get; set; } = string.Empty;
+        [Required(ErrorMessage = "The password is required")]
+        [MinLength(8, ErrorMessage = "Password Should be 8 characters at least")]
+        public string Password { get; set; } = string.Empty;
 
-        [RequiredField("Password")]
-        [StrongPasswordAttribute]
-        public string PasswordHash { get; set; } = string.Empty;
-
+        [Required(ErrorMessage = "PermissionId required")]
+        public List<int> PermissionId { get; set; } = new List<int>();
     }
 }

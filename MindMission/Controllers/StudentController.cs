@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MindMission.API.Controllers.Base;
+using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
@@ -53,7 +54,6 @@ namespace MindMission.API.Controllers
 
         }
 
-
         [HttpGet("{courseId}/students/{recentNumber}")]
         public async Task<ActionResult<IQueryable<StudentDto>>> GetRecentStudents(int recentNumber, int courseId, [FromQuery] PaginationDto pagination)
         {
@@ -61,9 +61,9 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("UploadImage")]
-        public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string StudentId)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile ProfilePictureFile, string id)
         {
-            var student = await _studentService.GetByIdAsync(StudentId);
+            var student = await _studentService.GetByIdAsync(id);
             if (student == null)
             {
                 return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "This student doesn't exist", new List<string>()));
@@ -83,20 +83,32 @@ namespace MindMission.API.Controllers
             student.ProfilePicture = blobClient.Uri.ToString();
             _context.Entry(student).Property(x => x.ProfilePicture).IsModified = true;
             var result = await _context.SaveChangesAsync();
-            if(student.ProfilePicture != null && result >  0)
+            if (student.ProfilePicture != null && result > 0)
             {
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, "The image is updated successfully", new List<string>()));
+                var link = new List<string>() { student.ProfilePicture };
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "The image is updated successfully", link));
             }
             return Ok(ResponseObjectFactory.CreateResponseObject(false, "Some wrong during saving your image", new List<string>()));
-
         }
 
-        [HttpPatch("{StudnetId}")]
-        public async Task<ActionResult> UpdateInstructor(string StudnetId, StudentDto StudentDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateStudentAsync(string id, StudentDto StudentDto)
         {
-            return await UpdateEntityResponse(_studentService.GetByIdAsync, _studentService.UpdateAsync, StudnetId, StudentDto, "Student");
+            if (ModelState.IsValid)
+            {
+                var Student = await _studentService.GetByIdAsync(id);
+                if (Student != null)
+                {
+                    Student.FirstName = StudentDto.FirstName;
+                    Student.LastName = StudentDto.LastName;
+                    Student.Bio = StudentDto.Bio;
+                    await _studentService.UpdatePartialAsync(id, Student);
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This student is updated successfully", new List<string>()));
+                }
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "This student is not found", new List<string>()));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<string>()));
         }
-        // DELETE: api/Student/{id}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)

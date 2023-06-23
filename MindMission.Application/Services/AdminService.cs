@@ -9,7 +9,7 @@ using MindMission.Domain.Models;
 
 namespace MindMission.Application.Services
 {
-    public class AdminService : Service<Admin, int>, IAdminService
+    public class AdminService : Service<Admin, string>, IAdminService
     {
 
         public AdminService(IAdminRepository context) : base(context)
