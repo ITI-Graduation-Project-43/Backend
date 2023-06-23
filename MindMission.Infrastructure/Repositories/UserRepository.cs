@@ -23,7 +23,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IdentityResult> RegistrationStudentAsync(User user, string _FirstName, string _LastName)
         {
             user.Id = Guid.NewGuid().ToString();
-            user.Students.Add(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LastName });
+            user.Students.Add(new Student() { Id = user.Id, FirstName = _FirstName, LastName = _LastName, ProfilePicture = "https://mindmission.blob.core.windows.net/photos/42b273dd-9a89-49ee-b693-81a8c87c4e43.jpg" });
             var Result = await UserManager.CreateAsync(user, user.PasswordHash);
             if (Result.Succeeded)
             {
@@ -47,7 +47,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LastName)
         {
             user.Id = Guid.NewGuid().ToString();
-            user.Instructors.Add(new Instructor() { Id = user.Id, FirstName = _FirstName, LastName = _LastName });
+            user.Instructors.Add(new Instructor() { Id = user.Id, FirstName = _FirstName, LastName = _LastName, ProfilePicture = "https://mindmission.blob.core.windows.net/photos/42b273dd-9a89-49ee-b693-81a8c87c4e43.jpg" });
             var Result = await UserManager.CreateAsync(user, user.PasswordHash);
             if (Result.Succeeded)
             {
@@ -76,7 +76,7 @@ namespace MindMission.Infrastructure.Repositories
             {
                 AdminPermissions.Add(new AdminPermission() { Id = user.Id, PermissionId = permission }); 
             }
-            user.Admins.Add(new Admin() { Id = user.Id, FirstName = _FirstName, LastName = _LastName, AdminPermissions = AdminPermissions});
+            user.Admins.Add(new Admin() { Id = user.Id, FirstName = _FirstName, LastName = _LastName, ProfilePicture = "https://mindmission.blob.core.windows.net/photos/42b273dd-9a89-49ee-b693-81a8c87c4e43.jpg", AdminPermissions = AdminPermissions});
             var Result = await UserManager.CreateAsync(user, user.PasswordHash);
             try
             {
