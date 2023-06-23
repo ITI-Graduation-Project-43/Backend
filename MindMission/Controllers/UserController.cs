@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.AdminDtos;
 using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
@@ -53,6 +54,30 @@ namespace MindMission.API.Controllers
             if (ModelState.IsValid)
             {
                 var Result = await UserService.RegistrationInstructorAsync(UserMappingService.MapDtoToEntity(UserDto), UserDto.FirstName, UserDto.LastName);
+                if (Result.Succeeded)
+                {
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));
+                }
+
+                string Errors = string.Empty;
+                foreach (var Error in Result.Errors)
+                {
+                    Errors += Error.Description.Substring(0, Error.Description.Length - 1) + ", ";
+                }
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Errors.Substring(0, Errors.Length - 2), new List<UserDto>()));
+            }
+            else
+            {
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+            }
+        }
+
+        [HttpPost("Register/Admin")]
+        public async Task<IActionResult> RegistrationAdminAsync(AdminCreateDto AdminCreateDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var Result = await UserService.RegistrationAdminAsync(UserMappingService.MapDtoToEntity(new UserDto() { Email = AdminCreateDto.Email, Password = AdminCreateDto.Password}), AdminCreateDto.FirstName, AdminCreateDto.LastName, AdminCreateDto.PermissionId);
                 if (Result.Succeeded)
                 {
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));

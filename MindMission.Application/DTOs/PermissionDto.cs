@@ -18,6 +18,6 @@ namespace MindMission.Application.DTOs
         [Unicode(false)]
         public string Description { get; set; } = string.Empty;
 
-        public List<int> AdminIds { get; set; } = new List<int>();
+        public List<string> AdminIds { get; set; } = new List<string>();
     }
 }

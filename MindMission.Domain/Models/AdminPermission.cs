@@ -6,14 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    /// <summary>
-    /// Represents an admin permission entity that associates an admin with a permission.
-    /// </summary>
     [Index(nameof(Id), Name = "idx_adminpermissions_adminid")]
-    public partial class AdminPermission : BaseEntity, IEntity<int>, ISoftDeletable
+    public partial class AdminPermission : BaseEntity, IEntity<string>, ISoftDeletable
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Key]
         public int PermissionId { get; set; }

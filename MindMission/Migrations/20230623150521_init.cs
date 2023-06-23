@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,31 +15,14 @@ namespace MindMission.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountType = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false)
+                    AccountType = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Admins",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    ProfilePicture = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    PasswordHash = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    IsDeactivated = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Admins", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,14 +44,7 @@ namespace MindMission.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "((1))"),
-                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeactivated = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "varchar(256)", unicode: false, maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
@@ -78,7 +55,13 @@ namespace MindMission.API.Migrations
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "((1))"),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeactivated = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -92,11 +75,12 @@ namespace MindMission.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    ParentId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     Approved = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -105,8 +89,25 @@ namespace MindMission.API.Migrations
                         name: "FK__Categorie__Paren__7B5B524B",
                         column: x => x.ParentId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,11 +117,31 @@ namespace MindMission.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false)
+                    Description = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SiteCoupons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SiteCoupons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,6 +161,30 @@ namespace MindMission.API.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Admins",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    ProfilePicture = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
+                    IsDeactivated = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Admins_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
@@ -237,15 +282,16 @@ namespace MindMission.API.Migrations
                     FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Bio = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: false),
-                    ProfilePicture = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    ProfilePicture = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     Title = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
                     NoOfCourses = table.Column<int>(type: "int", nullable: false),
                     NoOfStudents = table.Column<int>(type: "int", nullable: false),
-                    AvgRating = table.Column<double>(type: "float", nullable: true),
                     NoOfRatings = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AvgRating = table.Column<double>(type: "float", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -265,12 +311,13 @@ namespace MindMission.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    Bio = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: false),
-                    ProfilePicture = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Bio = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: true),
+                    ProfilePicture = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     NumCourses = table.Column<int>(type: "int", nullable: false),
                     NumWishlist = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -292,8 +339,9 @@ namespace MindMission.API.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     AccountLink = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -319,8 +367,10 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Rating = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     FeedbackText = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -337,9 +387,12 @@ namespace MindMission.API.Migrations
                 name: "AdminPermissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false),
-                    GrantedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
+                    GrantedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -366,28 +419,27 @@ namespace MindMission.API.Migrations
                     InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     ShortDescription = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    WhatWillLearn = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    Requirements = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
-                    WholsFor = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
+                    Description = table.Column<string>(type: "varchar(max)", unicode: false, maxLength: 10000, nullable: false),
                     ImageUrl = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
                     Language = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Level = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
                     AvgReview = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
                     NoOfReviews = table.Column<int>(type: "int", nullable: false),
                     NoOfStudents = table.Column<int>(type: "int", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(3,2)", nullable: true),
                     ChapterCount = table.Column<int>(type: "int", nullable: false),
                     LessonCount = table.Column<int>(type: "int", nullable: false),
                     NoOfVideos = table.Column<int>(type: "int", nullable: false),
                     NoOfArticles = table.Column<int>(type: "int", nullable: false),
+                    NoOfQuizzes = table.Column<int>(type: "int", nullable: false),
                     NoOfAttachments = table.Column<int>(type: "int", nullable: false),
                     NoOfHours = table.Column<int>(type: "int", nullable: false),
                     Published = table.Column<bool>(type: "bit", nullable: false),
                     Approved = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -413,9 +465,10 @@ namespace MindMission.API.Migrations
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     NoOfLessons = table.Column<int>(type: "int", nullable: false),
-                    NoOfHours = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    NoOfHours = table.Column<float>(type: "real", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -428,7 +481,30 @@ namespace MindMission.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseFeedback",
+                name: "Coupons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Coupons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Coupons_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseFeedbacks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -439,11 +515,13 @@ namespace MindMission.API.Migrations
                     InstructorRating = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
                     CourseRating = table.Column<decimal>(type: "decimal(3,2)", nullable: false),
                     FeedbackText = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseFeedback", x => x.Id);
+                    table.PrimaryKey("PK_CourseFeedbacks", x => x.Id);
                     table.ForeignKey(
                         name: "FK__CourseFee__Cours__4D5F7D71",
                         column: x => x.CourseId,
@@ -462,6 +540,47 @@ namespace MindMission.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseRequirement",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseRequirement", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseRequirement_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EnrollmentItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EnrollmentItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EnrollmentItem_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Enrollments",
                 columns: table => new
                 {
@@ -469,7 +588,10 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
+                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -487,6 +609,52 @@ namespace MindMission.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LearningItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LearningItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LearningItem_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimeTrackings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeTrackings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK__timeTrackings__Cours__59C55456",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK__timeTrackings__Stude__5AB9788F",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wishlists",
                 columns: table => new
                 {
@@ -494,7 +662,10 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CourseId = table.Column<int>(type: "int", nullable: false),
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AddedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())")
+                    AddedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -520,11 +691,12 @@ namespace MindMission.API.Migrations
                     ChapterId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    Type = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    NoOfHours = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    NoOfHours = table.Column<float>(type: "real", nullable: false),
                     IsFree = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -543,9 +715,10 @@ namespace MindMission.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LessonId = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -565,9 +738,11 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LessonId = table.Column<int>(type: "int", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    FileUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    FileData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -587,11 +762,12 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LessonId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ParentDiscussionId = table.Column<int>(type: "int", nullable: false),
+                    ParentDiscussionId = table.Column<int>(type: "int", nullable: true),
                     Content = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: false),
                     Upvotes = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -605,8 +781,7 @@ namespace MindMission.API.Migrations
                         name: "FK__Discussio__Paren__42E1EEFE",
                         column: x => x.ParentDiscussionId,
                         principalTable: "Discussions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Discussions_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -623,8 +798,9 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LessonId = table.Column<int>(type: "int", nullable: false),
                     NoOfQuestions = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -644,8 +820,9 @@ namespace MindMission.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LessonId = table.Column<int>(type: "int", nullable: false),
                     VideoUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -664,14 +841,15 @@ namespace MindMission.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuizId = table.Column<int>(type: "int", nullable: false),
-                    QuestionText = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    QuestionText = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ChoiceA = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ChoiceB = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ChoiceC = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ChoiceD = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CorrectAnswer = table.Column<string>(type: "char(1)", unicode: false, fixedLength: true, maxLength: 1, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
                 },
                 constraints: table =>
                 {
@@ -697,6 +875,12 @@ namespace MindMission.API.Migrations
                 name: "idx_articles_lessonid",
                 table: "Articles",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Articles_LessonId",
+                table: "Articles",
+                column: "LessonId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -731,16 +915,27 @@ namespace MindMission.API.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
+                name: "IX_AspNetUsers_Email",
                 table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "idx_attachments_lessonid",
                 table: "Attachments",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_LessonId",
+                table: "Attachments",
+                column: "LessonId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_ParentId",
@@ -753,19 +948,35 @@ namespace MindMission.API.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "idx_coursefeedback_courseid",
-                table: "CourseFeedback",
+                name: "IX_Coupons_Code",
+                table: "Coupons",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coupons_CourseId",
+                table: "Coupons",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseFeedback_InstructorId",
-                table: "CourseFeedback",
+                name: "idx_coursefeedbacks_courseid",
+                table: "CourseFeedbacks",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseFeedbacks_InstructorId",
+                table: "CourseFeedbacks",
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseFeedback_StudentId",
-                table: "CourseFeedback",
+                name: "IX_CourseFeedbacks_StudentId",
+                table: "CourseFeedbacks",
                 column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseRequirement_CourseId",
+                table: "CourseRequirement",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "idx_courses_instructorid",
@@ -793,6 +1004,11 @@ namespace MindMission.API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EnrollmentItem_CourseId",
+                table: "EnrollmentItem",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
                 name: "idx_enrollments_courseid",
                 table: "Enrollments",
                 column: "CourseId");
@@ -801,6 +1017,11 @@ namespace MindMission.API.Migrations
                 name: "IX_Enrollments_StudentId",
                 table: "Enrollments",
                 column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LearningItem_CourseId",
+                table: "LearningItem",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "idx_lessons_chapterid",
@@ -816,6 +1037,22 @@ namespace MindMission.API.Migrations
                 name: "idx_quizzes_lessonid",
                 table: "Quizzes",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quizzes_LessonId",
+                table: "Quizzes",
+                column: "LessonId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "idx_TimeTracking_courseid",
+                table: "TimeTrackings",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeTrackings_StudentId",
+                table: "TimeTrackings",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "idx_useraccounts_userid",
@@ -837,6 +1074,12 @@ namespace MindMission.API.Migrations
                 name: "idx_videos_lessonid",
                 table: "Videos",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Videos_LessonId",
+                table: "Videos",
+                column: "LessonId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "idx_websitefeedback_userid",
@@ -881,16 +1124,37 @@ namespace MindMission.API.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "CourseFeedback");
+                name: "Coupons");
+
+            migrationBuilder.DropTable(
+                name: "CourseFeedbacks");
+
+            migrationBuilder.DropTable(
+                name: "CourseRequirement");
 
             migrationBuilder.DropTable(
                 name: "Discussions");
 
             migrationBuilder.DropTable(
+                name: "EnrollmentItem");
+
+            migrationBuilder.DropTable(
                 name: "Enrollments");
 
             migrationBuilder.DropTable(
+                name: "LearningItem");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "SiteCoupons");
+
+            migrationBuilder.DropTable(
+                name: "TimeTrackings");
 
             migrationBuilder.DropTable(
                 name: "UserAccounts");

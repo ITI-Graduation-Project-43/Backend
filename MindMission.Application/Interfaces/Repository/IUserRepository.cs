@@ -9,9 +9,11 @@ namespace MindMission.Application.Interfaces.Repository
         Task<IdentityResult> RegistrationStudentAsync(User User, string FirstName, string LasName);
         
         Task<IdentityResult> RegistrationInstructorAsync(User user, string _FirstName, string _LasName);
-        
-        Task<SuccessLoginDto?> LoginAsync(string Email, string Password);
 
+        Task<IdentityResult> RegistrationAdminAsync(User user, string _FirstName, string _LasName, List<int> PermissionIds);
+
+        Task<SuccessLoginDto?> LoginAsync(string Email, string Password);
+        
         Task<bool> ChangeEmailFoundAsync(string Email);
 
         Task<IdentityResult> ChangeEmailAsync(string OldEmail, string NewEmail, string Password);

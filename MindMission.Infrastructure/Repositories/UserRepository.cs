@@ -68,6 +68,35 @@ namespace MindMission.Infrastructure.Repositories
             return Result;
         }
 
+        public async Task<IdentityResult> RegistrationAdminAsync(User user, string _FirstName, string _LastName, List<int> PermissionIds)
+        {
+            user.Id = Guid.NewGuid().ToString();
+            var AdminPermissions = new List<AdminPermission>();
+            foreach(var permission in PermissionIds)
+            {
+                AdminPermissions.Add(new AdminPermission() { Id = user.Id, PermissionId = permission }); 
+            }
+            user.Admins.Add(new Admin() { Id = user.Id, FirstName = _FirstName, LastName = _LastName, AdminPermissions = AdminPermissions});
+            var Result = await UserManager.CreateAsync(user, user.PasswordHash);
+            try
+            {
+                if (Result.Succeeded)
+                {
+                    var RoleResult = await UserManager.AddToRoleAsync(user, "Admin");
+                    if (RoleResult.Succeeded)
+                    {
+                        return IdentityResult.Success;
+                    }
+                }
+                return Result;
+            }
+            catch (Exception ex)
+            {
+                await UserManager.DeleteAsync(user);
+                return IdentityResult.Failed(new IdentityError() { Code = "Role Error", Description = ex.Message });
+            }
+        }
+
         public async Task<bool> ChangeEmailFoundAsync(string Email)
         {
             var User = await UserManager.FindByEmailAsync(Email);
@@ -77,10 +106,10 @@ namespace MindMission.Infrastructure.Repositories
             }
             return false;
         }
-
+        
         public async Task<SuccessLoginDto?> LoginAsync(string Email, string Password)
         {
-            var User = Context.Users.AsSplitQuery().Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();
+            var User = Context.Users.AsSplitQuery().Include(e => e.Admins).Include(e => e.Students).Include(e => e.Instructors).Where(e => e.Email == Email).FirstOrDefault();
 
             if (User != null)
             {
@@ -93,13 +122,18 @@ namespace MindMission.Infrastructure.Repositories
                         string FullName = string.Empty;
                         if (role[0] == "Student")
                         {
-                            var Student = User.Students.FirstOrDefault();
+                            var Student = User.Students.Where(e => e.Id == User.Id).FirstOrDefault();
                             FullName = Student?.FirstName + " " + Student?.LastName;
+                        }
+                        else if(role[0] == "Instructor")
+                        {
+                            var Instructor = User.Instructors.Where(e => e.Id == User.Id).FirstOrDefault();
+                            FullName = Instructor?.FirstName + " " + Instructor?.LastName;
                         }
                         else
                         {
-                            var Instructor = User.Instructors.FirstOrDefault();
-                            FullName = Instructor?.FirstName + " " + Instructor?.LastName;
+                            var Admin = User.Admins.Where(e => e.Id == User.Id).FirstOrDefault();
+                            FullName = Admin?.FirstName + " " + Admin?.LastName;
                         }
                         User.IsActive = true;
                         User.IsDeactivated = false;

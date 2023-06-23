@@ -43,7 +43,6 @@ namespace MindMission.Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
                 if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
@@ -52,7 +51,9 @@ namespace MindMission.Infrastructure.Context
                     builder.Entity(entityType.ClrType).Property("UpdatedAt").HasDefaultValueSql("getdate()");
                 }
             }
+
             base.OnModelCreating(builder);
+
             builder.Entity<Account>(entity =>
             {
                 entity.Property(e => e.AccountType).IsUnicode(false);
@@ -60,9 +61,6 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Admin>(entity =>
             {
-
-                entity.Property(e => e.Email).IsUnicode(false);
-
                 entity.Property(e => e.FirstName).IsUnicode(false);
 
                 entity.Property(e => e.LastName).IsUnicode(false);
@@ -74,8 +72,6 @@ namespace MindMission.Infrastructure.Context
             {
                 entity.HasKey(e => new { e.Id, e.PermissionId })
                     .HasName("PK__AdminPer__9F658B3A6B1E0167");
-
-
 
                 entity.HasOne(d => d.Admin)
                     .WithMany(p => p.AdminPermissions)
@@ -282,7 +278,6 @@ namespace MindMission.Infrastructure.Context
             builder.Entity<Student>(entity =>
             {
                 entity.Property(e => e.Bio).IsUnicode(false).IsRequired(false);
-
 
                 entity.Property(e => e.FirstName).IsUnicode(false);
 

@@ -6,15 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    /// <summary>
-    /// Represents an admin entity.
-    /// </summary>
-    public partial class Admin : BaseEntity, IEntity<int>, ISoftDeletable
+    public partial class Admin : BaseEntity, IEntity<string>, ISoftDeletable
     {
 
-
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
@@ -27,23 +23,15 @@ namespace MindMission.Domain.Models
         public string LastName { get; set; } = string.Empty;
 
 
-
-        [Required]
-        [StringLength(255)]
-        [Unicode(false)]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
         [StringLength(2048)]
         [Unicode(false)]
         public string ProfilePicture { get; set; } = string.Empty;
 
-        [Required]
-        [StringLength(2048)]
-        public string PasswordHash { get; set; } = string.Empty;
-
         public bool IsDeactivated { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
+
+        [ForeignKey(nameof(Id))]
+        public virtual User User { get; set; } = null!;
 
         [InverseProperty(nameof(AdminPermission.Admin))]
         public virtual ICollection<AdminPermission>? AdminPermissions { get; set; }

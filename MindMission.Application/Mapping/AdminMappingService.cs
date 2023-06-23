@@ -21,12 +21,7 @@ namespace MindMission.Application.Mapping
                 Id = admin.Id,
                 FirstName = admin.FirstName,
                 LastName = admin.LastName,
-                Email = admin.Email,
                 ProfilePicture = admin.ProfilePicture,
-                PasswordHash = admin.PasswordHash,
-                IsDeactivated = admin.IsDeactivated,
-                CreatedAt = admin.CreatedAt,
-                UpdatedAt = admin.UpdatedAt,
                 AdminPermissions = permissions
             };
         }
@@ -38,12 +33,7 @@ namespace MindMission.Application.Mapping
                 Id = dto.Id,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                Email = dto.Email,
                 ProfilePicture = dto.ProfilePicture,
-                PasswordHash = dto.PasswordHash,
-                IsDeactivated = dto.IsDeactivated,
-                CreatedAt = dto.CreatedAt,
-                UpdatedAt = dto.UpdatedAt
             };
         }
     }

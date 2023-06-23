@@ -6,12 +6,12 @@ namespace MindMission.Application.DTOs.UserDtos
     {
         [Required(ErrorMessage = "The FirstName is required")]
         [MinLength(3, ErrorMessage = "FirstName Should be 3 characters at least")]
-        [MaxLength(10, ErrorMessage = "FirstName Should be 10 characters at Most")]
+        [MaxLength(30, ErrorMessage = "FirstName Should be 10 characters at Most")]
         public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "The LastName is required")]
         [MinLength(3, ErrorMessage = "LastName Should be 3 characters at least")]
-        [MaxLength(10, ErrorMessage = "LastName Should be 10 characters at Most")]
+        [MaxLength(30, ErrorMessage = "LastName Should be 10 characters at Most")]
         public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "The email is required")]
