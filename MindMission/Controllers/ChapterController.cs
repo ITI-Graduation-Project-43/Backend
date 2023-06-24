@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.CourseChapters;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
@@ -59,6 +60,13 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<ChapterDto>> AddChapter([FromBody] ChapterDto chapterDto)
         {
             return await AddEntityResponse(_chapterService.AddAsync, chapterDto, "Chapter", nameof(GetChapterById));
+        }
+
+        [HttpPost("ChapterLesson/{id}")]
+        public async Task<ActionResult> AddChaptersLesson(int id, [FromForm] List<CreateChapterDto> chapterDto)
+        {
+            int x = id;
+            return Ok(chapterDto);
         }
         #endregion
 

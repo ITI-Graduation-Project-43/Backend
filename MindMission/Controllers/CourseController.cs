@@ -22,13 +22,13 @@ namespace MindMission.API.Controllers
         private readonly ICourseService _courseService;
         private readonly IMappingService<Course, PostCourseDto> _postCourseMappingService;
         private readonly ICategoryService _categoryService;
-        private readonly IUploadImage _uploadImageService;
+        private readonly IUploadImageService _uploadImageService;
         private readonly ICoursePatchValidator _coursePatchValidator;
         public CourseController(ICourseService courseService,
                                 IMappingService<Course, CourseDto> courseMappingService,
                                 IMappingService<Course, PostCourseDto> postCourseMappingService,
                                 ICategoryService categoryService,
-                                IUploadImage uploadImageService,
+                                IUploadImageService uploadImageService,
                                 ICoursePatchValidator coursePatchValidator) : base(courseMappingService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
@@ -247,7 +247,7 @@ namespace MindMission.API.Controllers
                 return BadRequest(ValidationFailedResponse());
             }
 
-            string courseImage = await _uploadImageService.UploadImage(courseImg);
+            string courseImage = await _uploadImageService.Upload(courseImg);
 
 
             if (string.IsNullOrEmpty(courseImage))
@@ -356,7 +356,7 @@ namespace MindMission.API.Controllers
                 return BadRequest(ValidationFailedResponse());
             }
 
-            string courseImage = await _uploadImageService.UploadImage(courseImg);
+            string courseImage = await _uploadImageService.Upload(courseImg);
 
 
             if (string.IsNullOrEmpty(courseImage))

@@ -3,34 +3,34 @@ using Microsoft.Extensions.Configuration;
 using Azure.Storage.Blobs;
 using MindMission.Application.Interfaces.Services;
 
-namespace MindMission.Application.Services
+namespace MindMission.Application.Services.Upload
 {
-    public class UploadImageService : IUploadImage
+    public class UploadImageService : IUploadImageService
     {
 
         private readonly BlobContainerClient _containerClient;
         public UploadImageService(BlobServiceClient blobServiceClient, IConfiguration configuration)
         {
-            string containerName = configuration["AzureStorage:ContainerName2"];
+            string containerName = configuration["AzureStorage:PhotosContainer"];
             _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
         }
-        public async Task<string> UploadImage(IFormFile imageFile)
+        public async Task<string> Upload(IFormFile file)
         {
-            if (imageFile == null || imageFile.Length == 0)
+            if (file == null || file.Length == 0)
             {
                 return null;
             }
 
             // Validate the file size
-            if (imageFile.Length > 10_000_000) // 10 MB
+            if (file.Length > 10_000_000) // 10 MB
             {
                 throw new Exception("The file is too large. The maximum allowed size is 10 MB.");
             }
 
             // Validate the file extension
-            var allowedExtensions = new[] { ".jpg", ".png", ".webp", ".jpeg", ".avif" };
-            var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg", ".webp", ".avif" };
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
             if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
             {
@@ -40,13 +40,12 @@ namespace MindMission.Application.Services
             // Upload the file and save the URL
             string fileName = Guid.NewGuid().ToString() + extension;
             BlobClient blobClient = _containerClient.GetBlobClient(fileName);
-            using (Stream stream = imageFile.OpenReadStream())
+            using (Stream stream = file.OpenReadStream())
             {
                 await blobClient.UploadAsync(stream, true);
             }
 
             return blobClient.Uri.ToString();
         }
-
     }
 }

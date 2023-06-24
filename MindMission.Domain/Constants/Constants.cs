@@ -37,6 +37,7 @@
         public const string ValueBelowMinimum = "The value of the field is below the minimum value of {0}.";
         public const string RangeValueExceeded = "The value must be between {0} and {1}.";
         public const string IncorrectListCount = "The list must contain at least {0} item(s).";
+        public const string IncorrectRangeListCount = "The list must contain at least {0} item(s) and atmost {1} item(s).";
 
 
 
@@ -48,6 +49,7 @@
     {
         public const string RetrievedSuccessfully = "{0} retrieved successfully.";
         public const string CreatedSuccessfully = "{0} created successfully.";
+        public const string UploadedSuccessfully = "{0} uploaded successfully.";
         public const string UpdatedSuccessfully = "{0} updated successfully.";
         public const string DeletedSuccessfully = "{0} deleted successfully.";
     }
