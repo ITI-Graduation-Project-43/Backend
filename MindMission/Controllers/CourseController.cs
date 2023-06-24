@@ -167,9 +167,9 @@ namespace MindMission.API.Controllers
             return Ok(response);
         }
 
-        // GET: api/Course/{courseId}
-        [HttpGet("{courseId}")]
-        public async Task<ActionResult<CourseDto>> GetCourseById(int courseId)
+        // GET: api/Course/{Id}
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<CourseDto>> GetCourseById(int Id)
         {
             return await GetEntityResponseWithInclude(
                     () => _courseService.GetByIdAsync(courseId,
@@ -211,7 +211,6 @@ namespace MindMission.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(InvalidDataResponse());
@@ -267,7 +266,7 @@ namespace MindMission.API.Controllers
 
             // Map the created course entity back to a DTO.
             var courseDto = await _postCourseMappingService.MapEntityToDto(createdCourse);
-    
+
             if (courseDto == null)
                 return NotFound(NotFoundResponse("Course"));
             // Return the created course.
