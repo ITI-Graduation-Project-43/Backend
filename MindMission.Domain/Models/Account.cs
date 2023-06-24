@@ -17,7 +17,7 @@ namespace MindMission.Domain.Models
 
 
         [Required]
-        [StringLength(15)]
+        [StringLength(100)]
         [Unicode(false)]
         [EnumDataType(typeof(UserAccount))]
         public string AccountType { get; set; } = string.Empty;
