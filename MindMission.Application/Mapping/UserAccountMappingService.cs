@@ -1,9 +1,6 @@
-﻿using Microsoft.Identity.Client;
-using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.UserAccount;
 using MindMission.Application.Mapping.Base;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping

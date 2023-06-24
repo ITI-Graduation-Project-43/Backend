@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Common;
@@ -11,7 +12,7 @@ namespace MindMission.Infrastructure.Repositories
     public class UserAccountRepository : Repository<UserAccount, int>, IUserAccountRepository
     {
         private readonly MindMissionDbContext _context;
-        private readonly DbSet<UserAccount> _dbSet;
+        private readonly DbSet<UserAccount> _dbSet; 
 
         public UserAccountRepository(MindMissionDbContext context) : base(context)
         {
@@ -24,46 +25,27 @@ namespace MindMission.Infrastructure.Repositories
             var userAccounts = await _context.UserAccounts.Include(i => i.Account).Where(i => i.UserId == id && !i.IsDeleted).ToListAsync();
             return userAccounts.AsQueryable();
         }
+
         public async Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string UserId)
         {
-            var userAccounts = await _dbSet.AsSplitQuery().Include(i=>i.Account).Where(w => w.UserId == UserId && !w.IsDeleted).ToListAsync();
+            var userAccounts = _dbSet.AsSplitQuery().Include(i => i.Account).Where(w => w.UserId == UserId && !w.IsDeleted);
             return userAccounts.AsQueryable();
         }
-        public async Task<UserAccount> GetUserAccountByUserIdAndAccountId(string userId, int accountId)
+        
+        public async Task<IQueryable<UserAccount>> GetUserAccountByUserIdAndAccountId(string userId)
         {
-            var existingAccount = _context.UserAccounts.FirstOrDefault(a =>
-            a.UserId == userId && a.AccountId == accountId);
+            //var existingAccount = _context.UserAccounts.FirstOrDefault(a => a.UserId == userId && a.AccountId == accountId);
+
+            var existingAccount = _context.UserAccounts.Where(a => a.UserId == userId);
+
 
             return existingAccount;
         }
-        public async Task<UserAccountDto> UpdateUserAccount(string userId, int accountId, string accountLink)
+
+        public async Task<int> UpdateUserAccount(List<UserAccount> _UserAccounts)
         {
-           UserAccount existingAccount = await GetUserAccountByUserIdAndAccountId(userId, accountId);
-
-            if (existingAccount == null)
-            {
-                existingAccount = new UserAccount
-                {
-                    UserId = userId,
-                    AccountId = accountId,
-                    AccountLink = accountLink
-                };
-                _dbSet.Add(existingAccount);
-            }
-            else
-            {
-                existingAccount.AccountLink = accountLink;
-                _dbSet.Update(existingAccount);
-            }
-            await _context.SaveChangesAsync();
-            var dto = new UserAccountDto
-            {
-                UserId = existingAccount.UserId,
-                AccountId = existingAccount.AccountId,
-                AccountLink = existingAccount.AccountLink
-            };
-            return dto;
+            _context.UserAccounts.UpdateRange(_UserAccounts);
+            return  await _context.SaveChangesAsync();
         }
-
     }
 }

@@ -45,9 +45,9 @@ string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
 
 #region serilog
-var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(Logger);
+//var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
+//builder.Logging.ClearProviders();
+//builder.Logging.AddSerilog(Logger);
 #endregion
 
 
@@ -364,7 +364,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
