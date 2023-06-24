@@ -28,9 +28,9 @@ namespace MindMission.Application.Services
         {
             return _context.GetAllByUserIdAsync(userId);
         }
-        public async Task<UserAccountDto> UpdateUserAccount(string userId, int accountId, string accountLink)
+        public async Task<int> UpdateUserAccount(List<UserAccount> userAccounts)
         {
-            return await _context.UpdateUserAccount(userId, accountId,accountLink);
+            return await _context.UpdateUserAccount(userAccounts);
         }
     }
 }
