@@ -56,7 +56,7 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Account>(entity =>
             {
-                entity.Property(e => e.AccountType).IsUnicode(false);
+                entity.Property(e => e.AccountName).IsUnicode(false);
             });
 
             builder.Entity<Admin>(entity =>

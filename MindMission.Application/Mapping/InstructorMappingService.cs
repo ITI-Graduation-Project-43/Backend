@@ -79,7 +79,7 @@ namespace MindMission.Application.Mapping
             var userAccounts = await _userAccountService.GetUserAccountsAsync(entity.Id) ?? throw new ArgumentNullException(nameof(_userAccountService));
             foreach (var account in userAccounts)
             {
-                instructorDto.accounts.Add(account.Account.AccountType, account.AccountLink);
+                instructorDto.accounts.Add(account.Account.AccountName, account.AccountLink);
             }
 
             return instructorDto;

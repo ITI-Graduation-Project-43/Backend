@@ -6,5 +6,8 @@ namespace MindMission.Application.DTOs.Account
     {
         public int Id { get; set; }
         public string AccountName { get; set; } = string.Empty;
+
+        public string AccountDomain { get; set; } = string.Empty;
+
     }
 }
