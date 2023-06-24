@@ -210,7 +210,7 @@ namespace MindMission.API.Controllers
         // POST: api/Course
         [HttpPost]
         public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
-        {
+            {
             if (!ModelState.IsValid)
             {
                 return BadRequest(InvalidDataResponse());
