@@ -6,21 +6,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MindMission.Domain.Models
 {
-    /// <summary>
-    /// Represents an account entity that holds the account types for users.
-    /// </summary>
     public partial class Account : BaseEntity, IEntity<int>, ISoftDeletable
     {
 
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        [StringLength(50)]
+        [Unicode(false)]
+        [EnumDataType(typeof(UserAccount))]
+        public string AccountName { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100)]
         [Unicode(false)]
         [EnumDataType(typeof(UserAccount))]
-        public string AccountType { get; set; } = string.Empty;
+        public string AccountDomain { get; set; } = string.Empty;
 
         public bool IsDeleted { get; set; } = false;
 

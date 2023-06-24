@@ -17,7 +17,8 @@ namespace MindMission.Application.Mapping
             return new AccountDto()
             {
                 Id = account.Id,
-                AccountName = account.AccountType
+                AccountName = account.AccountName,
+                AccountDomain = account.AccountDomain
             };
         }
 
@@ -26,7 +27,8 @@ namespace MindMission.Application.Mapping
             return new Account()
             {
                 Id = dto.Id,
-                AccountType = dto.AccountName,
+                AccountName = dto.AccountName,
+                AccountDomain = dto.AccountDomain,
                 IsDeleted = false
             };         
         }

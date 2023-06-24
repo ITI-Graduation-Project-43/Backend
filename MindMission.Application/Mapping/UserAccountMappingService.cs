@@ -27,7 +27,7 @@ namespace MindMission.Application.Mapping
                 UserId = entity.UserId,
                 AccountId = entity.AccountId,
                 AccountLink = entity.AccountLink,
-                AccountName = entity.Account.AccountType
+                AccountName = entity.Account.AccountName
             };
             
             return accountDto;
