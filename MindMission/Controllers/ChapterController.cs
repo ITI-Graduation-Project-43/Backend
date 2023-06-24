@@ -63,7 +63,7 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("ChapterLesson/{id}")]
-        public async Task<ActionResult> AddChaptersLesson(int id, [FromForm] List<CreateChapterDto> chapterDto)
+        public async Task<ActionResult> AddChaptersLesson(int id, [FromBody] List<CreateChapterDto> chapterDto)
         {
             int x = id;
             return Ok(chapterDto);
