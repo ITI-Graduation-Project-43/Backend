@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
+using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.UserAccount;
+using MindMission.Application.DTOs.UserDtos;
+using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
@@ -38,12 +42,24 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(() => _context.GetAllByUserIdAsync(UserId), pagination, "UserAccounts");          
         }
 
-        [HttpPut("useraccounts/{userId}/{accountId}")]
-        public async Task<IActionResult> UpdateUserAccount(string userId, int accountId, string AccountLink)
+        [HttpPatch("Accounts")]
+        public async Task<IActionResult> UpdateUserAccount(UserAccountsDto UserAccountsDto)
         {
-            UserAccountDto userAccount = await _context.UpdateUserAccount(userId, accountId, AccountLink);
+            List<UserAccount> userAccounts = new List<UserAccount>();
 
-            return Ok(userAccount);
+            foreach (var account in UserAccountsDto.userAccounts)
+            {
+                userAccounts.Add(new UserAccount()
+                {
+                    Id = account.Id,
+                    AccountId = account.AccountId,
+                    UserId = UserAccountsDto.UserId,
+                    AccountLink = account.accountDomain
+                });
+            }
+
+            var userAccount = await _context.UpdateUserAccount(userAccounts);
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "The accounts is updated successfully", new List<UserAccount>()));
         }
     }
 }

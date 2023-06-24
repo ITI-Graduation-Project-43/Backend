@@ -8,6 +8,7 @@ namespace MindMission.Application.Mapping
     public class InstructorMappingService : IMappingService<Instructor, InstructorDto>
     {
         private readonly IUserAccountService _userAccountService;
+
         public InstructorMappingService(IUserAccountService userAccountService)
         {
             _userAccountService = userAccountService ?? throw new ArgumentNullException(nameof(userAccountService));
