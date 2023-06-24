@@ -35,6 +35,8 @@ using MindMission.Application.DTOs.VideoDtos;
 using MindMission.Application.Service.Interfaces;
 using MindMission.Application.DTOs.QuestionDtos;
 using MindMission.Application.DTOs.UserDtos;
+using MindMission.Application.DTOs.Account;
+using AccountService = MindMission.Application.Services.AccountService;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -156,12 +158,16 @@ builder.Services.AddScoped<IMappingService<CourseRequirement, CourseRequirementC
 builder.Services.AddScoped<IMappingService<EnrollmentItem, EnrollmentItemCreateDto>, EnrollmentItemMappingService>();
 builder.Services.AddScoped<IMappingService<LearningItem, LearningItemCreateDto>, LearningItemMappingService>();
 
-
 /*Instructor Configuration*/
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<InstructorMappingService, InstructorMappingService>();
 builder.Services.AddScoped<IMappingService<Instructor, InstructorDto>, InstructorMappingService>();
+
+/*Account Configuration*/
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<AccountMappingService, AccountMappingService>();
 
 /*UserAccount Configuration*/
 builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
@@ -192,7 +198,6 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
 builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
-
 
 
 
