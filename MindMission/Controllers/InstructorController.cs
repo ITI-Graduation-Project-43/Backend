@@ -26,7 +26,7 @@ namespace MindMission.API.Controllers
             _context = context;
             _instructorService = instructorService;
 
-            string containerName = configuration["AzureStorage:ContainerName2"];
+            string containerName = configuration["AzureStorage:photosContainer"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         }
 

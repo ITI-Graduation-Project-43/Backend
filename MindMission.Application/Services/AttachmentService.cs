@@ -22,7 +22,7 @@ namespace MindMission.Application.Services
             using (var Stream = new MemoryStream())
             {
                 file.CopyTo(Stream);
-                attachment.FileData = Stream.ToArray();
+                //attachment.FileData = Stream.ToArray();
             }
 
             await _context.PostAttachmentAsync(lesson, attachment);
@@ -31,8 +31,10 @@ namespace MindMission.Application.Services
 
         public async Task DownloadAttachmentAsync(Attachment attachment)
         {
-            var FileContent = new MemoryStream(attachment.FileData);
-            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "Downloaded Files", attachment.FileName);
+            //var FileContent = new MemoryStream(attachment.FileData);
+
+            var FileContent = new MemoryStream();
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "Downloaded Files", attachment.Name);
 
             using var Stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write);
             await FileContent.CopyToAsync(Stream);
@@ -46,7 +48,8 @@ namespace MindMission.Application.Services
 
         public async Task<Attachment> GetAttachmentByIdAsync(int id)
         {
-            Attachment? Attachment = await _context.GetAttachmentByIdAsync(id);
+            Attachment Attachment = await _context.GetAttachmentByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"Attachment with id {id} not found");
             return Attachment;
         }
     }
