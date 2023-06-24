@@ -20,17 +20,21 @@ namespace MindMission.Domain.Models
 
         [Required]
         [StringLength(255)]
-        public string FileName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
 
         [Required]
-        public byte[] FileData { get; set; } = new byte[1];
+        [StringLength(2048)]
+        public string Url { get; set; } = string.Empty;
         public bool IsDeleted { get; set; } = false;
 
+        [Required]
+        [StringLength(10)]
+        public string Type { get; set; } = string.Empty;
 
         [Required]
-        [EnumDataType(typeof(FileType))]
-        public string FileType { get; set; } = string.Empty;
+        [StringLength(50)]
+        public string Size { get; set; } = string.Empty;
 
         [ForeignKey(nameof(LessonId))]
         [InverseProperty("Attachment")]

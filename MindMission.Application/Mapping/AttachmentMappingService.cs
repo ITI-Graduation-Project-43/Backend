@@ -11,8 +11,8 @@ namespace MindMission.Application.Mapping
             {
                 new FileDetailsDto()
                 {
-                    FileName= attachment.FileName,
-                    FileType= attachment.FileType,
+                    FileName= attachment.Name,
+                    FileType= attachment.Type,
                 }
             };
         }
@@ -21,9 +21,9 @@ namespace MindMission.Application.Mapping
         {
             Attachment Attachment = new Attachment()
             {
-                FileName = attachmentDto.File.FileName,
+                Name = attachmentDto.File.FileName,
                 LessonId = attachmentDto.LessonId,
-                FileType = $"{attachmentDto.FileType}",
+                Type = $"{attachmentDto.FileType}",
                 CreatedAt = DateTime.Now,
             };
             return Attachment;
