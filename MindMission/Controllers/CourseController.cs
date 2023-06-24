@@ -172,7 +172,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<CourseDto>> GetCourseById(int Id)
         {
             return await GetEntityResponseWithInclude(
-                    () => _courseService.GetByIdAsync(courseId,
+                    () => _courseService.GetByIdAsync(Id,
                         course => course.Instructor,
                         Course => Course.Category,
                         Course => Course.Chapters,
