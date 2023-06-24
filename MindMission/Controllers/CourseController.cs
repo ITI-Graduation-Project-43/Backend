@@ -208,8 +208,8 @@ namespace MindMission.API.Controllers
         #region Add
 
         // POST: api/Course
-        [HttpPost]
-        public async Task<IActionResult> AddCourse([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
+        [HttpPost("withPhoto")]
+        public async Task<IActionResult> AddCourseWithPhoto([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
             {
             if (!ModelState.IsValid)
             {
@@ -279,6 +279,68 @@ namespace MindMission.API.Controllers
 
             return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
+        [HttpPost]
+        public async Task<IActionResult> AddCourse( [FromBody] PostCourseDto postCourseDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(InvalidDataResponse());
+
+            }
+            var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
+            if (category == null)
+            {
+                return BadRequest(NotFoundResponse("Category"));
+            }
+
+            if (category.Type != CategoryType.Topic)
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Level), postCourseDto.Level))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.LearningItems == null || !postCourseDto.LearningItems.Any() || postCourseDto.LearningItems.Any(item => string.IsNullOrWhiteSpace(item.Title) || string.IsNullOrWhiteSpace(item.Description)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.EnrollmentItems == null || !postCourseDto.EnrollmentItems.Any() || postCourseDto.EnrollmentItems.Any(item => string.IsNullOrWhiteSpace(item.Title)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+
+            // Map the course create DTO to a course entity.
+            var courseToCreate = _postCourseMappingService.MapDtoToEntity(postCourseDto);
+
+            // Use the service to add the course to the database.
+            var createdCourse = await _courseService.AddCourseAsync(courseToCreate);
+
+            // Map the created course entity back to a DTO.
+            var courseDto = await _postCourseMappingService.MapEntityToDto(createdCourse);
+
+            if (courseDto == null)
+                return NotFound(NotFoundResponse("Course"));
+            // Return the created course.
+
+
+            string message = string.Format(SuccessMessages.CreatedSuccessfully, "Course");
+
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<PostCourseDto> { courseDto });
+
+
+            return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
+        }
+
 
         #endregion Add
 
