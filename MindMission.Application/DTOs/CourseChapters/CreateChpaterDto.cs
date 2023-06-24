@@ -1,9 +1,10 @@
-﻿using MindMission.Application.CustomValidation.DataAnnotation;
+﻿using Microsoft.AspNetCore.Http;
+using MindMission.Application.CustomValidation.DataAnnotation;
 using MindMission.Domain.Enums;
 
 namespace MindMission.Application.DTOs.CourseChapters
 {
-    public class ChapterDto
+    public class CreateChapterDto
     {
         public int Id { get; set; }
 
@@ -13,9 +14,9 @@ namespace MindMission.Application.DTOs.CourseChapters
         [RangeStringLength(5, 100)]
         public string Title { get; set; } = string.Empty;
         [ListCount(1)]
-        public List<LessonDto> Lessons { get; set; } = new();
+        public List<CreateLessonDto> Lessons { get; set; } = new();
     }
-    public class LessonDto
+    public class CreateLessonDto
     {
         public int Id { get; set; }
 
@@ -32,13 +33,13 @@ namespace MindMission.Application.DTOs.CourseChapters
 
         public LessonType Type { get; set; }
 
-        public AttachmentDto? Attachment { get; set; }
-        public ArticleDto? Article { get; set; }
-        public QuizDto? Quiz { get; set; }
-        public VideoDto? Video { get; set; }
+        public CreateAttachmentDto? Attachment { get; set; }
+        public CreateArticleDto? Article { get; set; }
+        public CreateQuizDto? Quiz { get; set; }
+        public CreateVideoDto? Video { get; set; }
     }
 
-    public class ArticleDto
+    public class CreateArticleDto
     {
         public int Id { get; set; }
         [RequiredInteger("Lesson Id")]
@@ -50,7 +51,7 @@ namespace MindMission.Application.DTOs.CourseChapters
 
 
 
-    public class VideoDto
+    public class CreateVideoDto
     {
         public int Id { get; set; }
         [RequiredInteger("Lesson Id")]
@@ -60,21 +61,25 @@ namespace MindMission.Application.DTOs.CourseChapters
         public string VideoUrl { get; set; } = string.Empty;
     }
 
-    public class AttachmentDto
+    public class CreateAttachmentDto
     {
         public int Id { get; set; }
 
         [RequiredInteger("Lesson Id")]
         public int LessonId { get; set; }
 
-        public string FileName { get; set; } = string.Empty;
+        [RequiredField("VideoUrl")]
+        [MaxStringLength(2048)]
+        public string AttachmentUrl { get; set; } = string.Empty;
+        [MaxStringLength(2048)]
+        public string AttachmentName { get; set; } = string.Empty;
+        [MaxStringLength(10)]
+        public string AttachmentType { get; set; } = string.Empty;
+        [MaxStringLength(50)]
+        public string AttachmentSize { get; set; } = string.Empty;
 
-        [RequiredField("FileData")]
-        public byte[]? FileData { get; set; }
-        public bool IsDeleted { get; set; }
-        public FileType FileType { get; set; }
     }
-    public class QuizDto
+    public class CreateQuizDto
     {
         public int Id { get; set; }
 
@@ -82,10 +87,10 @@ namespace MindMission.Application.DTOs.CourseChapters
         public int LessonId { get; set; }
 
         [ListCount(1)]
-        public List<QuestionDto> Questions { get; set; } = new List<QuestionDto>();
+        public List<CreateQuestionDto> Questions { get; set; } = new List<CreateQuestionDto>();
     }
 
-    public class QuestionDto
+    public class CreateQuestionDto
     {
         public int Id { get; set; }
         [RequiredInteger("Quiz Id")]
@@ -93,21 +98,8 @@ namespace MindMission.Application.DTOs.CourseChapters
         [RequiredField("Question Text")]
         [MaxStringLength(500)]
         public string QuestionText { get; set; } = string.Empty;
-
-        [RequiredField("Choice A")]
-        [MaxStringLength(255)]
-        public string ChoiceA { get; set; } = string.Empty;
-
-        [RequiredField("Choice B")]
-        [MaxStringLength(255)]
-        public string ChoiceB { get; set; } = string.Empty;
-
-        [MaxStringLength(255)]
-        public string ChoiceC { get; set; } = string.Empty;
-
-        [MaxStringLength(255)]
-        public string ChoiceD { get; set; } = string.Empty;
-        [McqCorrectAnswer]
+        [RangeListCount(2, 4)]
+        public List<string> Choices { get; set; } = new List<string>();
         public string CorrectAnswer { get; set; } = string.Empty;
     }
 

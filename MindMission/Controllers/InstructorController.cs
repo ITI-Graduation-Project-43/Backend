@@ -26,7 +26,7 @@ namespace MindMission.API.Controllers
             _context = context;
             _instructorService = instructorService;
 
-            string containerName = configuration["AzureStorage:ContainerName2"];
+            string containerName = configuration["AzureStorage:photosContainer"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         }
 
@@ -123,7 +123,7 @@ namespace MindMission.API.Controllers
         // DELETE: api/Instructor/{id}
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<ActionResult<IQueryable<InstructorDto>>> Delete(string id, [FromQuery] PaginationDto pagination)
         {
 
             var course = await _instructorService.GetByIdAsync(id);
@@ -131,7 +131,7 @@ namespace MindMission.API.Controllers
             if (course == null)
                 return NotFound(NotFoundResponse("Course"));
             await _instructorService.SoftDeleteAsync(id);
-            return NoContent();
+            return await GetAllInstructors(pagination);
         }
 
         #endregion

@@ -33,7 +33,7 @@ namespace MindMission.API.Middlewares
             var response = ResponseObjectFactory.CreateResponseObject(
                 success: false,
                 message: ex.Message,
-                items: new List<string> { ex.Message },
+                items: new List<string> { },
                 pageNumber: 1,
                 itemsPerPage: 1
             );

@@ -37,14 +37,17 @@ using MindMission.Application.DTOs.QuestionDtos;
 using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.DTOs.Account;
 using AccountService = MindMission.Application.Services.AccountService;
+using MindMission.Application.Services.Upload;
+using MindMission.Application.Interfaces.Azure_services;
+using MindMission.Application.Services.Azure_services;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
 
 #region serilog
-var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(Logger);
+//var Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
+//builder.Logging.ClearProviders();
+//builder.Logging.AddSerilog(Logger);
 #endregion
 
 
@@ -91,8 +94,12 @@ builder.Services.AddScoped(x =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-/*  upload image */
-builder.Services.AddScoped<IUploadImage, UploadImageService>();
+/*  upload files */
+builder.Services.AddScoped<IUploadImageService, UploadImageService>();
+builder.Services.AddScoped<IUploadVideoService, UploadVideoService>();
+builder.Services.AddScoped<IUploadAttachmentService, UploadAttachmentService>();
+builder.Services.AddScoped<IDeleteService, DeleteUploadedServices>();
+
 
 /*Admin Configuration*/
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -357,7 +364,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
