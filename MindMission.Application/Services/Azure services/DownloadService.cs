@@ -28,7 +28,6 @@ namespace MindMission.Application.Services.Upload
                 throw new NotFoundException($"Container {container} not found");
             }
 
-            // Check if the fileUrl is a full URL, if so, extract the file name
             if (Uri.IsWellFormedUriString(fileUrl, UriKind.Absolute))
             {
                 Uri uri = new Uri(fileUrl);

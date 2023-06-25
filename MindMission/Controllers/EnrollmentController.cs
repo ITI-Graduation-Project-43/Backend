@@ -46,11 +46,11 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(() => _EnrollmentService.GetAllByCourseIdAsync(CourseId), pagination, "Enrollments");
         }
 
-        // GET: api/Enrollment/{EnrollmentId}
-        [HttpGet("{EnrollmentId}", Name = "GetEnrollmentById")]
-        public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int EnrollmentId)
+        // GET: api/Enrollment/{Id}
+        [HttpGet("{Id}", Name = "GetEnrollmentById")]
+        public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int Id)
         {
-            return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(EnrollmentId), "Enrollment");
+            return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(Id), "Enrollment");
         }
 
         [HttpGet("Student/{StudentId}/Course/{CourseId}")]
@@ -73,7 +73,7 @@ namespace MindMission.API.Controllers
             {
                 EnrollmentId = addedEnrollment.Id
             });
-            //return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
+            // return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
         }
 
         #endregion Add

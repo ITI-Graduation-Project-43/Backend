@@ -2,7 +2,6 @@
 using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Application.Interfaces.Services.Base;
 using MindMission.Domain.Common;
-using System.Formats.Asn1;
 using System.Linq.Expressions;
 
 
@@ -37,7 +36,7 @@ namespace MindMission.Application.Services.Base
             return _baseContext.GetByIdAsync(id, IncludeProperties);
         }
 
-        public Task<TEntity> AddAsync(TEntity entity)
+        public virtual Task<TEntity> AddAsync(TEntity entity)
         {
             return _baseContext.AddAsync(entity);
         }

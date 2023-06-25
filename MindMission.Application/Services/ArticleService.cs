@@ -1,5 +1,4 @@
-﻿using MindMission.Application.Exceptions;
-using MindMission.Application.Interfaces.Repository;
+﻿using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services.Base;

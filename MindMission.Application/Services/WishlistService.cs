@@ -22,6 +22,11 @@ namespace MindMission.Application.Services
             return _context.GetAllByCourseIdAsync(courseId);
         }
 
+        public Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId)
+        {
+            return _context.GetByCourseStudentAsync(courseId, studentId);
+        }
+
         public Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId)
         {
             return _context.GetAllByStudentIdAsync(studentId);

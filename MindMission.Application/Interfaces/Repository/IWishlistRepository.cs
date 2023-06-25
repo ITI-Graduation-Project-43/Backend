@@ -7,5 +7,7 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId);
         Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId);
+        Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId);
+
     }
 }
