@@ -12,6 +12,7 @@ using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Application.Exceptions;
 using MindMission.Application.DTOs.PostDtos;
+using MindMission.Application.Services;
 
 namespace MindMission.API.Controllers
 {
@@ -373,7 +374,7 @@ namespace MindMission.API.Controllers
         #region Edit Patch/Put
 
         // PUT: api/Course/{id}
-        [HttpPut(template: "{photoid}")]
+        [HttpPut(template: "photo/{photoid}")]
         public async Task<IActionResult> UpdateCourseWithPhoto(int id, [FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
@@ -577,5 +578,15 @@ namespace MindMission.API.Controllers
         {
             return await GetEntitiesResponse(() => _courseService.GetNonApprovedCoursesByInstructorAsync(instructorId), pagination, "Courses");
         }
+
+
+        [HttpPut("makeCourseApproved/{courseId}")]
+        public async Task<ActionResult<Course>> makeCourseApproved(int courseId)
+        {
+            var course = await _courseService.PutCourseToApprovedAsync(courseId);
+            return Ok(course);
+        }
     }
+
+    
 }
