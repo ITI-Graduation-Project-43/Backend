@@ -1,4 +1,5 @@
-﻿using MindMission.Application.DTOs.Base;
+﻿using MindMission.Application.DTOs.Account;
+using MindMission.Application.DTOs.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace MindMission.Application.DTOs
@@ -29,7 +30,7 @@ namespace MindMission.Application.DTOs
         public int NoOfRating { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public Dictionary<string, string> accounts { get; set; } = new Dictionary<string, string>();
+        public ICollection<AccountDto> accounts { get; set; } = new List<AccountDto>();
         public List<Dictionary<string, string>> Courses { get; set; } = new List<Dictionary<string, string>>();
 
 
