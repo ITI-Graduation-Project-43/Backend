@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
@@ -50,6 +51,7 @@ namespace MindMission.Infrastructure.Context
                 {
                     builder.Entity(entityType.ClrType).Property("CreatedAt").HasDefaultValueSql("getdate()");
                     builder.Entity(entityType.ClrType).Property("UpdatedAt").HasDefaultValueSql("getdate()");
+                    builder.Entity(entityType.ClrType).Property("IsDeleted").HasDefaultValueSql("0");
                 }
             }
 
@@ -205,6 +207,7 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Enrollment>(entity =>
             {
+                entity.Property("EnrollmentDate").HasDefaultValueSql("getdate()");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Enrollments)
@@ -337,6 +340,8 @@ namespace MindMission.Infrastructure.Context
 
             builder.Entity<Wishlist>(entity =>
             {
+                entity.Property("AddedDate").HasDefaultValueSql("getdate()");
+
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Wishlists)
                     .HasForeignKey(d => d.CourseId)

@@ -8,9 +8,6 @@ using MindMission.Application.DTOs.VideoDtos;
 using MindMission.Application.Exceptions;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
-using MindMission.Application.Service.Interfaces;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Validator.Base;
 using MindMission.Domain.Models;
 using System.Transactions;
 
