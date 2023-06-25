@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Repository;
+using MindMission.Domain.Common;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using System.Text;
@@ -242,6 +243,34 @@ namespace MindMission.Infrastructure.Repositories
                     User.Email += "," + User.Id;
                     User.NormalizedEmail = null;
                     User.EmailConfirmed = false;
+                    var Role = await UserManager.GetRolesAsync(User);
+                    if (Role[0] == "Student")
+                    {
+                        var student = Context.Students.FirstOrDefault(e => e.Id == User.Id);
+                        if(student != null)
+                        {
+                            student.IsDeleted = true;
+                            Context.Entry(student).State = EntityState.Modified;
+                        }   
+                    }
+                    else if (Role[0] == "Instructor")
+                    {
+                        var instructor = Context.Instructors.FirstOrDefault(e => e.Id == User.Id);
+                        if (instructor != null)
+                        {
+                            instructor.IsDeleted = true;
+                            Context.Entry(instructor).State = EntityState.Modified;
+                        }
+                    }
+                    else
+                    {
+                        var admin = Context.Admins.FirstOrDefault(e => e.Id == User.Id);
+                        if (admin != null)
+                        {
+                            admin.IsDeleted = true;
+                            Context.Entry(admin).State = EntityState.Modified;
+                        }
+                    }
                     return await UserManager.UpdateAsync(User);
                 }
             }
