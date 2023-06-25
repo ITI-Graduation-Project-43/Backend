@@ -13,11 +13,9 @@ namespace MindMission.API.Controllers
     public class AccountController : BaseController<Account, AccountDto, int>
     {
         private readonly IAccountService _accountService;
-        private readonly ILogger<AccountController> _logger;
         public AccountController(IAccountService accountService, AccountMappingService accountMappingService, ILogger<AccountController> logger) : base(accountMappingService)
         {
             _accountService = accountService;
-            _logger = logger;
         }
 
         [HttpGet]
