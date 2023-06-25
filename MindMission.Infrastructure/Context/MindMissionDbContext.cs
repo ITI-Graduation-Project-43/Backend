@@ -220,6 +220,10 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Enrollmen__Stude__55F4C372");
+
+
+                entity.HasIndex(e => new { e.CourseId, e.StudentId })
+                .IsUnique();
             });
 
             builder.Entity<Instructor>(entity =>
@@ -353,6 +357,8 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Wishlists__Stude__5AB9788F");
+                entity.HasIndex(e => new { e.CourseId, e.StudentId })
+                   .IsUnique();
             });
 
             builder.Entity<TimeTracking>(entity =>
