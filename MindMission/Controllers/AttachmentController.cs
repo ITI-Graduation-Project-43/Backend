@@ -87,7 +87,7 @@ namespace MindMission.API.Controllers
 
                         var Response = ResponseObjectFactory
                             .CreateResponseObject<FileDetailsDto>(true,
-                            $"'{Attachment.FileName}' downloaded Successfully",
+                            $"'{Attachment.Name}' downloaded Successfully",
                             FileDataDto,
                             1, 10);
                         return Ok(Response);
@@ -121,7 +121,8 @@ namespace MindMission.API.Controllers
                         //////
                         //return File(file content in bytes -from database- , MIME type -generic- , filename)
                         //////
-                        return File(Attachment.FileData, "application/octet-stream", Attachment.FileName);
+                        //return File(Attachment.FileData, "application/octet-stream", Attachment.FileName);
+                        return Ok("try to azure it better");
                     }
                     catch
                     {
