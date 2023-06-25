@@ -99,6 +99,8 @@ builder.Services.AddScoped<IUploadImageService, UploadImageService>();
 builder.Services.AddScoped<IUploadVideoService, UploadVideoService>();
 builder.Services.AddScoped<IUploadAttachmentService, UploadAttachmentService>();
 builder.Services.AddScoped<IDeleteService, DeleteUploadedServices>();
+builder.Services.AddScoped<IDownloadService, DownloadService>();
+
 
 
 /*Admin Configuration*/

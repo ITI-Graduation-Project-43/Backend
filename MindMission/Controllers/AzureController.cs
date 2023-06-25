@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Azure_services;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Constants;
+using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
 {
@@ -14,17 +16,20 @@ namespace MindMission.API.Controllers
         private readonly IUploadVideoService _videoUploadService;
         private readonly IUploadAttachmentService _attachmentUploadService;
         private readonly IDeleteService _deleteService;
+        private readonly IDownloadService _downloadService;
 
         public AzureController(
                                 IUploadImageService imageUploadService,
                                 IUploadVideoService videoUploadService,
                                 IUploadAttachmentService attachmentUploadService,
-                                IDeleteService deleteService)
+                                IDeleteService deleteService,
+                                IDownloadService downloadService)
         {
             _imageUploadService = imageUploadService;
             _videoUploadService = videoUploadService;
             _attachmentUploadService = attachmentUploadService;
             _deleteService = deleteService;
+            _downloadService = downloadService;
         }
         // POST: api/Azure/Video
         [HttpPost("Video")]
@@ -58,11 +63,27 @@ namespace MindMission.API.Controllers
 
         }
 
+        // Download: api/Azure/Video
+        [HttpGet("Video")]
+        public async Task<IActionResult> DownloadVideo(string fileUrl)
+        {
+            return await DownloadFile(fileUrl, "VideoContainer");
+
+        }
+
         // Delete: api/Azure/Image
         [HttpDelete("Image")]
         public async Task<IActionResult> DeleteImage(string fileUrl)
         {
             return await DeleteFile(fileUrl, "PhotosContainer");
+
+        }
+
+        // Get: api/Azure/Image
+        [HttpGet("Image")]
+        public async Task<IActionResult> DownloadImage(string fileUrl)
+        {
+            return await DownloadFile(fileUrl, "PhotosContainer");
 
         }
         // Delete: api/Azure/Attachment
@@ -72,9 +93,16 @@ namespace MindMission.API.Controllers
             return await DeleteFile(fileUrl, "AttachmentContainer");
 
         }
+        // Get: api/Azure/Attachment
+        [HttpGet("Attachment")]
+        public async Task<IActionResult> DownloadAttachment(string fileUrl)
+        {
+            return await DownloadFile(fileUrl, "AttachmentContainer");
+
+        }
 
 
-        private async Task<IActionResult> UploadFile(IFormFile file, IUpload uploadService, string fileType)
+        private async Task<IActionResult> UploadFile(IFormFile file, IUploadService uploadService, string fileType)
         {
             string uploadedFileUrl = await uploadService.Upload(file);
 
@@ -103,6 +131,22 @@ namespace MindMission.API.Controllers
             catch (Exception ex)
             {
                 string errorMessage = $"Error deleting file: {ex.Message}";
+                var response = ResponseObjectFactory.CreateResponseObject(false, errorMessage, new List<string>());
+                return BadRequest(response);
+            }
+        }
+        private async Task<IActionResult> DownloadFile(string fileUrl, string containerName)
+        {
+            try
+            {
+                var downloadInfo = await _downloadService.Download(containerName, fileUrl);
+
+                return File(downloadInfo.Content, downloadInfo.ContentType, Path.GetFileName(fileUrl));
+
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = $"Error downloading file: {ex.Message}";
                 var response = ResponseObjectFactory.CreateResponseObject(false, errorMessage, new List<string>());
                 return BadRequest(response);
             }

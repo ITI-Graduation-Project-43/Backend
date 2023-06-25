@@ -17,7 +17,7 @@ namespace MindMission.API.Controllers
         {
             this.dbContext = dbContext;
 
-            string containerName = configuration["AzureStorage:ContainerName1"];
+            string containerName = configuration["AzureStorage:VideoContainer"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         }
 
