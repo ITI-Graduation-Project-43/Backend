@@ -468,5 +468,24 @@ namespace MindMission.Infrastructure.Repositories
             }
             return courseTobeApproved;
         }
+
+        public async Task<IQueryable<Course>> GetNonApprovedCoursesAsync()
+        {
+            var courses = await _context.Courses
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
+                            .ThenInclude(l => l.Attachment)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                            .Where(c => !c.Approved)
+                            .ToListAsync();
+
+            return courses.AsQueryable();
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace MindMission.Application.Repository_Interfaces
         Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId);
         Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber);
         Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber);
+        Task<IQueryable<Course>> GetNonApprovedCoursesAsync();
 
         Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber);
 
