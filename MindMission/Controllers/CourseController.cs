@@ -45,20 +45,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(
-               _courseService.GetAllAsync,
-               pagination,
-               "Courses",
-               course => course.Instructor,
-               course => course.Category,
-               course => course.Chapters,
-               course => course.Chapters.Select(chapter => chapter.Lessons),
-               course => course.Category.Parent,
-               course => course.Category.Parent.Parent,
-               course => course.CourseRequirements,
-               course => course.LearningItems,
-               course => course.EnrollmentItems
-           );
+            return await GetEntitiesResponse(_courseService.GetAllAsync, pagination, "Courses");
         }
 
         // GET: api/Course/category/{categoryId}
@@ -173,22 +160,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{Id}")]
         public async Task<ActionResult<CourseDto>> GetCourseById(int Id)
         {
-            return await GetEntityResponseWithInclude(
-                    () => _courseService.GetByIdAsync(Id,
-                        course => course.Instructor,
-                        Course => Course.Category,
-                        Course => Course.Chapters,
-                        Course => Course.Chapters.Select(chapter => chapter.Lessons),
-                        Course => Course.Category.Parent,
-                        Course => Course.Category.Parent.Parent,
-                        Course => Course.CourseRequirements,
-                        Course => Course.LearningItems,
-                        Course => Course.EnrollmentItems
-
-
-                    ),
-                    "Course"
-                );
+            return await GetEntityResponse(() => _courseService.GetByIdAsync(Id), "Course");
         }
 
         // GET: api/Course/name/{name}
@@ -588,5 +560,5 @@ namespace MindMission.API.Controllers
         }
     }
 
-    
+
 }

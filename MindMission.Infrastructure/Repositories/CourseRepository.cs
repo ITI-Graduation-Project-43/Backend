@@ -5,6 +5,7 @@ using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
+using System.Formats.Asn1;
 using System.Linq;
 
 namespace MindMission.Infrastructure.Repositories
@@ -17,7 +18,42 @@ namespace MindMission.Infrastructure.Repositories
         {
             _context = context;
         }
+        public override async Task<IQueryable<Course>> GetAllAsync()
+        {
+            var courses = await _context.Courses
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                            .Where(c => !c.IsDeleted)
+                            .ToListAsync();
 
+            return courses.AsQueryable();
+        }
+
+        public override async Task<Course> GetByIdAsync(int id)
+        {
+
+            var entity = await _context.Courses
+                           .Include(c => c.Instructor)
+                           .Include(c => c.Chapters)
+                           .ThenInclude(c => c.Lessons)
+                           .Include(c => c.CourseRequirements)
+                           .Include(c => c.LearningItems)
+                           .Include(c => c.EnrollmentItems)
+                           .Include(c => c.Category)
+                           .ThenInclude(c => c.Parent)
+                           .ThenInclude(c => c.Parent)
+                           .Where(c => !c.IsDeleted)
+                           .FirstOrDefaultAsync();
+
+            return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
+        }
 
         public async Task<Course> GetByNameAsync(string name)
         {
@@ -413,7 +449,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<Course> PutCourseToApprovedAsync(int courseId)
         {
-            var courseTobeApproved =await _context.Courses.FindAsync(courseId) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Course with id {courseId}"));
+            var courseTobeApproved = await _context.Courses.FindAsync(courseId) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Course with id {courseId}"));
             if (courseTobeApproved != null)
             {
                 courseTobeApproved.Approved = true;

@@ -19,7 +19,7 @@ namespace MindMission.Infrastructure.Repositories.Base
             _dbSet = _context.Set<TClass>();
         }
 
-        public async Task<IQueryable<TClass>> GetAllAsync()
+        public virtual async Task<IQueryable<TClass>> GetAllAsync()
         {
             var Query = await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
             return Query.AsQueryable();
@@ -32,7 +32,7 @@ namespace MindMission.Infrastructure.Repositories.Base
             return await Query.ToListAsync();
         }
 
-        public async Task<TClass> GetByIdAsync(TDataType id)
+        public virtual async Task<TClass> GetByIdAsync(TDataType id)
         {
             if (id == null)
             {
