@@ -37,22 +37,6 @@ namespace MindMission.Application.Validator
                     return string.Format(ErrorMessages.InvalidId, "Quiz");
                 }
 
-                if (string.IsNullOrWhiteSpace(questionDto.QuestionText) || questionDto.QuestionText.Length > 500)
-                {
-                    return string.Format(ErrorMessages.Required, "Question Text");
-                }
-                if (string.IsNullOrWhiteSpace(questionDto.ChoiceA) || questionDto.ChoiceA.Length > 1 ||
-                string.IsNullOrWhiteSpace(questionDto.ChoiceB) || questionDto.ChoiceB.Length > 1 ||
-                string.IsNullOrWhiteSpace(questionDto.ChoiceC) || questionDto.ChoiceC.Length > 1 ||
-                    string.IsNullOrWhiteSpace(questionDto.ChoiceD) || questionDto.ChoiceD.Length > 1)
-                {
-                    return ErrorMessages.AnswerTooLong;
-                }
-
-                if (string.IsNullOrWhiteSpace(questionDto.CorrectAnswer) || !new[] { 'A', 'B', 'C', 'D' }.Contains(questionDto.CorrectAnswer.ToUpperInvariant()[0]))
-                {
-                    return ErrorMessages.InvalidAnswerFormat;
-                }
                 var quiz = await _quizService.GetByIdAsync(questionDto.QuizId);
                 if (quiz == null)
                 {

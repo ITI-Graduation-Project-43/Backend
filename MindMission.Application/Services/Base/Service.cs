@@ -2,6 +2,7 @@
 using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Application.Interfaces.Services.Base;
 using MindMission.Domain.Common;
+using System.Formats.Asn1;
 using System.Linq.Expressions;
 
 
@@ -39,6 +40,11 @@ namespace MindMission.Application.Services.Base
         public Task<TEntity> AddAsync(TEntity entity)
         {
             return _baseContext.AddAsync(entity);
+        }
+        public Task<IEnumerable<TEntity>> BulkAddAsync(IEnumerable<TEntity> entities)
+        {
+            return _baseContext.BulkAddAsync(entities);
+
         }
 
         public Task<TEntity> UpdateAsync(TEntity entity)

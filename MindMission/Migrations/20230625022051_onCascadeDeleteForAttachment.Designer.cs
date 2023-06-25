@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230625022051_onCascadeDeleteForAttachment")]
+    partial class onCascadeDeleteForAttachment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1564,7 +1566,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
                         .WithOne("Article")
                         .HasForeignKey("MindMission.Domain.Models.Article", "LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Articles__Lesson__395884C4");
 
@@ -1598,7 +1599,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Course", "Course")
                         .WithMany("Chapters")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Chapters__Course__1CBC4616");
 
@@ -1754,7 +1754,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Chapter", "Chapter")
                         .WithMany("Lessons")
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Lessons__Chapter__245D67DE");
 
@@ -1766,7 +1765,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Quiz", "Quiz")
                         .WithMany("Questions")
                         .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Questions__QuizI__30C33EC3");
 
@@ -1778,7 +1776,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
                         .WithOne("Quiz")
                         .HasForeignKey("MindMission.Domain.Models.Quiz", "LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Quizzes__LessonI__2B0A656D");
 
@@ -1841,7 +1838,6 @@ namespace MindMission.API.Migrations
                     b.HasOne("MindMission.Domain.Models.Lesson", "Lesson")
                         .WithOne("Video")
                         .HasForeignKey("MindMission.Domain.Models.Video", "LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__Videos__LessonId__3587F3E0");
 

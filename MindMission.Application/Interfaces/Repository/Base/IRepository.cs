@@ -15,6 +15,7 @@ namespace MindMission.Application.Interfaces.Repository.Base
         Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties);
 
         Task<TClass> AddAsync(TClass entity);
+        Task<IEnumerable<TClass>> BulkAddAsync(IEnumerable<TClass> entities);
 
         Task<TClass> UpdateAsync(TClass entity);
         Task<TClass> UpdatePartialAsync(TDataType id, TClass entity);

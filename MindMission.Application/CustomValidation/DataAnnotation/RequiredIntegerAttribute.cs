@@ -10,7 +10,7 @@ namespace MindMission.Application.CustomValidation.DataAnnotation
     public class RequiredIntegerAttribute : RangeAttribute
     {
         public RequiredIntegerAttribute(string fieldName)
-            : base(1, int.MaxValue)
+            : base(0, int.MaxValue)
         {
             ErrorMessage = string.Format(ErrorMessages.Required, fieldName);
         }
