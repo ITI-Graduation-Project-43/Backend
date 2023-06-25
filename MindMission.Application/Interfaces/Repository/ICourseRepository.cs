@@ -32,5 +32,7 @@ namespace MindMission.Application.Repository_Interfaces
         Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId);
         Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId);
 
+        Task<Course>PutCourseToApprovedAsync(int courseId);
+
     }
 }

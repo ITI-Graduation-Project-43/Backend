@@ -402,5 +402,15 @@ namespace MindMission.Infrastructure.Repositories
             return courses.AsQueryable();
         }
 
+        public async Task<Course> PutCourseToApprovedAsync(int courseId)
+        {
+            var courseTobeApproved =await _context.Courses.FindAsync(courseId) ?? throw new Exception(string.Format(ErrorMessages.ResourceNotFound, $"Course with id {courseId}"));
+            if (courseTobeApproved != null)
+            {
+                courseTobeApproved.Approved = true;
+                await _context.SaveChangesAsync();
+            }
+            return courseTobeApproved;
+        }
     }
 }

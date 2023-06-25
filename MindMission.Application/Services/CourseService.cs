@@ -96,6 +96,11 @@ namespace MindMission.Application.Services
         {
             return await _context.GetNonApprovedCoursesByInstructorAsync(instructorId);
         }
+
+        public async Task<Course> PutCourseToApprovedAsync(int courseId)
+        {
+            return await _context.PutCourseToApprovedAsync(courseId);
+        }
     }
 }
 
