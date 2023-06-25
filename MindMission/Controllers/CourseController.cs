@@ -556,7 +556,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<Course>> makeCourseApproved(int courseId)
         {
             var course = await _courseService.PutCourseToApprovedAsync(courseId);
-            return Ok(course);
+            return Ok();
         }
     }
 
