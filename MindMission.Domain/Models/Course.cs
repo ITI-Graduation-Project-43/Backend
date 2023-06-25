@@ -87,8 +87,9 @@ namespace MindMission.Domain.Models
         [NotMapped]
         public int NoOfQuizzes => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Quiz));
         [NotMapped]
-        public int NoOfAttachments => Chapters.SelectMany(chapter => chapter.Lessons)
-                                                .Count(lesson => lesson.Attachment != null);
+
+        public int NoOfAttachments => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Attachment != null));
+
         [NotMapped]
         public float NoOfHours => Chapters.Sum(chapter => chapter.Lessons.Sum(lesson => lesson.NoOfHours));
 
