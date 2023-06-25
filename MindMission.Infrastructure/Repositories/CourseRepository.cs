@@ -462,6 +462,8 @@ namespace MindMission.Infrastructure.Repositories
             if (courseTobeApproved != null)
             {
                 courseTobeApproved.Approved = true;
+                _context.Courses.Update(courseTobeApproved);
+
                 await _context.SaveChangesAsync();
             }
             return courseTobeApproved;
