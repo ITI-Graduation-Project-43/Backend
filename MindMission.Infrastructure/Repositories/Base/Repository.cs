@@ -55,7 +55,7 @@ namespace MindMission.Infrastructure.Repositories.Base
             Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             var entity = await Query.FirstOrDefaultAsync(q => q.Id.Equals(id));
 
-            return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
+            return entity;
         }
 
         public async Task<TClass> AddAsync(TClass entity)
@@ -64,7 +64,12 @@ namespace MindMission.Infrastructure.Repositories.Base
             await _context.SaveChangesAsync();
             return entity;
         }
-
+        public async Task<IEnumerable<TClass>> BulkAddAsync(IEnumerable<TClass> entities)
+        {
+            _context.Set<TClass>().AddRange(entities);
+            await _context.SaveChangesAsync();
+            return entities;
+        }
         public async Task<TClass> UpdateAsync(TClass entity)
         {
             _dbSet.Update(entity);
@@ -91,10 +96,7 @@ namespace MindMission.Infrastructure.Repositories.Base
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
             }
-            else
-            {
-                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
-            }
+
         }
         public async Task SoftDeleteAsync(TDataType id)
         {
@@ -105,10 +107,7 @@ namespace MindMission.Infrastructure.Repositories.Base
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            else
-            {
-                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
-            }
+
         }
 
         public async Task SoftDeleteAsync(TClass entity)
@@ -120,10 +119,7 @@ namespace MindMission.Infrastructure.Repositories.Base
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            else
-            {
-                throw new KeyNotFoundException(string.Format(ErrorMessages.ResourceNotFound, "Entity"));
-            }
+
         }
 
     }

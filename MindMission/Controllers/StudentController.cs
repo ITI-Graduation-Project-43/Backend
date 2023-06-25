@@ -6,6 +6,7 @@ using MindMission.Application.DTOs;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 
@@ -20,11 +21,11 @@ namespace MindMission.API.Controllers
         private readonly BlobContainerClient containerClient;
 
 
-        public StudentController(MindMissionDbContext context, IStudentService studentService, StudentMappingService studentMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration) : base(studentMappingService)
+        public StudentController(MindMissionDbContext context, IStudentService studentService, IMappingService<Student, StudentDto> studentMappingService, BlobServiceClient blobServiceClient, IConfiguration configuration) : base(studentMappingService)
         {
             _context = context;
             _studentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
-            string containerName = configuration["AzureStorage:ContainerName2"];
+            string containerName = configuration["AzureStorage:PhotosContainer"];
             containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         }
 
@@ -36,7 +37,9 @@ namespace MindMission.API.Controllers
               _studentService.GetAllAsync,
               pagination,
               "Students",
-              student => student.User
+              student => student.User,
+              Student => Student.Enrollments,
+              Student => Student.Wishlists
           );
         }
 

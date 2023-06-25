@@ -29,13 +29,13 @@ namespace MindMission.Domain.Models
         [StringLength(255)]
         public string ChoiceB { get; set; } = string.Empty;
 
-        [Required]
-        [StringLength(255)]
-        public string ChoiceC { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(255)]
-        public string ChoiceD { get; set; } = string.Empty;
+        public string? ChoiceC { get; set; } = string.Empty;
+
+
+        [StringLength(255)]
+        public string? ChoiceD { get; set; } = string.Empty;
 
         [Required]
         [StringLength(1)]

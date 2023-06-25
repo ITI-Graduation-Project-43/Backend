@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230625152350_isDeletedDefault")]
+    partial class isDeletedDefault
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -797,9 +799,6 @@ namespace MindMission.API.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("CourseId", "StudentId")
-                        .IsUnique();
-
                     b.HasIndex(new[] { "CourseId" }, "idx_enrollments_courseid");
 
                     b.ToTable("Enrollments");
@@ -1521,9 +1520,6 @@ namespace MindMission.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("CourseId", "StudentId")
-                        .IsUnique();
 
                     b.HasIndex(new[] { "CourseId" }, "idx_wishlists_courseid");
 

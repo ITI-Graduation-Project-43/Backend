@@ -33,10 +33,10 @@ namespace MindMission.Domain.Models
         [AllowNull]
         public string? ProfilePicture { get; set; } = string.Empty;
 
-        public int NumCourses { get; set; }
-        
-        public int NumWishlist { get; set; }
-        
+        public int NoOfCourses { get; set; }
+
+        public int NoOfWishlist { get; set; }
+
         public bool IsDeleted { get; set; } = false;
 
         [ForeignKey(nameof(Id))]

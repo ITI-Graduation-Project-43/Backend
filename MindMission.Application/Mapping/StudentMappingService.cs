@@ -28,8 +28,8 @@ namespace MindMission.Application.Mapping
                 LastName = studentDto.LastName,
                 Bio = studentDto.Bio,
                 ProfilePicture = studentDto.ProfilePicture,
-                NumCourses = studentDto.NumCourses,
-                NumWishlist = studentDto.NumWishlist,
+                NoOfCourses = studentDto.NoOfCourses,
+                NoOfWishlist = studentDto.NoOfWishlist,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -49,14 +49,14 @@ namespace MindMission.Application.Mapping
                 LastName = entity.LastName,
                 Bio = entity.Bio,
                 ProfilePicture = entity.ProfilePicture,
-                NumCourses = entity.NumCourses,
-                NumWishlist = entity.NumWishlist
+                NoOfCourses = entity.NoOfCourses,
+                NoOfWishlist = entity.NoOfWishlist
             };
 
             var userAccounts = await _userAccountService.GetUserAccountsAsync(entity.Id) ?? throw new ArgumentNullException(nameof(_userAccountService));
             foreach (var account in userAccounts)
             {
-                studentDto.accounts.Add(new AccountDto() {Id= account.Id, AccountId = account.AccountId, AccountName = account.Account.AccountName, AccountDomain = account.AccountLink });
+                studentDto.Accounts.Add(new AccountDto() { Id = account.Id, AccountId = account.AccountId, AccountName = account.Account.AccountName, AccountDomain = account.AccountLink });
             }
 
             return studentDto;

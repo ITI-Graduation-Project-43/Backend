@@ -28,10 +28,10 @@ namespace MindMission.Application.Validator
             {
                 return ErrorMessages.InvalidData;
             }
-            /*if (chapterDto.CourseId <= 0)
+            if (chapterDto.CourseId <= 0)
             {
                 return string.Format(ErrorMessages.InvalidId, entity);
-            }*/
+            }
 
             if (string.IsNullOrEmpty(chapterDto.Title))
             {
@@ -43,11 +43,11 @@ namespace MindMission.Application.Validator
                 return string.Format(ErrorMessages.RangeValueExceeded, 5, 100);
             }
 
-            /*var course = await _courseService.GetByIdAsync(chapterDto.CourseId);
+            var course = await _courseService.GetByIdAsync(chapterDto.CourseId);
             if (course == null)
             {
                 return string.Format(ErrorMessages.ResourceNotFound, entity);
-            }*/
+            }
 
 
             return null;

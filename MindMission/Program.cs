@@ -237,7 +237,6 @@ builder.Services.AddScoped<IMappingService<Enrollment, EnrollmentDto>, Enrollmen
 /*Student Configuration*/
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<StudentMappingService, StudentMappingService>();
 builder.Services.AddScoped<IMappingService<Student, StudentDto>, StudentMappingService>();
 
 

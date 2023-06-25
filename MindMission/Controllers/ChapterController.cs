@@ -76,6 +76,14 @@ namespace MindMission.API.Controllers
                 {
                     return NotFound(NotFoundResponse("Course"));
                 }
+                for (int i = 0; i < chapterDtos.Count; i++)
+                {
+                    chapterDtos[i].CourseId = id;
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(InvalidDataResponse());
+                }
                 await _chapterLessonsService.AddChapters(chapterDtos);
                 return Ok(GenerateResponse(true, "Chapters and lessons added successfully"));
             }
