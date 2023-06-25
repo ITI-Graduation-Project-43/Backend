@@ -101,6 +101,11 @@ namespace MindMission.Application.Services
         {
             return await _context.PutCourseToApprovedAsync(courseId);
         }
+
+        public Task<IQueryable<Course>> GetNonApprovedCoursesAsync()
+        {
+            return _context.GetNonApprovedCoursesAsync();
+        }
     }
 }
 
