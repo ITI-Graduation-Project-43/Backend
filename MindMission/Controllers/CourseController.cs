@@ -280,7 +280,7 @@ namespace MindMission.API.Controllers
             return CreatedAtAction(nameof(GetCourseById), new { id = courseDto.Id }, response);
         }
         [HttpPost]
-        public async Task<IActionResult> AddCourse( [FromBody] PostCourseDto postCourseDto)
+        public async Task<IActionResult> AddCourse([FromBody] PostCourseDto postCourseDto)
         {
             if (!ModelState.IsValid)
             {
@@ -371,8 +371,8 @@ namespace MindMission.API.Controllers
         #region Edit Patch/Put
 
         // PUT: api/Course/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCourse(int id, [FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
+        [HttpPut(template: "{photoid}")]
+        public async Task<IActionResult> UpdateCourseWithPhoto(int id, [FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
                                                                        c => c.EnrollmentItems,
@@ -442,7 +442,69 @@ namespace MindMission.API.Controllers
 
             return Ok(response);
         }
+        [HttpPut(template: "{id}")]
 
+        public async Task<IActionResult> UpdateCourse(int id,  [FromBody] PostCourseDto postCourseDto)
+        {
+            var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
+                                                                       c => c.EnrollmentItems,
+                                                                       c => c.EnrollmentItems);
+            if (courseToUpdate == null)
+            {
+                return NotFound(NotFoundResponse("Course"));
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(InvalidDataResponse());
+            }
+
+            postCourseDto.Id = id;
+            var category = await _categoryService.GetByIdAsync(postCourseDto.CategoryId);
+            if (category == null)
+            {
+                return BadRequest(NotFoundResponse("Category"));
+            }
+
+            if (category.Type != CategoryType.Topic)
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Language), postCourseDto.Language))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (!Enum.IsDefined(typeof(Level), postCourseDto.Level))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.LearningItems == null || !postCourseDto.LearningItems.Any() || postCourseDto.LearningItems.Any(item => string.IsNullOrWhiteSpace(item.Title) || string.IsNullOrWhiteSpace(item.Description)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+            if (postCourseDto.EnrollmentItems == null || !postCourseDto.EnrollmentItems.Any() || postCourseDto.EnrollmentItems.Any(item => string.IsNullOrWhiteSpace(item.Title)))
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+
+
+            // Map the course update DTO to a course entity.
+            var updatedCourseEntity = _postCourseMappingService.MapDtoToEntity(postCourseDto);
+
+            // Use the service to update the course in the database.
+            var updatedCourse = await _courseService.UpdateCourseAsync(id, updatedCourseEntity);
+
+            // Map the updated course entity back to a DTO.
+            var courseDto = await _postCourseMappingService.MapEntityToDto(updatedCourse);
+
+            string message = string.Format(SuccessMessages.UpdatedSuccessfully, "Course");
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<PostCourseDto> { courseDto });
+
+            return Ok(response);
+        }
 
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchCourse(int id, [FromBody] JsonPatchDocument<PostCourseDto> patchDoc)

@@ -1,4 +1,5 @@
 ﻿using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.Account;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Domain.Models;
@@ -80,7 +81,7 @@ namespace MindMission.Application.Mapping
             var userAccounts = await _userAccountService.GetUserAccountsAsync(entity.Id) ?? throw new ArgumentNullException(nameof(_userAccountService));
             foreach (var account in userAccounts)
             {
-                instructorDto.accounts.Add(account.Account.AccountName, account.AccountLink);
+                instructorDto.accounts.Add(new AccountDto() { Id = account.Id, AccountId = account.AccountId, AccountName = account.Account.AccountName, AccountDomain = account.AccountLink });
             }
 
             return instructorDto;
