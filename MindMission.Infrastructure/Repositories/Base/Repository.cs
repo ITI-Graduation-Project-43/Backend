@@ -41,7 +41,7 @@ namespace MindMission.Infrastructure.Repositories.Base
 
             var entity = await _dbSet.Where(x => !x.IsDeleted && x.Id.Equals(id)).FirstOrDefaultAsync();
 
-            return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
+            return entity;
         }
 
         public async Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties)

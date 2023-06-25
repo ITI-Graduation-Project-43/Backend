@@ -21,11 +21,9 @@ namespace MindMission.Application.DTOs.QuestionDtos
         [MaxStringLength(255)]
         public string ChoiceB { get; set; } = string.Empty;
 
-        [RequiredField("Choice C")]
         [MaxStringLength(255)]
         public string ChoiceC { get; set; } = string.Empty;
 
-        [RequiredField("Choice D")]
         [MaxStringLength(255)]
         public string ChoiceD { get; set; } = string.Empty;
 

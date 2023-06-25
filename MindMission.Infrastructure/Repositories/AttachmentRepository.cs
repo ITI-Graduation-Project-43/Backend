@@ -2,14 +2,15 @@
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using MindMission.Infrastructure.Repositories.Base;
 
 namespace MindMission.Infrastructure.Repositories
 {
-    public class AttachmentRepository : IAttachmentRepository
+    public class AttachmentRepository : Repository<Attachment, int>, IAttachmentRepository
     {
         private readonly MindMissionDbContext _context;
 
-        public AttachmentRepository(MindMissionDbContext context)
+        public AttachmentRepository(MindMissionDbContext context) : base(context)
         {
             _context = context;
         }

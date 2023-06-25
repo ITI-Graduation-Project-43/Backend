@@ -2,16 +2,17 @@
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Repository_Interfaces;
+using MindMission.Application.Services.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Services
 {
-    public class AttachmentService : IAttachmentService
+    public class AttachmentService : Service<Attachment, int>, IAttachmentService
     {
         private readonly IAttachmentRepository _context;
         private readonly ILessonRepository _lessonRepository;
 
-        public AttachmentService(IAttachmentRepository context, ILessonRepository lessonRepository)
+        public AttachmentService(IAttachmentRepository context, ILessonRepository lessonRepository) : base(context)
         {
             _context = context;
             _lessonRepository = lessonRepository;
@@ -48,6 +49,11 @@ namespace MindMission.Application.Services
         {
             Attachment? Attachment = await _context.GetAttachmentByIdAsync(id);
             return Attachment;
+        }
+
+        public Task PostAttachmentAsync(Lesson lesson, Attachment attachment)
+        {
+            return _context.PostAttachmentAsync(lesson, attachment);
         }
     }
 }

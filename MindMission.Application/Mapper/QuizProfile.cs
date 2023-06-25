@@ -18,15 +18,12 @@ namespace MindMission.Application.Mapper
                 .ForMember(dest => dest.LessonDescription, opt => opt.MapFrom(src => src.Lesson.Description))
                 .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions));
 
-            /*
-                        CreateMap<QuizDto, Quiz>()
-                              .ForMember(dest => dest.Lesson, opt => opt.Ignore());*/
+
 
             CreateMap<Question, QuizQuestionDto>();
             CreateMap<QuizQuestionDto, Question>();
 
             CreateMap<QuizCreateDto, Quiz>();
-            // .ForMember(dest => dest.Questions, opt => opt.Ignore());
             CreateMap<Quiz, QuizCreateDto>();
 
 

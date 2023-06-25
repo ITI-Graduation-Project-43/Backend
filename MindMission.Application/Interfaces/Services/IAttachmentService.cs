@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MindMission.Application.Interfaces.Repository;
+using MindMission.Application.Interfaces.Services.Base;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Interfaces.Services
 {
-    public interface IAttachmentService
+    public interface IAttachmentService : IService<Attachment, int>, IAttachmentRepository
     {
         public Task<Attachment> AddAttachmentAsync(Attachment attachment, IFormFile file, Lesson lesson);
 

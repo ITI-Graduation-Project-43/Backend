@@ -14,8 +14,8 @@ namespace MindMission.Application.DTOs.QuizDtos
 
         [RequiredInteger("Lesson Id")]
         public int LessonId { get; set; }
-        [ListCount(2)]
-        public List<QuizQuestionCreateDto> Questions { get; set; } = new List<QuizQuestionCreateDto>();
+        [ListCount(1)]
+        public List<QuestionCreateDto> Questions { get; set; } = new List<QuestionCreateDto>();
     }
 
 }
