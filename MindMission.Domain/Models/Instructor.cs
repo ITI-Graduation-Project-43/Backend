@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using MindMission.Domain.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -54,7 +55,10 @@ namespace MindMission.Domain.Models
         public int NoOfCourses { get; set; }
         public int NoOfStudents { get; set; }
         public int NoOfRatings { get; set; }
-        public double? AvgRating { get; set; }
+
+        [Column(TypeName = "decimal(3, 2)")]
+        [DefaultValue(0)]
+        public double AvgRating { get; set; }
 
         public bool IsDeleted { get; set; } = false;
 

@@ -31,7 +31,7 @@ namespace MindMission.Domain.Models
         [StringLength(50)]
         [Unicode(false)]
         public LessonType Type { get; set; }
-
+        [Column(TypeName = "decimal(3, 2)")]
         public float NoOfHours { get; set; }
         public bool IsFree { get; set; } = false;
         public bool IsDeleted { get; set; } = false;

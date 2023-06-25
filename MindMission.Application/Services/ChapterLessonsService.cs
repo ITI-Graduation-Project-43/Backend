@@ -39,8 +39,6 @@ namespace MindMission.Application.Services
                 foreach (var chapterDto in chapterDtos)
                 {
                     var chapter = _mapper.Map<Chapter>(chapterDto);
-                    chapter.NoOfLessons = chapterDto.Lessons.Count;
-                    chapter.NoOfHours = chapterDto.Lessons.Sum(lesson => lesson.NoOfHours);
                     await _chapterRepository.AddAsync(chapter);
                 }
 

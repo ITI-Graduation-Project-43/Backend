@@ -55,6 +55,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByCourseIdAsync(int courseId, [FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(() => _chapterService.GetByCourseIdAsync(courseId), pagination, "Chapters");
+
         }
         #endregion
 

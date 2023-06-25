@@ -14,10 +14,10 @@ namespace MindMission.Application.DTOs
         public Language Language { get; set; }
         public decimal Price { get; set; }
         public Level Level { get; set; }
-        public decimal? AvgReview { get; set; }
+        public decimal AvgReview { get; set; }
         public int NoOfReviews { get; set; }
         public int NoOfStudents { get; set; }
-        public decimal? Discount { get; set; }
+        public decimal Discount { get; set; }
         public int ChapterCount { get; set; }
         public int LessonCount { get; set; }
         public int NoOfVideos { get; set; }
@@ -25,7 +25,7 @@ namespace MindMission.Application.DTOs
         public int NoOfAttachments { get; set; }
         public int NoOfQuizes { get; set; }
 
-        public int NoOfHours { get; set; }
+        public float NoOfHours { get; set; }
         public bool Published { get; set; }
         public bool Approved { get; set; }
         public DateTime CreatedAt { get; set; }

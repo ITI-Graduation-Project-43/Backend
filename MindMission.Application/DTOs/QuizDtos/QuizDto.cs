@@ -10,7 +10,7 @@ namespace MindMission.Application.DTOs.QuizDtos
     {
         public int Id { get; set; }
 
-        public int NoOfQuestions { get { return Questions?.Count ?? 0; } }
+        public int NoOfQuestions { get; set; }
         public List<QuizQuestionDto> Questions { get; set; } = new List<QuizQuestionDto>();
 
         public string? LessonName { get; set; }

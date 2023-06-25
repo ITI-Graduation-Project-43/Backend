@@ -18,10 +18,9 @@ namespace MindMission.Domain.Models
         public int Id { get; set; }
         [Required]
         public int LessonId { get; set; }
-        public int NoOfQuestions
-        {
-            get; set;
-        }
+        [NotMapped]
+        public int NoOfQuestions => Questions.Count;
+
 
         public bool IsDeleted { get; set; } = false;
 

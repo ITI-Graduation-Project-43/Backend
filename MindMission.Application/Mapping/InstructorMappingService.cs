@@ -55,7 +55,7 @@ namespace MindMission.Application.Mapping
                 Title = entity.Title,
                 Description = entity.Description,
                 NoOfCources = entity.NoOfCourses,
-                AvgRating = entity.AvgRating.HasValue ? entity.AvgRating.Value : 0,
+                AvgRating = entity.AvgRating,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 NoOfStudents = entity.NoOfStudents,

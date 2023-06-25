@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using MindMission.Domain.Enums;
 using MindMission.Domain.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -59,13 +60,14 @@ namespace MindMission.Domain.Models
 
         [Column(TypeName = "decimal(3, 2)")]
         [Range(0, 1)]
-        public decimal? Discount { get; set; }
+        [DefaultValue(0)]
+        public decimal Discount { get; set; }
 
         #region calculated fields
 
         [Column(TypeName = "decimal(3, 2)")]
-
-        public decimal? AvgReview { get; set; }
+        [DefaultValue(0)]
+        public decimal AvgReview { get; set; }
 
         [Range(0, int.MaxValue)]
 
@@ -74,35 +76,21 @@ namespace MindMission.Domain.Models
         [Range(0, int.MaxValue)]
 
         public int NoOfStudents { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int ChapterCount { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int LessonCount { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int NoOfVideos { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int NoOfArticles { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int NoOfQuizzes { get; set; }
-
-
-        [Range(0, int.MaxValue)]
-        public int NoOfAttachments { get; set; }
-
-
-        //[Range(0, int.MaxValue)]
-        public int NoOfHours { get; set; }
-
+        [NotMapped]
+        public int ChapterCount => Chapters.Count;
+        [NotMapped]
+        public int LessonCount => Chapters.Sum(chapter => chapter.Lessons.Count);
+        [NotMapped]
+        public int NoOfVideos => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Video));
+        [NotMapped]
+        public int NoOfArticles => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Article));
+        [NotMapped]
+        public int NoOfQuizzes => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Quiz));
+        [NotMapped]
+        public int NoOfAttachments => Chapters.SelectMany(chapter => chapter.Lessons)
+                                                .Count(lesson => lesson.Attachment != null);
+        [NotMapped]
+        public float NoOfHours => Chapters.Sum(chapter => chapter.Lessons.Sum(lesson => lesson.NoOfHours));
 
 
         #endregion

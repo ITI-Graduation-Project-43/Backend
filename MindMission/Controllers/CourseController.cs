@@ -49,13 +49,14 @@ namespace MindMission.API.Controllers
                pagination,
                "Courses",
                course => course.Instructor,
-               Course => Course.Category,
-               Course => Course.Chapters,
-               Course => Course.Category.Parent,
-               Course => Course.Category.Parent.Parent,
-               Course => Course.CourseRequirements,
-               Course => Course.LearningItems,
-               Course => Course.EnrollmentItems
+               course => course.Category,
+               course => course.Chapters,
+               course => course.Chapters.Select(chapter => chapter.Lessons),
+               course => course.Category.Parent,
+               course => course.Category.Parent.Parent,
+               course => course.CourseRequirements,
+               course => course.LearningItems,
+               course => course.EnrollmentItems
            );
         }
 
@@ -176,6 +177,7 @@ namespace MindMission.API.Controllers
                         course => course.Instructor,
                         Course => Course.Category,
                         Course => Course.Chapters,
+                        Course => Course.Chapters.Select(chapter => chapter.Lessons),
                         Course => Course.Category.Parent,
                         Course => Course.Category.Parent.Parent,
                         Course => Course.CourseRequirements,
@@ -210,7 +212,7 @@ namespace MindMission.API.Controllers
         // POST: api/Course
         [HttpPost("withPhoto")]
         public async Task<IActionResult> AddCourseWithPhoto([FromForm] IFormFile courseImg, [FromForm] PostCourseDto postCourseDto)
-            {
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest(InvalidDataResponse());
@@ -444,7 +446,7 @@ namespace MindMission.API.Controllers
         }
         [HttpPut(template: "{id}")]
 
-        public async Task<IActionResult> UpdateCourse(int id,  [FromBody] PostCourseDto postCourseDto)
+        public async Task<IActionResult> UpdateCourse(int id, [FromBody] PostCourseDto postCourseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id, c => c.LearningItems,
                                                                        c => c.EnrollmentItems,

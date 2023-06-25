@@ -29,6 +29,7 @@ namespace MindMission.Infrastructure.Repositories
             var entity = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -48,6 +49,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -77,6 +79,7 @@ namespace MindMission.Infrastructure.Repositories
             var relatedCourses = _context.Courses
                 .Include(c => c.Instructor)
                 .Include(c => c.Chapters)
+                .ThenInclude(c => c.Lessons)
                 .Include(c => c.CourseRequirements)
                 .Include(c => c.LearningItems)
                 .Include(c => c.EnrollmentItems)
@@ -96,6 +99,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -113,6 +117,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -130,6 +135,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -149,6 +155,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
+                         .ThenInclude(c => c.Lessons)
                          .Include(c => c.Category)
                          .Where(c => !c.IsDeleted)
                          .OrderByDescending(c => c.CreatedAt)
@@ -373,6 +380,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -390,6 +398,7 @@ namespace MindMission.Infrastructure.Repositories
             var courses = await _context.Courses
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)

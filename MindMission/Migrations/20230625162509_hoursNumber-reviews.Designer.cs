@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230625162509_hoursNumber-reviews")]
+    partial class hoursNumberreviews
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -443,6 +445,12 @@ namespace MindMission.API.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValueSql("0");
 
+                    b.Property<decimal>("NoOfHours")
+                        .HasColumnType("decimal(3,2)");
+
+                    b.Property<int>("NoOfLessons")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -517,6 +525,9 @@ namespace MindMission.API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ChapterCount")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -552,16 +563,34 @@ namespace MindMission.API.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int>("LessonCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Level")
                         .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int>("NoOfArticles")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoOfAttachments")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NoOfHours")
+                        .HasColumnType("decimal(3,2)");
+
+                    b.Property<int>("NoOfQuizzes")
+                        .HasColumnType("int");
+
                     b.Property<int>("NoOfReviews")
                         .HasColumnType("int");
 
                     b.Property<int>("NoOfStudents")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoOfVideos")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -1116,6 +1145,9 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("0");
 
                     b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoOfQuestions")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
