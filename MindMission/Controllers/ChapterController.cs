@@ -2,11 +2,11 @@
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.DTOs.CourseChapters;
-using MindMission.Application.Mapping;
+using MindMission.Application.Exceptions;
+using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
-using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -15,14 +15,17 @@ namespace MindMission.API.Controllers
     [ApiController]
     public class ChapterController : BaseController<Chapter, ChapterDto, int>
     {
+        private readonly ICourseService _courseService;
         private readonly IChapterService _chapterService;
-        private readonly IMappingService<Chapter, ChapterDto> _chapterMappingService;
+        private readonly IChapterLessonsService _chapterLessonsService;
 
-        public ChapterController(IChapterService chapterService, IMappingService<Chapter, ChapterDto> chapterMappingService) :
+
+        public ChapterController(ICourseService courseService, IChapterService chapterService, IMappingService<Chapter, ChapterDto> chapterMappingService, IChapterLessonsService chapterLessonsService) :
             base(chapterMappingService)
         {
+            _courseService = courseService;
             _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
-            _chapterMappingService = chapterMappingService ?? throw new ArgumentNullException(nameof(chapterMappingService));
+            _chapterLessonsService = chapterLessonsService;
         }
         #region Get
 
@@ -63,10 +66,27 @@ namespace MindMission.API.Controllers
         }
 
         [HttpPost("ChapterLesson/{id}")]
-        public async Task<ActionResult> AddChaptersLesson(int id, [FromBody] List<CreateChapterDto> chapterDto)
+        public async Task<ActionResult> AddChaptersLesson(int id, [FromBody] List<CreateChapterDto> chapterDtos)
         {
-            int x = id;
-            return Ok(chapterDto);
+
+            try
+            {
+                var course = await _courseService.GetByIdAsync(id);
+                if (course == null)
+                {
+                    return NotFound(NotFoundResponse("Course"));
+                }
+                await _chapterLessonsService.AddChapters(chapterDtos);
+                return Ok(GenerateResponse(true, "Chapters and lessons added successfully"));
+            }
+            catch (ApiException)
+            {
+                return BadRequest(ValidationFailedResponse());
+            }
+            catch
+            {
+                return BadRequest(DatabaseErrorResponse("Chapter"));
+            }
         }
         #endregion
 

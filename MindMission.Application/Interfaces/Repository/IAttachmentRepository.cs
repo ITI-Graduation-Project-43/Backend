@@ -1,8 +1,9 @@
-﻿using MindMission.Domain.Models;
+﻿using MindMission.Application.Interfaces.Repository.Base;
+using MindMission.Domain.Models;
 
 namespace MindMission.Application.Interfaces.Repository
 {
-    public interface IAttachmentRepository
+    public interface IAttachmentRepository : IRepository<Attachment, int>
     {
         Task PostAttachmentAsync(Lesson lesson, Attachment attachment);
 

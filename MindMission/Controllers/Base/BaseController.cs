@@ -94,7 +94,11 @@ namespace MindMission.API.Controllers.Base
         {
             return GenerateResponse(false, ErrorMessages.UnauthorizedAccess);
         }
-
+        protected ResponseObject<TDto> DatabaseErrorResponse(string entityName)
+        {
+            string message = string.Format(ErrorMessages.DatabaseError, entityName);
+            return GenerateResponse(false, message);
+        }
         protected ResponseObject<TDto> ForbiddenResponse()
         {
             return GenerateResponse(false, ErrorMessages.ForbiddenAccess);
