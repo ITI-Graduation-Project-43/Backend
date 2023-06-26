@@ -48,6 +48,13 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponse(_courseService.GetAllAsync, pagination, "Courses");
         }
 
+        [HttpGet("count")]
+        public async Task<ActionResult> GetCourseNumber()
+        {
+            var coursesNumber = await _courseService.GetCourseNumber();
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Total Number of Courses", new List<int>() { coursesNumber }));
+        }
+
         [HttpGet("nonApprovedCourses")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCourses([FromQuery] PaginationDto pagination)
         {
