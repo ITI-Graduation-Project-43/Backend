@@ -42,10 +42,11 @@ namespace MindMission.Infrastructure.Repositories
             return existingAccount;
         }
 
-        public async Task<int> UpdateUserAccount(List<UserAccount> _UserAccounts)
+        public async Task<IQueryable<UserAccount>> UpdateUserAccount(List<UserAccount> _UserAccounts)
         {
             _context.UserAccounts.UpdateRange(_UserAccounts);
-            return  await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return _UserAccounts.AsQueryable();
         }
     }
 }
