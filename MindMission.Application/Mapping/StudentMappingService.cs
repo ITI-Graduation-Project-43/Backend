@@ -50,7 +50,9 @@ namespace MindMission.Application.Mapping
                 Bio = entity.Bio,
                 ProfilePicture = entity.ProfilePicture,
                 NoOfCourses = entity.NoOfCourses,
-                NoOfWishlist = entity.NoOfWishlist
+                NoOfWishlist = entity.NoOfWishlist,
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt
             };
 
             var userAccounts = await _userAccountService.GetUserAccountsAsync(entity.Id) ?? throw new ArgumentNullException(nameof(_userAccountService));
