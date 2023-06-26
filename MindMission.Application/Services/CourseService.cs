@@ -19,6 +19,10 @@ namespace MindMission.Application.Services
 
         #region Get
 
+        public async Task<int> GetCourseNumber()
+        {
+            return await _context.GetCourseNumber();
+        }
 
         public async Task<Course> GetByNameAsync(string name)
         {

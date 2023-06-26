@@ -57,6 +57,11 @@ namespace MindMission.Infrastructure.Repositories
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
 
+        public async Task<int> GetCourseNumber()
+        {
+            return await _context.Courses.CountAsync();
+        }
+
         public async Task<Course> GetByNameAsync(string name)
         {
             if (name == null)
