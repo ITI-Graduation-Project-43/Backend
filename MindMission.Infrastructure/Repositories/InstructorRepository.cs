@@ -20,7 +20,7 @@ namespace MindMission.Infrastructure.Repositories
             var topInstructors = await _context.Instructors
                                             .Include(ins => ins.Courses)
                                             .Where(i => !i.IsDeleted)
-                                           .OrderByDescending(i => i.NoOfRatings * i.AvgRating)
+                                           .OrderByDescending(i =>  i.AvgRating)
                                            .Take(topNumber)
                                            .ToListAsync();
             return topInstructors.AsQueryable();
