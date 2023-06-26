@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
 using MindMission.Domain.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,7 +27,6 @@ namespace MindMission.Domain.Models
         [StringLength(2048)]
         [Unicode(false)]
         public string ProfilePicture { get; set; } = string.Empty;
-
         public bool IsDeactivated { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
 

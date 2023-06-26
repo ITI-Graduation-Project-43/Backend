@@ -48,6 +48,43 @@ namespace MindMission.API.Controllers
             }
         }
 
+        [HttpPost("Register/Students")]
+        public async Task<IActionResult> RegistrationStudentsAsync(List<UserDto> userDtos)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<UserDto>()));
+            }
+
+            var successfulRegistrations = new List<UserDto>();
+            var failedRegistrations = new List<UserDto>();
+            var errors = new List<string>();
+
+            foreach (var userDto in userDtos)
+            {
+                var result = await UserService.RegistrationStudentAsync(UserMappingService.MapDtoToEntity(userDto), userDto.FirstName, userDto.LastName);
+
+                if (result.Succeeded)
+                {
+                    successfulRegistrations.Add(userDto);
+                }
+                else
+                {
+                    failedRegistrations.Add(userDto);
+                    var errorMessages = result.Errors.Select(error => error.Description.TrimEnd(','));
+                    errors.AddRange(errorMessages);
+                }
+            }
+
+            if (failedRegistrations.Count > 0)
+            {
+                var errorMessage = string.Join(", ", errors);
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, errorMessage, failedRegistrations));
+            }
+
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration succeeded", successfulRegistrations));
+        }
+
         [HttpPost("Register/Instructor")]
         public async Task<IActionResult> RegistrationInstructorAsync(UserDto UserDto)
         {
@@ -77,7 +114,7 @@ namespace MindMission.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var Result = await UserService.RegistrationAdminAsync(UserMappingService.MapDtoToEntity(new UserDto() { Email = AdminCreateDto.Email, Password = AdminCreateDto.Password}), AdminCreateDto.FirstName, AdminCreateDto.LastName, AdminCreateDto.PermissionId);
+                var Result = await UserService.RegistrationAdminAsync(UserMappingService.MapDtoToEntity(new UserDto() { Email = AdminCreateDto.Email, Password = AdminCreateDto.Password }), AdminCreateDto.FirstName, AdminCreateDto.LastName, AdminCreateDto.PermissionId);
                 if (Result.Succeeded)
                 {
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<UserDto>()));
@@ -105,7 +142,7 @@ namespace MindMission.API.Controllers
                 if (User != null)
                 {
                     var Info = new List<SuccessLoginDto>();
-                    if(User.Id != "blocked")
+                    if (User.Id != "blocked")
                     {
                         Info.Add(User);
                         return Ok(ResponseObjectFactory.CreateResponseObject(true, "Login Succeeded", Info));
@@ -145,7 +182,7 @@ namespace MindMission.API.Controllers
                 {
                     return Ok(ResponseObjectFactory.CreateResponseObject(false, "This email is already used", new List<string>()));
                 }
-                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is not found", new List<string>()));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is not found", new List<string>()));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "Invalid Email", new List<string>()));
         }
@@ -191,7 +228,7 @@ namespace MindMission.API.Controllers
                 if (ModelState.IsValid)
                 {
                     var Result = await UserService.ValidateTokenAsync(Email, Token);
-                    if(Result)
+                    if (Result)
                     {
                         return Ok(ResponseObjectFactory.CreateResponseObject(Result, "The token is valid", new List<string>()));
                     }
@@ -268,7 +305,7 @@ namespace MindMission.API.Controllers
             var Result = await UserService.BlockUserAsync(Email, Blocking);
             if (Result.Succeeded)
             {
-                if(Blocking)
+                if (Blocking)
                 {
 
                     return Ok(ResponseObjectFactory.CreateResponseObject(true, "This email is blocked successfully", new List<string>()));
