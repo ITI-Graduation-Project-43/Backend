@@ -192,10 +192,10 @@ namespace MindMission.API.Controllers
         }
 
         // GET: api/Course/featureThisWeek
-        [HttpGet("featureThisWeek")]
-        public async Task<ActionResult<CourseDto>> GetFeatureThisWeekCourse()
+        [HttpGet("featureThisWeek/{categoryId}")]
+        public async Task<ActionResult<CourseDto>> GetFeatureThisWeekCourse(int categoryId)
         {
-            return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(), "Course");
+            return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(categoryId), "Course");
         }
 
 
