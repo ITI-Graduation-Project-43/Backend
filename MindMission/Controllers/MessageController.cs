@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.API.Controllers.Base;
+using MindMission.API.EmailSettings;
 using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
@@ -16,10 +17,13 @@ namespace MindMission.API.Controllers
     {
         private readonly IMessageService _messageService;
         private readonly MessageMappingService _messageMappingService;
-        public MessageController(IMessageService messageService, MessageMappingService messageMappingService) : base(messageMappingService)
+        private readonly IMailService MailService;
+
+        public MessageController(IMessageService messageService, MessageMappingService messageMappingService, IMailService _MailService) : base(messageMappingService)
         {
             _messageService = messageService;
             _messageMappingService = messageMappingService;
+            MailService = _MailService;
         }
 
         [HttpGet]
@@ -37,6 +41,19 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult> AddMessage([FromBody] MessageDto messageDTO)
         {
             return await AddEntityResponse(_messageService.AddAsync, messageDTO, "Message", nameof(GetMessageById));
+        }
+
+        [HttpPost("replay/{id:int}")]
+        public async Task<ActionResult> Replay(int id, MailData mailData)
+        {
+            if (MailService.SendMail(mailData))
+            {
+                //modify in IsReplayed column to be true
+                return Ok("Send");
+            }
+            return BadRequest();
+
+
         }
 
 

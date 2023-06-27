@@ -59,7 +59,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<int> GetCourseNumber()
         {
-            return await _context.Courses.CountAsync();
+            return await _context.Courses.Where(e => e.Approved == true).CountAsync();
         }
 
         public async Task<Course> GetByNameAsync(string name)
