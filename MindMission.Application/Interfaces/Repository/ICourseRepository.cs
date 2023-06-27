@@ -22,7 +22,7 @@ namespace MindMission.Application.Repository_Interfaces
         Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber);
 
 
-        Task<Course> GetFeatureThisWeekCourse();
+        Task<Course> GetFeatureThisWeekCourse(int categoryId);
 
         Task<Course> AddCourseAsync(Course course);
         Task<Course> UpdateCourseAsync(int id, Course course);
