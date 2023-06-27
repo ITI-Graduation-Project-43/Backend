@@ -69,6 +69,8 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.LastName).IsUnicode(false);
 
                 entity.Property(e => e.ProfilePicture).IsUnicode(false);
+                entity.Property(e => e.IsDeactivated).HasDefaultValueSql("0");
+
             });
 
             builder.Entity<AdminPermission>(entity =>
@@ -87,6 +89,8 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.PermissionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__AdminPerm__Permi__6FB49575");
+                entity.Property(p => p.GrantedAt).HasDefaultValueSql("getdate()");
+
             });
 
             builder.Entity<Article>(entity =>
@@ -153,6 +157,12 @@ namespace MindMission.Infrastructure.Context
                 entity.Property(e => e.ShortDescription).IsUnicode(false);
 
                 entity.Property(e => e.Title).IsUnicode(false);
+                entity.Property(e => e.Published).HasDefaultValueSql("0");
+                entity.Property(e => e.Approved).HasDefaultValueSql("0");
+                entity.Property(e => e.NoOfStudents).HasDefaultValueSql("0");
+                entity.Property(e => e.NoOfReviews).HasDefaultValueSql("0");
+                entity.Property(e => e.Price).HasDefaultValueSql("100");
+
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Courses)
@@ -245,6 +255,10 @@ namespace MindMission.Infrastructure.Context
             {
 
                 entity.Property(e => e.Type).HasConversion(new EnumToStringConverter<LessonType>());
+                entity.Property(e => e.NoOfHours).HasDefaultValueSql("0.5");
+
+                entity.Property(e => e.IsFree).HasDefaultValueSql("0");
+
 
                 entity.HasOne(d => d.Chapter)
                     .WithMany(p => p.Lessons)

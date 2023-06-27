@@ -20,7 +20,7 @@ namespace MindMission.Infrastructure.Repositories
         }
         public override async Task<IQueryable<Course>> GetAllAsync()
         {
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -40,7 +40,7 @@ namespace MindMission.Infrastructure.Repositories
         public override async Task<Course> GetByIdAsync(int id)
         {
 
-            var entity = await _context.Courses
+            var entity = await _context.Courses.AsSplitQuery()
                            .Include(c => c.Instructor)
                            .Include(c => c.Chapters)
                            .ThenInclude(c => c.Lessons)
@@ -57,6 +57,11 @@ namespace MindMission.Infrastructure.Repositories
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
         }
 
+        public async Task<int> GetCourseNumber()
+        {
+            return await _context.Courses.CountAsync();
+        }
+
         public async Task<Course> GetByNameAsync(string name)
         {
             if (name == null)
@@ -64,7 +69,7 @@ namespace MindMission.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var entity = await _context.Courses
+            var entity = await _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -85,7 +90,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
         {
 
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -108,7 +113,7 @@ namespace MindMission.Infrastructure.Repositories
         {
             var course = await _context.Courses.FindAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
             int topicId = course.CategoryId;
-            var Subcategory = await _context.Categories
+            var Subcategory = await _context.Categories.AsSplitQuery()
                                           .Include(c => c.Parent)
                                           .ThenInclude(c => c.Parent)
                                           .Where(c => c.Id == topicId && !c.IsDeleted)
@@ -117,6 +122,7 @@ namespace MindMission.Infrastructure.Repositories
             int categoryId = (int)Subcategory.Parent.ParentId;
 
             var relatedCourses = _context.Courses
+                .AsSplitQuery()
                 .Include(c => c.Instructor)
                 .Include(c => c.Chapters)
                 .ThenInclude(c => c.Lessons)
@@ -138,6 +144,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
         {
             var courses = await _context.Courses
+                            .AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -157,6 +164,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId)
         {
             var courses = await _context.Courses
+                            .AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -176,6 +184,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
         {
             var courses = await _context.Courses
+                            .AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -196,7 +205,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
         {
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .ThenInclude(c => c.Lessons)
@@ -213,6 +222,7 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber)
         {
             var course = await _context.Courses
+                        .AsSplitQuery()
                         .Include(c => c.Instructor)
                         .Include(c => c.Enrollments)
                             .ThenInclude(e => e.Student)
@@ -256,7 +266,7 @@ namespace MindMission.Infrastructure.Repositories
             int subcategoryId = (int)subcategory.ParentId;
             int categoryId = (int)subcategory.Parent.ParentId;
 
-            var relatedCourses = await _context.Courses
+            var relatedCourses = await _context.Courses.AsSplitQuery()
                                 .Include(c => c.Instructor)
                                 .Include(c => c.Enrollments)
                                     .ThenInclude(e => e.Student)
@@ -296,7 +306,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber)
         {
-            var instructorCourses = await _context.Courses
+            var instructorCourses = await _context.Courses.AsSplitQuery()
                     .Include(c => c.Instructor)
                     .Include(c => c.Enrollments)
                         .ThenInclude(e => e.Student)
@@ -368,7 +378,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<Course> UpdateCourseAsync(int id, Course course)
         {
-            var courseInDb = await _context.Courses
+            var courseInDb = await _context.Courses.AsSplitQuery()
                                         .Include(c => c.LearningItems)
                                         .Include(c => c.EnrollmentItems)
                                         .Include(c => c.CourseRequirements)
@@ -422,7 +432,7 @@ namespace MindMission.Infrastructure.Repositories
         //to be replaced by filter later
         public async Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId)
         {
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -440,7 +450,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId)
         {
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -471,7 +481,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Course>> GetNonApprovedCoursesAsync()
         {
-            var courses = await _context.Courses
+            var courses = await _context.Courses.AsSplitQuery()
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)

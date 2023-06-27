@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230625232310_SetDefaultForCourse")]
+    partial class SetDefaultForCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -940,14 +942,10 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("0");
 
                     b.Property<bool>("IsFree")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("NoOfHours")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(3,2)")
-                        .HasDefaultValueSql("0.5");
+                        .HasColumnType("decimal(3,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()

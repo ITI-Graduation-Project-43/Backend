@@ -58,8 +58,20 @@ namespace MindMission.API.Controllers
                 });
             }
 
-            var userAccount = await _context.UpdateUserAccount(userAccounts);
-            return Ok(ResponseObjectFactory.CreateResponseObject(true, "The accounts is updated successfully", new List<UserAccount>()));
+            var UpdatedUserAccounts = await _context.UpdateUserAccount(userAccounts);
+            foreach (var account in UpdatedUserAccounts)
+            {
+                foreach(var current in UserAccountsDto.userAccounts)
+                {
+                    if(current.AccountId == account.AccountId)
+                    {
+                        current.Id = account.Id;
+                        break;
+                    }
+                }
+            }
+
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "The accounts is updated successfully", UserAccountsDto.userAccounts));
         }
     }
 }

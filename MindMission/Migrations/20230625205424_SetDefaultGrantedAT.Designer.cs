@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230625205424_SetDefaultGrantedAT")]
+    partial class SetDefaultGrantedAT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -513,9 +515,7 @@ namespace MindMission.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Approved")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("AvgReview")
                         .HasColumnType("decimal(3,2)");
@@ -565,24 +565,16 @@ namespace MindMission.API.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<int>("NoOfReviews")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("int");
 
                     b.Property<int>("NoOfStudents")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(10,2)")
-                        .HasDefaultValueSql("100");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<bool>("Published")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("bit");
 
                     b.Property<string>("ShortDescription")
                         .IsRequired()
@@ -940,14 +932,10 @@ namespace MindMission.API.Migrations
                         .HasDefaultValueSql("0");
 
                     b.Property<bool>("IsFree")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValueSql("0");
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("NoOfHours")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(3,2)")
-                        .HasDefaultValueSql("0.5");
+                        .HasColumnType("decimal(3,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()

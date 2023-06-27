@@ -9,7 +9,7 @@ namespace MindMission.Application.Interfaces.Repository
     {
         Task<IQueryable<UserAccount>> GetUserAccountsAsync(string id);
         Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string UserId);
-        Task<int> UpdateUserAccount(List<UserAccount> userAccounts);
+        Task<IQueryable<UserAccount>> UpdateUserAccount(List<UserAccount> _UserAccounts);
 
     }
 }

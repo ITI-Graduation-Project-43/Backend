@@ -77,21 +77,22 @@ namespace MindMission.Domain.Models
 
         public int NoOfStudents { get; set; }
         [NotMapped]
-        public int ChapterCount => Chapters.Count;
+        
+        public int ChapterCount => Chapters?.Count??0;
         [NotMapped]
-        public int LessonCount => Chapters.Sum(chapter => chapter.Lessons.Count);
+        public int LessonCount => Chapters?.Sum(chapter => chapter.Lessons?.Count)??0;
         [NotMapped]
-        public int NoOfVideos => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Video));
+        public int NoOfVideos => Chapters?.Sum(chapter => chapter.Lessons?.Count(lesson => lesson.Type == LessonType.Video)) ?? 0;
         [NotMapped]
-        public int NoOfArticles => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Article));
+        public int NoOfArticles => Chapters?.Sum(chapter => chapter.Lessons?.Count(lesson => lesson.Type == LessonType.Article)) ?? 0;
         [NotMapped]
-        public int NoOfQuizzes => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Type == LessonType.Quiz));
+        public int NoOfQuizzes => Chapters?.Sum(chapter => chapter.Lessons?.Count(lesson => lesson.Type == LessonType.Quiz)) ?? 0;
         [NotMapped]
 
-        public int NoOfAttachments => Chapters.Sum(chapter => chapter.Lessons.Count(lesson => lesson.Attachment != null));
+        public int NoOfAttachments => Chapters?.Sum(chapter => chapter.Lessons?.Count(lesson => lesson.Attachment != null))??0;
 
         [NotMapped]
-        public float NoOfHours => Chapters.Sum(chapter => chapter.Lessons.Sum(lesson => lesson.NoOfHours));
+        public float NoOfHours => Chapters?.Sum(chapter => chapter.Lessons?.Sum(lesson => lesson.NoOfHours))??0;
 
 
         #endregion
@@ -109,7 +110,7 @@ namespace MindMission.Domain.Models
         public virtual Instructor Instructor { get; set; } = null!;
 
         [InverseProperty(nameof(Chapter.Course))]
-        public virtual ICollection<Chapter> Chapters { get; set; } = null!;
+        public virtual ICollection<Chapter>? Chapters { get; set; } = null;
 
         [InverseProperty(nameof(CourseFeedback.Course))]
         public virtual ICollection<CourseFeedback>? CourseFeedbacks { get; set; }
