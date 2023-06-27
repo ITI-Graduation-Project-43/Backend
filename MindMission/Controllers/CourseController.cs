@@ -13,6 +13,7 @@ using MindMission.Domain.Models;
 using MindMission.Application.Exceptions;
 using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MindMission.API.Controllers
 {
@@ -114,6 +115,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/related/{studentsNumber}")]
         public async Task<ActionResult<IQueryable<CourseDto>>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
         {
+
             var courses = await _courseService.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
 
             if (courses == null)
@@ -122,14 +124,20 @@ namespace MindMission.API.Controllers
             }
 
 
+
+
+
             var coursesList = courses.ToList();
+            EntitiesCount = coursesList.Count;
+
             if (coursesList.Count == 0)
             {
                 return NotFound(NotFoundResponse("Courses"));
             }
             var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize);
+            string message = string.Format(SuccessMessages.RetrievedSuccessfully, "Courses");
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesPage, pagination.PageNumber, pagination.PageSize, EntitiesCount);
             return Ok(response);
         }
 

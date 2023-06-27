@@ -51,7 +51,7 @@ namespace MindMission.Infrastructure.Repositories
                            .Include(c => c.Category)
                            .ThenInclude(c => c.Parent)
                            .ThenInclude(c => c.Parent)
-                           .Where(c => !c.IsDeleted)
+                           .Where(c => !c.IsDeleted && c.Id == id)
                            .FirstOrDefaultAsync();
 
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
