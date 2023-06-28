@@ -2,11 +2,13 @@
 using MindMission.Application.DTOs;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Constants;
+using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
 using System.Formats.Asn1;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -345,10 +347,54 @@ namespace MindMission.Infrastructure.Repositories
         public async Task<Course> GetFeatureThisWeekCourse(int categoryId)
         {
             DateTime CutoffDate = DateTime.Now.AddDays(-7);
-
-            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate && !en.IsDeleted)).Where(c=>c.CategoryId == categoryId)
+            var category = await _context.Categories.FindAsync(categoryId);
+            if(category.Type == CategoryType.Topic)
+            {
+                var query = await _context.Courses.AsSplitQuery().Include(c => c.Instructor)
+                .Include(c => c.Category)
+                .Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
+                .Where(c => c.CategoryId == categoryId && !c.IsDeleted)
                 .OrderByDescending(c => c.Enrollments.Count())
-                .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
+                .FirstOrDefaultAsync();
+                if (query != null)
+                    return query;
+            }
+            else
+            {
+                var topics = await _context.Categories.Where(cat => cat.ParentId == category.Id).ToListAsync();
+                foreach (var topic in topics)
+                {
+                    if (topic.Type == CategoryType.Topic)
+                    {
+                        var queryFromTopic = await _context.Courses.AsSplitQuery().Include(c => c.Instructor)
+                                .Include(c => c.Category)
+                                .Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
+                                .Where(c => c.CategoryId == topic.Id && !c.IsDeleted)
+                                .OrderByDescending(c => c.Enrollments.Count())
+                                .FirstOrDefaultAsync();
+                        if (queryFromTopic != null)
+                            return queryFromTopic;
+                    }
+                    else
+                    {
+                        var certainTopics = await _context.Categories.Where(cat => cat.ParentId == topic.Id).ToListAsync();
+                        foreach (var certainTopic in certainTopics)
+                        {
+                            var queryFromCertainTopic = await _context.Courses.AsSplitQuery().Include(c => c.Instructor)
+                                    .Include(c => c.Category)
+                                    .Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate))
+                                    .Where(c => c.CategoryId == certainTopic.Id && !c.IsDeleted)
+                                    .OrderByDescending(c => c.Enrollments.Count())
+                                    .FirstOrDefaultAsync();
+                            if (queryFromCertainTopic != null)
+                                return queryFromCertainTopic;
+                        }
+                    }
+                }
+
+                
+            }
+            throw new KeyNotFoundException("Feature this week not found");
         }
 
         public async Task<Course> AddCourseAsync(Course course)
