@@ -53,7 +53,7 @@ namespace MindMission.Infrastructure.Repositories
                            .Include(c => c.Category)
                            .ThenInclude(c => c.Parent)
                            .ThenInclude(c => c.Parent)
-                           .Where(c => !c.IsDeleted)
+                           .Where(c => !c.IsDeleted && c.Id == id)
                            .FirstOrDefaultAsync();
 
             return entity ?? throw new KeyNotFoundException($"No entity with id {id} found.");
@@ -61,7 +61,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<int> GetCourseNumber()
         {
-            return await _context.Courses.CountAsync();
+            return await _context.Courses.Where(e => e.Approved == true).CountAsync();
         }
 
         public async Task<Course> GetByNameAsync(string name)

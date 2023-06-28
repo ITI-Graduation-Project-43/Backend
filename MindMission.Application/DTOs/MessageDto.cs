@@ -13,5 +13,6 @@ namespace MindMission.Application.DTOs
         public string Name { get; set; }
         public string Email { get; set; }
         public string Message { get; set; }
+        public bool IsReplyed { get; set; }
     }
 }

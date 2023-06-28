@@ -12,6 +12,6 @@ namespace MindMission.Application.Interfaces.Repository
 {
     public interface IMessageRepository : IRepository<Messages, int>
     {
-        
+        Task messageReplyed(int id);
     }
 }
