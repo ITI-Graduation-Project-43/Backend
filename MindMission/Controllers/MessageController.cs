@@ -6,6 +6,7 @@ using Microsoft.VisualBasic;
 using MindMission.API.Controllers.Base;
 using MindMission.API.EmailSettings;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
@@ -50,9 +51,8 @@ namespace MindMission.API.Controllers
         {
             if (MailService.SendMail(mailData))
             {
-                //modify in IsReplayed column to be true
                await _messageService.messageReplyed(id);
-                return Ok("Send");
+                return Ok(ResponseObjectFactory.CreateResponseObject(true,"Email has been sent",new List<bool> { true},0));
             }
             return BadRequest();
 
