@@ -10,18 +10,16 @@ namespace MindMission.Infrastructure.Repositories
 {
     public class EnrollmentRepository : Repository<Enrollment, int>, IEnrollmentRepository
     {
-        private readonly MindMissionDbContext _context;
         private readonly DbSet<Enrollment> _dbSet;
 
         public EnrollmentRepository(MindMissionDbContext context) : base(context)
         {
-            _context = context;
-            _dbSet = _context.Set<Enrollment>();
+            _dbSet = context.Set<Enrollment>();
         }
 
         public IQueryable<Enrollment> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var Enrollments =  _dbSet.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted)
+            var Enrollments = _dbSet.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted)
                                     .Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return Enrollments.AsQueryable();
         }

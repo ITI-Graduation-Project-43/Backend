@@ -23,7 +23,7 @@ namespace MindMission.Application.Mapping
                 CourseImageUrl = wishlist.Course.ImageUrl,
                 CoursePrice = wishlist.Course.Price,
                 CourseAvgReview = wishlist.Course.AvgReview,
-                CategoryName = wishlist.Course.Category.Name,
+                CategoryName = wishlist.Course.Category?.Name,
                 StudentId = wishlist.Student.Id,
                 StudentName = wishlist.Student.FullName
             };

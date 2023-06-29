@@ -222,7 +222,6 @@ builder.Services.AddScoped<IMappingService<UserAccount, UserAccountDto>, UserAcc
 /*Wishlist Configuration*/
 builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
-builder.Services.AddScoped<WishlistMappingService, WishlistMappingService>();
 builder.Services.AddScoped<IMappingService<Wishlist, WishlistDto>, WishlistMappingService>();
 
 /*TimeTracking Configuration*/

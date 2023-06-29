@@ -2,6 +2,7 @@
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
+using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services_Classes;
 using MindMission.Domain.Models;
@@ -13,9 +14,9 @@ namespace MindMission.API.Controllers
     public class WishlistController : BaseController<Wishlist, WishlistDto, int>
     {
         private readonly IWishlistService _wishlistService;
-        private readonly WishlistMappingService _wishlistMappingService;
+        private readonly IMappingService<Wishlist, WishlistDto> _wishlistMappingService;
 
-        public WishlistController(IWishlistService wishlistService, WishlistMappingService wishlistMappingService) : base(wishlistMappingService)
+        public WishlistController(IWishlistService wishlistService, IMappingService<Wishlist, WishlistDto> wishlistMappingService) : base(wishlistMappingService)
         {
             _wishlistService = wishlistService ?? throw new ArgumentNullException(nameof(wishlistService));
             _wishlistMappingService = wishlistMappingService ?? throw new ArgumentNullException(nameof(wishlistMappingService));
@@ -27,7 +28,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<WishlistDto>>> GetAllWishlist([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithIncludePagination(_wishlistService.GetAllAsync, _wishlistService.GetTotalCountAsync, pagination, "Wishlists", e => e.Course, e => e.Student);
+            return await GetEntitiesResponseWithIncludePagination(_wishlistService.GetAllAsync, _wishlistService.GetTotalCountAsync, pagination, "Wishlists", e => e.Course, e => e.Course.Category, e => e.Student);
         }
 
         // GET: api/Wishlist/Student/{StudentId}

@@ -8,19 +8,17 @@ namespace MindMission.Infrastructure.Repositories
 {
     public class WishlistRepository : Repository<Wishlist, int>, IWishlistRepository
     {
-        private readonly MindMissionDbContext _context;
         private readonly DbSet<Wishlist> _dbSet;
 
         public WishlistRepository(MindMissionDbContext context) : base(context)
         {
-            _context = context;
-            _dbSet = _context.Set<Wishlist>();
+            _dbSet = context.Set<Wishlist>();
         }
 
         public IQueryable<Wishlist> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
             var wishlists = _dbSet.Include(e => e.Student)
-                .Include(e => e.Course).Where(w => w.CourseId == courseId && !w.IsDeleted)
+                .Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted)
                 .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
             return wishlists;
@@ -28,14 +26,14 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId)
         {
-            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.CourseId == courseId && w.StudentId == studentId && !w.IsDeleted).FirstOrDefaultAsync();
+            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && w.StudentId == studentId && !w.IsDeleted).FirstOrDefaultAsync();
             return wishlists;
         }
 
         public IQueryable<Wishlist> GetAllByStudentIdAsync(string studentId, int pageNumber, int pageSize)
         {
             var wishlists = _dbSet.Include(e => e.Student)
-                .Include(e => e.Course).Where(w => w.StudentId == studentId && !w.IsDeleted)
+                .Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.StudentId == studentId && !w.IsDeleted)
                 .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize); ;
             return wishlists;
