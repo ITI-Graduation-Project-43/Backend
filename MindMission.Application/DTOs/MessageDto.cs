@@ -14,5 +14,6 @@ namespace MindMission.Application.DTOs
         public string Email { get; set; }
         public string Message { get; set; }
         public bool IsReplied { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
