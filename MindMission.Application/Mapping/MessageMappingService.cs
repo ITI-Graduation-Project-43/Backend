@@ -22,7 +22,7 @@ namespace MindMission.Application.Mapping
 
         public async Task<MessageDto> MapEntityToDto(Messages entity)
         {
-            var MessageDTO =new MessageDto { Id=entity.Id,Name=entity.Name,Email=entity.Email,Message=entity.Message,IsReplyed=entity.IsReplyed};
+            var MessageDTO =new MessageDto { Id=entity.Id,Name=entity.Name,Email=entity.Email,Message=entity.Message,IsReplied=entity.IsReplied};
             return MessageDTO;
         }
     }
