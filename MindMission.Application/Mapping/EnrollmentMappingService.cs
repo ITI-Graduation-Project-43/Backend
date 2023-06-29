@@ -1,51 +1,35 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
-using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Mapping
 {
     public class EnrollmentMappingService : IMappingService<Enrollment, EnrollmentDto>
     {
-        private readonly ICourseService _CourseService;
-        private readonly IStudentService _StudentService;
 
-        public EnrollmentMappingService(ICourseService courseService, IStudentService studentService)
-        {
-            _CourseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _StudentService = studentService ?? throw new ArgumentNullException(nameof(studentService));
-        }
 
         public async Task<EnrollmentDto> MapEntityToDto(Enrollment Enrollment)
         {
             var EnrollmentDto = new EnrollmentDto
             {
                 Id = Enrollment.Id,
-                EnrollmentDate = Enrollment.EnrollmentDate
+                EnrollmentDate = Enrollment.EnrollmentDate,
+                CourseId = Enrollment.Course.Id,
+                CourseTitle = Enrollment.Course.Title,
+                CourseDescription = Enrollment.Course.Description,
+                CourseImageUrl = Enrollment.Course.ImageUrl,
+                CoursePrice = Enrollment.Course.Price,
+                CourseAvgReview = Enrollment.Course.AvgReview,
+                CategoryId = Enrollment.Course.CategoryId,
+                CategoryName = Enrollment.Course.Category.Name,
+                InstructorId = Enrollment.Course.Instructor.Id,
+                InstructorName = Enrollment.Course?.Instructor?.FirstName + " " + Enrollment.Course?.Instructor?.LastName,
+                InstructorProfilePicture = Enrollment.Course?.Instructor?.ProfilePicture,
+                CourseNoOfEnrollment = Enrollment.Course?.NoOfStudents,
+                StudentId = Enrollment.Student.Id,
+                StudentName = Enrollment.Student.FullName
             };
-            var course = await _CourseService.GetByIdAsync(Enrollment.CourseId, en => en.Category, em => em.Instructor);
-            if (course != null)
-            {
-                EnrollmentDto.CourseId = course.Id;
-                EnrollmentDto.CourseTitle = course.Title;
-                EnrollmentDto.CourseDescription = course.Description;
-                EnrollmentDto.CourseImageUrl = course.ImageUrl;
-                EnrollmentDto.CoursePrice = course.Price;
-                EnrollmentDto.CourseAvgReview = course.AvgReview;
-                EnrollmentDto.CategoryName = course.Category.Name;
-                EnrollmentDto.InstructorId = course.Instructor.Id;
-                EnrollmentDto.InstructorName = course?.Instructor?.FirstName + " " + course?.Instructor?.LastName;
-                EnrollmentDto.InstructorProfilePicture = course?.Instructor?.ProfilePicture;
-                EnrollmentDto.CourseNoOfEnrollment = course.NoOfStudents;
-            }
-            var student = await _StudentService.GetByIdAsync(Enrollment.StudentId);
-            if (student != null)
-            {
-                EnrollmentDto.StudentId = student.Id;
-                EnrollmentDto.StudentName = student.FirstName + " " + student.LastName;
-            }
+
             return EnrollmentDto;
         }
 

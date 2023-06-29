@@ -19,19 +19,19 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId)
         {
-            var wishlists = await _dbSet.Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
+            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
             return wishlists.AsQueryable();
         }
 
         public async Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId)
         {
-            var wishlists = await _dbSet.Where(w => w.CourseId == courseId && w.StudentId == studentId && !w.IsDeleted).FirstOrDefaultAsync();
+            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.CourseId == courseId && w.StudentId == studentId && !w.IsDeleted).FirstOrDefaultAsync();
             return wishlists;
         }
 
         public async Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId)
         {
-            var wishlists = await _dbSet.Where(w => w.StudentId == studentId && !w.IsDeleted).ToListAsync();
+            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.StudentId == studentId && !w.IsDeleted).ToListAsync();
             return wishlists.AsQueryable();
         }
     }

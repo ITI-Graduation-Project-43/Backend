@@ -20,13 +20,13 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId)
         {
-            var Enrollments = await _dbSet.Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
+            var Enrollments = await _dbSet.Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
             return Enrollments.AsQueryable();
         }
 
         public async Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string StudentId)
         {
-            var Enrollments = await _dbSet.Where(w => w.StudentId == StudentId && !w.IsDeleted).ToListAsync();
+            var Enrollments = await _dbSet.Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.StudentId == StudentId && !w.IsDeleted).ToListAsync();
             return Enrollments.AsQueryable();
         }
 
@@ -63,7 +63,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<int> SuccessfulLearners()
         {
-            return  _dbSet.Count();
+            return _dbSet.Count();
         }
     }
 }

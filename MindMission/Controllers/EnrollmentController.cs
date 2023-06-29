@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
-using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
 
@@ -30,14 +28,14 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_EnrollmentService.GetAllAsync, pagination, "Enrollments");
+            return await GetEntitiesResponseWithIncludePagination(_EnrollmentService.GetAllAsync, pagination, "Enrollments", e => e.Course, e => e.Course.Instructor, e => e.Course.Category, e => e.Student);
         }
 
         [HttpGet("SuccessfulLearners")]
         public async Task<ActionResult> SuccessfulLearners()
         {
             var TotalSuccessfulLearners = await _EnrollmentService.SuccessfulLearners();
-            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<int>() { TotalSuccessfulLearners}));
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<int>() { TotalSuccessfulLearners }));
         }
 
         // GET: api/Enrollment/Student/{StudentId}
@@ -60,7 +58,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{Id}", Name = "GetEnrollmentById")]
         public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(int Id)
         {
-            return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(Id), "Enrollment");
+            return await GetEntityResponse(() => _EnrollmentService.GetByIdAsync(Id, e => e.Course, e => e.Course.Instructor, e => e.Course.Category, e => e.Student), "Enrollment");
         }
 
         [HttpGet("Student/{StudentId}/Course/{CourseId}")]

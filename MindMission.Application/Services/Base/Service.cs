@@ -2,6 +2,7 @@
 using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Application.Interfaces.Services.Base;
 using MindMission.Domain.Common;
+using System.Formats.Asn1;
 using System.Linq.Expressions;
 
 
@@ -17,7 +18,10 @@ namespace MindMission.Application.Services.Base
         {
             _baseContext = context;
         }
-
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _baseContext.GetTotalCountAsync();
+        }
         public Task<IQueryable<TEntity>> GetAllAsync()
         {
             return _baseContext.GetAllAsync();
@@ -25,6 +29,17 @@ namespace MindMission.Application.Services.Base
         public Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] IncludeProperties)
         {
             return _baseContext.GetAllAsync(IncludeProperties);
+        }
+
+        public IQueryable<TEntity> GetAllAsync(int pageNumber, int pageSize)
+        {
+
+            return _baseContext.GetAllAsync(pageNumber, pageSize);
+        }
+        public IQueryable<TEntity> GetAllAsync(int pageNumber, int pageSize, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+
+            return _baseContext.GetAllAsync(pageNumber, pageSize, IncludeProperties);
         }
 
         public Task<TEntity> GetByIdAsync(TDataType id)

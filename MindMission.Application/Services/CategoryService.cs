@@ -16,14 +16,14 @@ namespace MindMission.Application.Services
         }
 
 
-        public Task<IQueryable<Category>> GetByTypeAsync(CategoryType type)
+        public IQueryable<Category> GetByTypeAsync(CategoryType type, int pageNumber, int pageSize)
         {
-            return _context.GetByTypeAsync(type);
+            return _context.GetByTypeAsync(type, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Category>> GetByParentIdAsync(int parentId)
+        public IQueryable<Category> GetByParentIdAsync(int parentId, int pageNumber, int pageSize)
         {
-            return _context.GetByParentIdAsync(parentId);
+            return _context.GetByParentIdAsync(parentId, pageNumber, pageSize);
         }
 
         public Task<Category> GetParentCategoryById(int parentId)

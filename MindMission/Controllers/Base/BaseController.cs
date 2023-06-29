@@ -178,6 +178,21 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
+        protected async Task<ActionResult> GetEntitiesResponsePagination(Func<Task<IQueryable<TEntity>>> serviceMethod, Func<Task<int>> totalCountMethod, PaginationDto pagination, string entityName)
+        {
+            var entities = await serviceMethod.Invoke();
+
+            if (entities == null)
+                return NotFound(NotFoundResponse(entityName));
+
+            var totalCount = await totalCountMethod.Invoke();
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName, totalCount);
+
+            return Ok(response);
+        }
         protected async Task<ActionResult> GetEntitiesResponseEnumerable(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();
@@ -212,6 +227,22 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
+
+        protected async Task<ActionResult> GetEntitiesResponseWithIncludePagination(Func<int, int, Expression<Func<TEntity, object>>[], IQueryable<TEntity>> serviceMethod, Func<Task<int>> totalCountMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
+        {
+            var entities = serviceMethod.Invoke(pagination.PageNumber, pagination.PageSize, IncludeProperties);
+            if (entities == null)
+                return NotFound(NotFoundResponse(entityName));
+
+            var totalCount = await totalCountMethod.Invoke();
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName, totalCount);
+
+            return Ok(response);
+        }
+
 
         protected async Task<ActionResult> GetEntityResponse(Func<Task<TEntity>> serviceMethod, string entityName)
         {

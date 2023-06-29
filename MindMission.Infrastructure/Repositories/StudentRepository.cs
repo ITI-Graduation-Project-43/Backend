@@ -14,7 +14,11 @@ namespace MindMission.Infrastructure.Repositories
         {
             _context = context;
         }
-
+        public async override Task<IQueryable<Student>> GetAllAsync()
+        {
+            var Query = await _context.Students.Where(x => !x.IsDeleted).ToListAsync();
+            return Query.AsQueryable();
+        }
         public async Task<IQueryable<Student>> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)
         {
             var recentStudents = await _context.Students

@@ -28,8 +28,9 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategories([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(
+            return await GetEntitiesResponseWithIncludePagination(
                 _categoryService.GetAllAsync,
+                _categoryService.GetTotalCountAsync,
                 pagination,
                 "Categories",
                 category => category.Parent,
@@ -55,7 +56,7 @@ namespace MindMission.API.Controllers
         [HttpGet("Type/{type}")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesByType(CategoryType type, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _categoryService.GetByTypeAsync(type), pagination, "Categories");
+            return await GetEntitiesResponsePagination(() => _categoryService.GetByTypeAsync(type, pagination.PageNumber, pagination.PageSize), _categoryService.GetTotalCountAsync, pagination, "Categories");
         }
 
         // GET: api/Category/Parent/{parentId}
@@ -63,7 +64,7 @@ namespace MindMission.API.Controllers
         [HttpGet("ParentSubCategories/{parentId}")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesByParentId(int parentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _categoryService.GetByParentIdAsync(parentId), pagination, "Categories");
+            return await GetEntitiesResponsePagination(() => _categoryService.GetByParentIdAsync(parentId, pagination.PageNumber, pagination.PageSize), pagination, "Categories");
         }
 
 

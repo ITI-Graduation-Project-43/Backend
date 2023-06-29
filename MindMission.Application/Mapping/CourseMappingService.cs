@@ -8,9 +8,6 @@ namespace MindMission.Application.Mapping
     public class CourseMappingService : IMappingService<Course, CourseDto>
     {
 
-        public CourseMappingService()
-        {
-        }
 
         public async Task<CourseDto> MapEntityToDto(Course course)
         {

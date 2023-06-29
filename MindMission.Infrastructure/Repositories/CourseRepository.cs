@@ -38,7 +38,25 @@ namespace MindMission.Infrastructure.Repositories
 
             return courses.AsQueryable();
         }
+        public override IQueryable<Course> GetAllAsync(int pageNumber, int pageSize)
+        {
+            var Query = _context.Courses.AsSplitQuery()
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
+                            .ThenInclude(l => l.Attachment)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                            .Where(c => !c.IsDeleted)
+                                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
+            return Query.AsQueryable();
+        }
         public override async Task<Course> GetByIdAsync(int id)
         {
 
@@ -66,7 +84,7 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<decimal> GetAvgRateCourses()
         {
-            return  _context.Courses.Average(e => e.AvgReview);
+            return _context.Courses.Average(e => e.AvgReview);
         }
 
         public async Task<Course> GetByNameAsync(string name)
@@ -355,7 +373,7 @@ namespace MindMission.Infrastructure.Repositories
         {
             DateTime CutoffDate = DateTime.Now.AddDays(-7);
             var category = await _context.Categories.FindAsync(categoryId);
-            if(category.Type == CategoryType.Topic)
+            if (category.Type == CategoryType.Topic)
             {
                 var query = await _context.Courses.AsSplitQuery().Include(c => c.Instructor)
                 .Include(c => c.Category)
@@ -399,7 +417,7 @@ namespace MindMission.Infrastructure.Repositories
                     }
                 }
 
-                
+
             }
             throw new KeyNotFoundException("Feature this week not found");
         }

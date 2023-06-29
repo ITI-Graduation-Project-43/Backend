@@ -21,7 +21,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<AccountDto>>> GetAllAccounts([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(_accountService.GetAllAsync, pagination, "Account");
+            return await GetEntitiesResponseWithIncludePagination(_accountService.GetAllAsync, _accountService.GetTotalCountAsync, pagination, "Account");
         }
     }
 }

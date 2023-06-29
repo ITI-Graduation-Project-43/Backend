@@ -9,8 +9,12 @@ namespace MindMission.Application.Interfaces.Repository.Base
     {
         DbContext Context { get; }
 
+        Task<int> GetTotalCountAsync();
         Task<IQueryable<TClass>> GetAllAsync();
         Task<IEnumerable<TClass>> GetAllAsync(params Expression<Func<TClass, object>>[] IncludeProperties);
+
+        IQueryable<TClass> GetAllAsync(int pageNumber, int pageSize);
+        IQueryable<TClass> GetAllAsync(int pageNumber, int pageSize, params Expression<Func<TClass, object>>[] IncludeProperties);
         Task<TClass> GetByIdAsync(TDataType id);
         Task<TClass> GetByIdAsync(TDataType id, params Expression<Func<TClass, object>>[] IncludeProperties);
 

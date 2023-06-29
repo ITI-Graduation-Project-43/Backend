@@ -15,13 +15,18 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
+        public async override Task<IQueryable<Instructor>> GetAllAsync()
+        {
+            var Query = await _context.Instructors.Where(x => !x.IsDeleted).ToListAsync();
+            return Query.AsQueryable();
+        }
         public async Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber)
         {
             var topInstructors = await _context.Instructors
                                             .AsSplitQuery()
                                             .Include(ins => ins.Courses)
                                             .Where(i => !i.IsDeleted)
-                                           .OrderByDescending(i =>  i.AvgRating)
+                                           .OrderByDescending(i => i.AvgRating)
                                            .Take(topNumber)
                                            .ToListAsync();
             return topInstructors.AsQueryable();

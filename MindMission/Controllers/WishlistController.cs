@@ -27,7 +27,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<WishlistDto>>> GetAllWishlist([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_wishlistService.GetAllAsync, pagination, "Wishlists");
+            return await GetEntitiesResponseWithInclude(_wishlistService.GetAllAsync, pagination, "Wishlists", e => e.Course, e => e.Student);
         }
 
         // GET: api/Wishlist/Student/{StudentId}
@@ -50,7 +50,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{wishlistId}")]
         public async Task<ActionResult<WishlistDto>> GetWishlistById(int wishlistId)
         {
-            return await GetEntityResponse(() => _wishlistService.GetByIdAsync(wishlistId), "Wishlist");
+            return await GetEntityResponse(() => _wishlistService.GetByIdAsync(wishlistId, w => w.Course, w => w.Student), "Wishlist");
         }
 
         #endregion GET

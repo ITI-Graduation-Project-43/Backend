@@ -18,10 +18,29 @@ namespace MindMission.Infrastructure.Repositories.Base
             _context = context;
             _dbSet = _context.Set<TClass>();
         }
-
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _dbSet.CountAsync(x => !x.IsDeleted);
+        }
         public virtual async Task<IQueryable<TClass>> GetAllAsync()
         {
-            var Query = await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
+            var Query = _dbSet.Where(x => !x.IsDeleted);
+            return await Task.FromResult(Query.AsQueryable());
+        }
+
+        public virtual IQueryable<TClass> GetAllAsync(int pageNumber, int pageSize)
+        {
+            var Query = _dbSet.Where(x => !x.IsDeleted)
+                                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+            return Query.AsQueryable();
+        }
+        public virtual IQueryable<TClass> GetAllAsync(int pageNumber, int pageSize, params Expression<Func<TClass, object>>[] IncludeProperties)
+        {
+            IQueryable<TClass> Query = _dbSet.Where(x => !x.IsDeleted)
+                                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+            Query = IncludeProperties.Aggregate(Query, (current, includeProperty) => current.Include(includeProperty));
             return Query.AsQueryable();
         }
 

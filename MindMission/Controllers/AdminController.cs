@@ -27,8 +27,9 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<AdminDto>>> GetAllAdmin([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(
+            return await GetEntitiesResponseWithIncludePagination(
                 _adminService.GetAllAsync,
+                _adminService.GetTotalCountAsync,
                 pagination,
                 "Admins",
                 admin => admin.AdminPermissions

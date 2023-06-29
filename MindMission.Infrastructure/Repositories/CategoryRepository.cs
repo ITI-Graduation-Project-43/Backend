@@ -16,24 +16,26 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IQueryable<Category>> GetByTypeAsync(CategoryType type)
+        public IQueryable<Category> GetByTypeAsync(CategoryType type, int pageNumber, int pageSize)
         {
-            var Query = await _context.Categories
+            var Query = _context.Categories
                         .Include(category => category.Parent)
                         .ThenInclude(parentCategory => parentCategory.Parent)
                         .Where(category => category.Type == type && !category.IsDeleted)
-                        .ToListAsync();
+                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return Query.AsQueryable();
         }
 
-        public async Task<IQueryable<Category>> GetByParentIdAsync(int parentId)
+        public IQueryable<Category> GetByParentIdAsync(int parentId, int pageNumber, int pageSize)
         {
-            var Query = await _context.Categories
+            var Query = _context.Categories
                         .Include(category => category.Parent)
                         .ThenInclude(parentCategory => parentCategory.Parent)
                         .Where(category => category.ParentId == parentId && !category.IsDeleted)
-                        .ToListAsync();
+                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return Query.AsQueryable();
         }
@@ -44,7 +46,7 @@ namespace MindMission.Infrastructure.Repositories
             return await _context.Categories
                 .Where(category => category.Type == 0 && category.Id == parentId && !category.IsDeleted)
                 .FirstOrDefaultAsync()
-                ?? throw new KeyNotFoundException($"No entity with id {parentId} found."); ;
+                ?? throw new KeyNotFoundException($"No entity with id {parentId} found.");
         }
     }
 }
