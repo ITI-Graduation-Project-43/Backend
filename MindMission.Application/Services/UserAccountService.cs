@@ -24,9 +24,9 @@ namespace MindMission.Application.Services
         {
             return await _context.GetUserAccountsAsync(id);
         }
-        public Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string userId)
+        public IQueryable<UserAccount> GetAllByUserIdAsync(string userId, int pageNumber, int pageSize)
         {
-            return _context.GetAllByUserIdAsync(userId);
+            return _context.GetAllByUserIdAsync(userId, pageNumber, pageSize);
         }
         public async Task<IQueryable<UserAccount>> UpdateUserAccount(List<UserAccount> userAccounts)
         {

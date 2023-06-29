@@ -19,9 +19,9 @@ namespace MindMission.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCoupons()
+        public async Task<IActionResult> GetAllCoupons([FromQuery] PaginationDto pagination)
         {
-            return Ok(await _siteCouponService.GetAllAsync());
+            return Ok(_siteCouponService.GetAllAsync(pagination.PageNumber, pagination.PageSize));
         }
 
         [HttpGet("{code}")]

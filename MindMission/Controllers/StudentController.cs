@@ -33,8 +33,9 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IQueryable<StudentDto>>> GetAllStudent([FromQuery] PaginationDto pagination)
         {
 
-            return await GetEntitiesResponseWithInclude(
+            return await GetEntitiesResponseWithIncludePagination(
               _studentService.GetAllAsync,
+              _studentService.GetTotalCountAsync,
               pagination,
               "Students",
               student => student.User,
@@ -56,7 +57,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/students/{recentNumber}")]
         public async Task<ActionResult<IQueryable<StudentDto>>> GetRecentStudents(int recentNumber, int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _studentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), pagination, "Students");
+            return await GetEntitiesResponsePagination(() => _studentService.GetRecentStudentEnrollmentAsync(recentNumber, courseId), _studentService.GetTotalCountAsync, pagination, "Students");
         }
 
         [HttpPost("UploadImage")]
