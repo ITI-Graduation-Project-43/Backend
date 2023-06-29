@@ -52,14 +52,14 @@ namespace MindMission.Application.Services
             return _context.SuccessfulLearners();
         }
 
-        public Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId)
+        public IQueryable<Enrollment> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            return _context.GetAllByCourseIdAsync(courseId);
+            return _context.GetAllByCourseIdAsync(courseId, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string studentId)
+        public IQueryable<Enrollment> GetAllByStudentIdAsync(string studentId, int pageNumber, int pageSize)
         {
-            return _context.GetAllByStudentIdAsync(studentId);
+            return _context.GetAllByStudentIdAsync(studentId, pageNumber, pageSize);
         }
 
         public async Task<EnrollmentDto> GetByStudentAndCourseAsync(string StudentId, int courseId)

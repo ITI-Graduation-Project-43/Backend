@@ -8,6 +8,7 @@ using MindMission.Infrastructure.Repositories.Base;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
@@ -24,34 +25,49 @@ namespace MindMission.Infrastructure.Repositories
         {
             _context = context;
         }
-
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseId(int courseId)
+        public async Task<int> GetTotalCountAsync()
         {
-            var CourseFeedbacks = _context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Course).Where(e => e.CourseId == courseId && !e.IsDeleted);
+            return await _context.CourseFeedbacks.CountAsync(x => !x.IsDeleted);
+        }
+        public IQueryable<CourseFeedback> GetFeedbackByCourseId(int courseId, int pageNumber, int pageSize)
+        {
+            var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).Where(e => e.CourseId == courseId && !e.IsDeleted)
+                                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+
             return CourseFeedbacks.AsQueryable();
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByInstructorId(string instructorId)
+        public IQueryable<CourseFeedback> GetFeedbackByInstructorId(string instructorId, int pageNumber, int pageSize)
         {
-            var CourseFeedbacks = _context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Course).Include(e => e.Instructor).Where(e => e.InstructorId == instructorId && !e.IsDeleted);
+            var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).Include(e => e.Instructor).Where(e => e.InstructorId == instructorId && !e.IsDeleted)
+                                    .Skip((pageNumber - 1) * pageSize)
+                                    .Take(pageSize);
+
             return CourseFeedbacks.AsQueryable();
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseIdAndInstructorId(int courseId, string instructorId)
+        public IQueryable<CourseFeedback> GetFeedbackByCourseIdAndInstructorId(int courseId, string instructorId, int pageNumber, int pageSize)
         {
-            var CourseFeedbacks = _context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Instructor).Include(e => e.Course).Where(e => e.CourseId == courseId && e.InstructorId == instructorId && !e.IsDeleted);
+            var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Instructor).Include(e => e.Course).Where(e => e.CourseId == courseId && e.InstructorId == instructorId && !e.IsDeleted)
+                                  .Skip((pageNumber - 1) * pageSize)
+                                                        .Take(pageSize);
             return CourseFeedbacks.AsQueryable();
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetTopCoursesRating(int numberOfCourses)
+        public IQueryable<CourseFeedback> GetTopCoursesRating(int numberOfCourses, int pageNumber, int pageSize)
         {
-            var CourseFeedbacks = _context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Course).Where(r => !r.IsDeleted).OrderByDescending(e => e.CourseRating).Take(numberOfCourses);
+            var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).Where(r => !r.IsDeleted).OrderByDescending(e => e.CourseRating).Take(numberOfCourses)
+                                  .Skip((pageNumber - 1) * pageSize)
+                                                        .Take(pageSize);
             return CourseFeedbacks.AsQueryable();
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetTopInstructorsRating(int numberOfInstructor)
+        public IQueryable<CourseFeedback> GetTopInstructorsRating(int numberOfInstructor, int pageNumber, int pageSize)
         {
-            var CourseFeedbacks = _context.CourseFeedbacks.Include(e => e.Student).Include(e => e.Instructor).Where(r => !r.IsDeleted).OrderByDescending(e => e.InstructorRating).Take(numberOfInstructor);
+            var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Instructor).Where(r => !r.IsDeleted).OrderByDescending(e => e.InstructorRating).Take(numberOfInstructor)
+                                  .Skip((pageNumber - 1) * pageSize)
+                                                        .Take(pageSize);
             return CourseFeedbacks.AsQueryable();
         }
 

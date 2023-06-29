@@ -15,12 +15,13 @@ namespace MindMission.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId)
+        public IQueryable<Chapter> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var Chapter = await _context.Chapters
+            var Chapter = _context.Chapters
                        .Include(chapter => chapter.Lessons)
                        .Where(chapter => chapter.CourseId == courseId && !chapter.IsDeleted)
-                       .ToListAsync();
+                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return Chapter.AsQueryable();
         }

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MindMission.Application.DTOs.PostDtos;
+﻿using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
@@ -14,32 +13,36 @@ namespace MindMission.Application.Services
         {
             CourseFeedbackRepository = _CourseFeedbackRepository;
         }
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await CourseFeedbackRepository.GetTotalCountAsync();
+        }
         public Task SoftDeleteAsync(int id)
         {
             return CourseFeedbackRepository.SoftDeleteAsync(id);
         }
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseId(int courseId)
+        public IQueryable<CourseFeedback> GetFeedbackByCourseId(int courseId, int pageNumber, int pageSize)
         {
-            return await CourseFeedbackRepository.GetFeedbackByCourseId(courseId);
+            return CourseFeedbackRepository.GetFeedbackByCourseId(courseId, pageNumber, pageSize);
         }
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByInstructorId(string instructorId)
+        public IQueryable<CourseFeedback> GetFeedbackByInstructorId(string instructorId, int pageNumber, int pageSize)
         {
-            return await CourseFeedbackRepository.GetFeedbackByInstructorId(instructorId);
-        }
-
-        public async Task<IQueryable<CourseFeedback>> GetFeedbackByCourseIdAndInstructorId(int courseId, string instructorId)
-        {
-            return await CourseFeedbackRepository.GetFeedbackByCourseIdAndInstructorId(courseId, instructorId);
+            return CourseFeedbackRepository.GetFeedbackByInstructorId(instructorId, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetTopCoursesRating(int numberOfCourses)
+        public IQueryable<CourseFeedback> GetFeedbackByCourseIdAndInstructorId(int courseId, string instructorId, int pageNumber, int pageSize)
         {
-            return await CourseFeedbackRepository.GetTopCoursesRating(numberOfCourses);
+            return CourseFeedbackRepository.GetFeedbackByCourseIdAndInstructorId(courseId, instructorId, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<CourseFeedback>> GetTopInstructorsRating(int numberOfInstructor)
+        public IQueryable<CourseFeedback> GetTopCoursesRating(int numberOfCourses, int pageNumber, int pageSize)
         {
-            return await CourseFeedbackRepository.GetTopInstructorsRating(numberOfInstructor);
+            return CourseFeedbackRepository.GetTopCoursesRating(numberOfCourses, pageNumber, pageSize);
+        }
+
+        public IQueryable<CourseFeedback> GetTopInstructorsRating(int numberOfInstructor, int pageNumber, int pageSize)
+        {
+            return CourseFeedbackRepository.GetTopInstructorsRating(numberOfInstructor, pageNumber, pageSize);
         }
 
         public async Task<CourseFeedback> AddCourseFeedback(CourseFeedback courseFeedback)

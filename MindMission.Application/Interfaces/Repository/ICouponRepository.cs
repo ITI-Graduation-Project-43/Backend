@@ -6,8 +6,8 @@ namespace MindMission.Application.Interfaces.Repository
 {
     public interface ICouponRepository : IRepository<Coupon, int>
     {
-        Task<Coupon> getCouponByCode(string code);
-        Task<IQueryable<Coupon>> getCouponsByCourse(int courseId);
-        Task<Coupon> getCouponByCodeAndCourse(string code, int courseId);
+        Task<Coupon> GetCouponByCode(string code);
+        IQueryable<Coupon> GetCouponsByCourse(int courseId, int pageNumber, int pageSize);
+        Task<Coupon> GetCouponByCodeAndCourse(string code, int courseId);
     }
 }

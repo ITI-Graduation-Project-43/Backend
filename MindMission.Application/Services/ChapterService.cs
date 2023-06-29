@@ -15,9 +15,9 @@ namespace MindMission.Application.Services_Classes
         }
 
 
-        public Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId)
+        public IQueryable<Chapter> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            return _context.GetByCourseIdAsync(courseId);
+            return _context.GetByCourseIdAsync(courseId, pageNumber, pageSize);
         }
 
     }

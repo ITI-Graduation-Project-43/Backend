@@ -30,7 +30,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DiscussionDto>>> GetAllDiscussion([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(_discussionService.GetAllAsync, pagination, "Discussions", d => d.ParentDiscussion, d => d.User);
+            return await GetEntitiesResponsePagination(() => _discussionService.GetAllAsync(pagination.PageNumber, pagination.PageSize), _discussionService.GetTotalCountAsync, pagination, "Discussions");
         }
 
         [HttpGet("{Id}")]
@@ -43,13 +43,13 @@ namespace MindMission.API.Controllers
 
         public async Task<ActionResult<Discussion>> GetDiscussionByParentId(int parentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseEnumerable(() => _discussionService.GetAllDiscussionByParentIdAsync(parentId), pagination, "Discussion");
+            return await GetEntitiesResponsePagination(() => _discussionService.GetAllDiscussionByParentIdAsync(parentId, pagination.PageNumber, pagination.PageSize), _discussionService.GetTotalCountAsync, pagination, "Discussion");
         }
 
         [HttpGet("Lesson/{lessonId}")]
         public async Task<ActionResult<Discussion>> GetDiscussionByLessonId(int lessonId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseEnumerable(() => _discussionService.GetAllDiscussionByLessonIdAsync(lessonId), pagination, "Discussion");
+            return await GetEntitiesResponsePagination(() => _discussionService.GetAllDiscussionByLessonIdAsync(lessonId, pagination.PageNumber, pagination.PageSize), _discussionService.GetTotalCountAsync, pagination, "Discussion");
         }
         #endregion
 

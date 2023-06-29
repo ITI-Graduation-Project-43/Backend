@@ -16,29 +16,29 @@ namespace MindMission.Application.Services_Classes
         }
         #region Get
 
-        public Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId)
+        public IQueryable<Lesson> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            return _context.GetByCourseIdAsync(courseId);
+            return _context.GetByCourseIdAsync(courseId, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Lesson>> GetByChapterIdAsync(int chapterId)
+        public IQueryable<Lesson> GetByChapterIdAsync(int chapterId, int pageNumber, int pageSize)
         {
-            return _context.GetByChapterIdAsync(chapterId);
+            return _context.GetByChapterIdAsync(chapterId, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Lesson>> GetByCourseAndChapterIdAsync(int courseId, int chapterId)
+        public IQueryable<Lesson> GetByCourseAndChapterIdAsync(int courseId, int chapterId, int pageNumber, int pageSize)
         {
-            return _context.GetByCourseAndChapterIdAsync(courseId, chapterId);
+            return _context.GetByCourseAndChapterIdAsync(courseId, chapterId, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Lesson>> GetFreeByCourseIdAsync(int courseId)
+        public IQueryable<Lesson> GetFreeByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            return _context.GetFreeByCourseIdAsync(courseId);
+            return _context.GetFreeByCourseIdAsync(courseId, pageNumber, pageSize);
         }
 
-        public Task<IQueryable<Lesson>> GetByTypeAsync(int courseId, LessonType type)
+        public IQueryable<Lesson> GetByTypeAsync(int courseId, LessonType type, int pageNumber, int pageSize)
         {
-            return _context.GetByTypeAsync(courseId, type);
+            return _context.GetByTypeAsync(courseId, type, pageNumber, pageSize);
         }
 
         public Task<Lesson> GetByLessonIdAsync(int lessonId)

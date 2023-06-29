@@ -1,10 +1,8 @@
 ﻿using MindMission.Application.DTOs;
-using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services.Base;
 using MindMission.Domain.Models;
-using System.Linq.Expressions;
 
 namespace MindMission.Application.Services
 {
@@ -31,37 +29,40 @@ namespace MindMission.Application.Services
 
         public async Task<decimal> GetAvgRateCourses()
         {
-            return  await _context.GetAvgRateCourses();
+            return await _context.GetAvgRateCourses();
         }
 
-        public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
+        public IQueryable<Course> GetAllByCategoryAsync(int categoryId, int pageNumber, int pageSize)
         {
-            return await _context.GetAllByCategoryAsync(categoryId);
+            return _context.GetAllByCategoryAsync(categoryId, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId)
+        public Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId, int pageNumber, int pageSize)
         {
-            return await _context.GetRelatedCoursesAsync(courseId);
+            return _context.GetRelatedCoursesAsync(courseId, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
+        public IQueryable<Course> GetAllByInstructorAsync(string instructorId, int pageNumber, int pageSize)
         {
-            return await _context.GetAllByInstructorAsync(instructorId);
+            return _context.GetAllByInstructorAsync(instructorId, pageNumber, pageSize);
+        }
+        public Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
+        {
+            return _context.GetAllByInstructorAsync(instructorId);
+        }
+        public IQueryable<Course> GetInstructorOtherCourses(string instructorId, int courseId, int pageNumber, int pageSize)
+        {
+            return _context.GetInstructorOtherCourses(instructorId, courseId, pageNumber, pageSize);
+
+        }
+        public IQueryable<Course> GetTopRatedCoursesAsync(int topNumber, int pageNumber, int pageSize)
+        {
+            return _context.GetTopRatedCoursesAsync(topNumber, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId)
+        public IQueryable<Course> GetRecentCoursesAsync(int recentNumber, int pageNumber, int pageSize)
         {
-            return await _context.GetInstructorOtherCourses(instructorId, courseId);
-
-        }
-        public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
-        {
-            return await _context.GetTopRatedCoursesAsync(topNumber);
-        }
-
-        public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
-        {
-            return await _context.GetRecentCoursesAsync(recentNumber);
+            return _context.GetRecentCoursesAsync(recentNumber, pageNumber, pageSize);
         }
 
         public async Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber)
@@ -69,14 +70,14 @@ namespace MindMission.Application.Services
             return await _context.GetCourseByIdWithStudentsAsync(courseId, studentsNumber);
         }
 
-        public async Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber)
+        public Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, int pageNumber, int pageSize)
         {
-            return await _context.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
+            return _context.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber)
+        public IQueryable<StudentCourseDto> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber, int pageNumber, int pageSize)
         {
-            return await _context.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber);
+            return _context.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber, pageNumber, pageSize);
         }
 
         public async Task<Course> GetFeatureThisWeekCourse(int categoryId)
@@ -96,14 +97,14 @@ namespace MindMission.Application.Services
             return await _context.UpdateCourseAsync(id, course);
         }
 
-        public async Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId)
+        public IQueryable<Course> GetApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize)
         {
-            return await _context.GetApprovedCoursesByInstructorAsync(instructorId);
+            return _context.GetApprovedCoursesByInstructorAsync(instructorId, pageNumber, pageSize);
         }
 
-        public async Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId)
+        public IQueryable<Course> GetNonApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize)
         {
-            return await _context.GetNonApprovedCoursesByInstructorAsync(instructorId);
+            return _context.GetNonApprovedCoursesByInstructorAsync(instructorId, pageNumber, pageSize);
         }
 
         public async Task<Course> PutCourseToApprovedAsync(int courseId)
@@ -111,9 +112,9 @@ namespace MindMission.Application.Services
             return await _context.PutCourseToApprovedAsync(courseId);
         }
 
-        public Task<IQueryable<Course>> GetNonApprovedCoursesAsync()
+        public IQueryable<Course> GetNonApprovedCoursesAsync(int pageNumber, int pageSize)
         {
-            return _context.GetNonApprovedCoursesAsync();
+            return _context.GetNonApprovedCoursesAsync(pageNumber, pageSize);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Enums;
@@ -33,57 +32,57 @@ namespace MindMission.Infrastructure.Repositories
         }
 
 
-        public async Task<IQueryable<Lesson>> GetByChapterIdAsync(int chapterId)
+        public IQueryable<Lesson> GetByChapterIdAsync(int chapterId, int pageNumber, int pageSize)
         {
-            var lessons = await _context.Lessons
+            var lessons = _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.ChapterId == chapterId && !lesson.IsDeleted)
-                       .ToListAsync();
+                       .Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return lessons.AsQueryable();
         }
 
-        public async Task<IQueryable<Lesson>> GetByCourseAndChapterIdAsync(int courseId, int chapterId)
+        public IQueryable<Lesson> GetByCourseAndChapterIdAsync(int courseId, int chapterId, int pageNumber, int pageSize)
         {
-            var lessons = await _context.Lessons
+            var lessons = _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.ChapterId == chapterId && !lesson.IsDeleted)
-                       .ToListAsync();
+                       .Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return lessons.AsQueryable();
         }
 
-        public async Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId)
+        public IQueryable<Lesson> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var lessons = await _context.Lessons
+            var lessons = _context.Lessons
                        .Include(lesson => lesson.Chapter)
                        .ThenInclude(lessonChapter => lessonChapter.Course)
                        .Where(lesson => lesson.Chapter.CourseId == courseId && !lesson.IsDeleted)
-                       .ToListAsync();
+                       .Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return lessons.AsQueryable();
         }
 
-        public async Task<IQueryable<Lesson>> GetByTypeAsync(int courseId, LessonType type)
+        public IQueryable<Lesson> GetByTypeAsync(int courseId, LessonType type, int pageNumber, int pageSize)
         {
-            var lessons = await _context.Lessons
-               .Include(lesson => lesson.Chapter)
-               .ThenInclude(chapter => chapter.Course)
-               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.Type == type && !lesson.IsDeleted)
-               .ToListAsync();
+            var lessons = _context.Lessons
+                                   .Include(lesson => lesson.Chapter)
+                                   .ThenInclude(chapter => chapter.Course)
+                                   .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.Type == type && !lesson.IsDeleted)
+                                   .Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return lessons.AsQueryable();
         }
 
-        public async Task<IQueryable<Lesson>> GetFreeByCourseIdAsync(int courseId)
+        public IQueryable<Lesson> GetFreeByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var lessons = await _context.Lessons
-               .Include(lesson => lesson.Chapter)
-               .ThenInclude(chapter => chapter.Course)
-               .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.IsFree && !lesson.IsDeleted)
-               .ToListAsync();
+            var lessons = _context.Lessons
+                                   .Include(lesson => lesson.Chapter)
+                                   .ThenInclude(chapter => chapter.Course)
+                                   .Where(lesson => lesson.Chapter.CourseId == courseId && lesson.IsFree && !lesson.IsDeleted)
+                                   .Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return lessons.AsQueryable();
         }

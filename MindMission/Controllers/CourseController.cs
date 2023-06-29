@@ -48,11 +48,6 @@ namespace MindMission.API.Controllers
         {
             return await GetEntitiesResponseWithIncludePagination(_courseService.GetAllAsync, _courseService.GetTotalCountAsync, pagination, "Courses");
         }
-        [HttpGet("hhh")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses2([FromQuery] PaginationDto pagination)
-        {
-            return await GetEntitiesResponse(_courseService.GetAllAsync, pagination, "Courses");
-        }
 
         [HttpGet("count")]
         public async Task<ActionResult> GetCourseNumber()
@@ -71,7 +66,7 @@ namespace MindMission.API.Controllers
         [HttpGet("nonApprovedCourses")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCourses([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_courseService.GetNonApprovedCoursesAsync, pagination, "courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetNonApprovedCoursesAsync(pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "courses");
         }
 
         // GET: api/Course/category/{categoryId}
@@ -79,7 +74,7 @@ namespace MindMission.API.Controllers
         [HttpGet("category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetAllByCategoryAsync(categoryId), pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetAllByCategoryAsync(categoryId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
         }
 
         // GET: api/Course/{courseId}/related
@@ -87,7 +82,19 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/related")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRelatedCourses(int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetRelatedCoursesAsync(courseId), pagination, "Courses");
+
+            var entities = await _courseService.GetRelatedCoursesAsync(courseId, pagination.PageNumber, pagination.PageSize);
+
+            if (entities == null)
+                return NotFound(NotFoundResponse("Courses"));
+
+            var totalCount = await _courseService.GetTotalCountAsync();
+
+            var entityDTOs = await MapEntitiesToDTOs(entities);
+
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, "Courses", totalCount);
+
+            return Ok(response);
         }
 
         // GET: api/Course/instructor/{instructorId}
@@ -95,7 +102,7 @@ namespace MindMission.API.Controllers
         [HttpGet("instructor/{instructorId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetAllByInstructorAsync(instructorId), pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetAllByInstructorAsync(instructorId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
         }
 
         // GET: api/Course/instructorOtherCourses/{instructorId}
@@ -103,7 +110,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/instructor/{instructorId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorOtherCourses(string instructorId, int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetInstructorOtherCourses(instructorId, courseId), pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetInstructorOtherCourses(instructorId, courseId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
         }
 
         // GET: api/Course/top/{topNumber}
@@ -111,7 +118,7 @@ namespace MindMission.API.Controllers
         [HttpGet("top/{topNumber}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetTopRatedCourses(int topNumber, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetTopRatedCoursesAsync(topNumber), pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetTopRatedCoursesAsync(topNumber, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
         }
 
         // GET: api/Course/recent/{recentNumber}
@@ -119,7 +126,7 @@ namespace MindMission.API.Controllers
         [HttpGet("recent/{recentNumber}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetRecentCourses(int recentNumber, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _courseService.GetRecentCoursesAsync(recentNumber), pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetRecentCoursesAsync(recentNumber, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
         }
 
         // GET: api/Course/{courseId}/related/{studentsNumber}
@@ -128,7 +135,7 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IQueryable<CourseDto>>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
         {
 
-            var courses = await _courseService.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
+            var courses = await _courseService.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber, pagination.PageNumber, pagination.PageSize);
 
             if (courses == null)
             {
@@ -136,7 +143,7 @@ namespace MindMission.API.Controllers
             }
 
             var coursesList = courses.ToList();
-            EntitiesCount = coursesList.Count;
+            var totalCount = await _courseService.GetTotalCountAsync();
 
             if (coursesList.Count == 0)
             {
@@ -145,7 +152,7 @@ namespace MindMission.API.Controllers
             var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
             string message = string.Format(SuccessMessages.RetrievedSuccessfully, "Courses");
-            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesPage, pagination.PageNumber, pagination.PageSize, EntitiesCount);
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesPage, pagination.PageNumber, pagination.PageSize, totalCount);
             return Ok(response);
         }
 
@@ -153,7 +160,8 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/instructor/{instructorId}/{studentsNumber}")]
         public async Task<ActionResult<IQueryable<StudentCourseDto>>> GetInstructorOtherCoursesWithStudentsAsync(string instructorId, int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
         {
-            var courses = await _courseService.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber);
+
+            var courses = _courseService.GetInstructorOtherWithStudentsCourses(instructorId, courseId, studentsNumber, pagination.PageNumber, pagination.PageSize);
 
             if (courses == null)
             {
@@ -161,13 +169,15 @@ namespace MindMission.API.Controllers
             }
 
             var coursesList = courses.ToList();
+            var totalCount = await _courseService.GetTotalCountAsync();
+
             if (coursesList.Count == 0)
             {
                 return NotFound(NotFoundResponse("Courses"));
             }
             var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize);
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize, totalCount);
             return Ok(response);
         }
 
@@ -206,7 +216,17 @@ namespace MindMission.API.Controllers
             return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(categoryId), "Course");
         }
 
+        [HttpGet("instructor/approved/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponsePagination(() => _courseService.GetApprovedCoursesByInstructorAsync(instructorId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
+        }
 
+        [HttpGet("instructor/waiting/{instructorId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
+        {
+            return await GetEntitiesResponsePagination(() => _courseService.GetNonApprovedCoursesByInstructorAsync(instructorId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
+        }
         #endregion Get
 
         #region Add
@@ -568,17 +588,7 @@ namespace MindMission.API.Controllers
 
         #endregion Edit Patch/Put
 
-        [HttpGet("instructor/approved/{instructorId}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
-        {
-            return await GetEntitiesResponse(() => _courseService.GetApprovedCoursesByInstructorAsync(instructorId), pagination, "Courses");
-        }
 
-        [HttpGet("instructor/waiting/{instructorId}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
-        {
-            return await GetEntitiesResponse(() => _courseService.GetNonApprovedCoursesByInstructorAsync(instructorId), pagination, "Courses");
-        }
 
 
         [HttpPut("makeCourseApproved/{courseId}")]

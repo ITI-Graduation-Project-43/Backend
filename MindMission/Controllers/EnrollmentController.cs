@@ -43,7 +43,7 @@ namespace MindMission.API.Controllers
         [HttpGet("Student/{StudentId}")]
         public async Task<ActionResult<IEnumerable<EnrollmentDto>>> GetEnrollmentsByStudentId(string StudentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _EnrollmentService.GetAllByStudentIdAsync(StudentId), pagination, "Enrollments");
+            return await GetEntitiesResponsePagination(() => _EnrollmentService.GetAllByStudentIdAsync(StudentId, pagination.PageNumber, pagination.PageSize), _EnrollmentService.GetTotalCountAsync, pagination, "Enrollments");
         }
 
         // GET: api/Enrollment/Course/{CourseId}
@@ -51,7 +51,7 @@ namespace MindMission.API.Controllers
         [HttpGet("Course/{CourseId}")]
         public async Task<ActionResult<IEnumerable<EnrollmentDto>>> GetEnrollmentsByCourseId(int CourseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _EnrollmentService.GetAllByCourseIdAsync(CourseId), pagination, "Enrollments");
+            return await GetEntitiesResponsePagination(() => _EnrollmentService.GetAllByCourseIdAsync(CourseId, pagination.PageNumber, pagination.PageSize), _EnrollmentService.GetTotalCountAsync, pagination, "Enrollments");
         }
 
         // GET: api/Enrollment/{Id}

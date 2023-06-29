@@ -11,30 +11,30 @@ using System.Threading.Tasks;
 
 namespace MindMission.Application.Services
 {
-	public class CouponService : Service<Coupon, int>, ICouponService
-	{
-		private readonly ICouponRepository _context;
+    public class CouponService : Service<Coupon, int>, ICouponService
+    {
+        private readonly ICouponRepository _context;
 
-		public CouponService(ICouponRepository context):base(context)
-		{
-			_context = context;
-		}
+        public CouponService(ICouponRepository context) : base(context)
+        {
+            _context = context;
+        }
 
-		public async Task<Coupon> getCouponByCode(string code)
-		{
-			return await _context.getCouponByCode(code);
-		}
+        public async Task<Coupon> GetCouponByCode(string code)
+        {
+            return await _context.GetCouponByCode(code);
+        }
 
-		public Task<Coupon> getCouponByCodeAndCourse(string code, int courseId)
-		{
-			return _context.getCouponByCodeAndCourse(code, courseId);
-		}
+        public Task<Coupon> GetCouponByCodeAndCourse(string code, int courseId)
+        {
+            return _context.GetCouponByCodeAndCourse(code, courseId);
+        }
 
-		public async Task<IQueryable<Coupon>> getCouponsByCourse(int courseId)
-		{
-			return await _context.getCouponsByCourse(courseId);
-		}
+        public IQueryable<Coupon> GetCouponsByCourse(int courseId, int pageNumber, int pageSize)
+        {
+            return _context.GetCouponsByCourse(courseId, pageNumber, pageSize);
+        }
 
 
-	}
+    }
 }

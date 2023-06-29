@@ -16,9 +16,9 @@ namespace MindMission.Application.Services
         }
 
 
-        public async Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber)
+        public IQueryable<Instructor> GetTopRatedInstructorsAsync(int topNumber, int pageNumber, int pageSize)
         {
-            return await _context.GetTopRatedInstructorsAsync(topNumber);
+            return _context.GetTopRatedInstructorsAsync(topNumber, pageNumber, pageSize);
         }
 
         public async Task<int> GetTotalTopRatedInstructorsAsync()

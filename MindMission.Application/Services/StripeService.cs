@@ -15,7 +15,7 @@ namespace MindMission.Application.Services
         private readonly CustomerService _customerService;
         private readonly TokenService _tokenService;
         private readonly ICourseRepository _courseRepository;
-		private readonly ISiteCouponRepository _siteCouponRepository;
+        private readonly ISiteCouponRepository _siteCouponRepository;
         private readonly ICouponService _couponService;
 
         //////Injection of Stripe services to be used to implement the two methods
@@ -32,7 +32,7 @@ namespace MindMission.Application.Services
             _customerService = customerService;
             _tokenService = tokenService;
             _courseRepository = courseRepository;
-			_siteCouponRepository = siteCouponRepository;
+            _siteCouponRepository = siteCouponRepository;
             _couponService = couponService;
         }
 
@@ -148,10 +148,10 @@ namespace MindMission.Application.Services
             {
                 if (siteCoupon.Discount != null)
                     discount = siteCoupon.Discount.Value / 100m;
-            } 
+            }
             #endregion
 
-            if(courseCoupons != null)
+            if (courseCoupons != null)
             {
                 foreach (var couponItem in courseCoupons)
                 {
@@ -171,7 +171,7 @@ namespace MindMission.Application.Services
                     int index = coursesIdsWithDiscount.IndexOf(courseId);
                     try
                     {
-                        coupon = await _couponService.getCouponByCodeAndCourse(couponsCodes[index], coursesIdsWithDiscount[index]);
+                        coupon = await _couponService.GetCouponByCodeAndCourse(couponsCodes[index], coursesIdsWithDiscount[index]);
                     }
                     catch (KeyNotFoundException)
                     {
@@ -183,13 +183,13 @@ namespace MindMission.Application.Services
                         if (coupon.Discount != null)
                             coursesDiscount += course.Price * (coupon.Discount.Value / 100m);
                     }
-                } 
+                }
                 #endregion
 
                 totalPrice += (course).Price;
-			}
+            }
 
-			return (long) ((totalPrice - (totalPrice * discount)) - coursesDiscount);
+            return (long)((totalPrice - (totalPrice * discount)) - coursesDiscount);
         }
     }
 }

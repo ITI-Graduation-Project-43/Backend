@@ -7,13 +7,15 @@ namespace MindMission.Application.Repository_Interfaces
     public interface ICourseRepository : IRepository<Course, int>
     {
         Task<Course> GetByNameAsync(string name);
-        Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId);
-        Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId);
+        IQueryable<Course> GetAllByCategoryAsync(int categoryId, int pageNumber, int pageSize);
+        Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId, int pageNumber, int pageSize);
+        IQueryable<Course> GetAllByInstructorAsync(string instructorId, int pageNumber, int pageSize);
         Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId);
-        Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId);
-        Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber);
-        Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber);
-        Task<IQueryable<Course>> GetNonApprovedCoursesAsync();
+
+        IQueryable<Course> GetInstructorOtherCourses(string instructorId, int courseId, int pageNumber, int pageSize);
+        IQueryable<Course> GetTopRatedCoursesAsync(int topNumber, int pageNumber, int pageSize);
+        IQueryable<Course> GetRecentCoursesAsync(int recentNumber, int pageNumber, int pageSize);
+        IQueryable<Course> GetNonApprovedCoursesAsync(int pageNumber, int pageSize);
 
         Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber);
 
@@ -21,8 +23,8 @@ namespace MindMission.Application.Repository_Interfaces
 
         Task<decimal> GetAvgRateCourses();
 
-        Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber);
-        Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber);
+        Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, int pageNumber, int pageSize);
+        IQueryable<StudentCourseDto> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber, int pageNumber, int pageSize);
 
 
         Task<Course> GetFeatureThisWeekCourse(int categoryId);
@@ -33,10 +35,10 @@ namespace MindMission.Application.Repository_Interfaces
 
 
         //to be replaced by filter later
-        Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId);
-        Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId);
+        IQueryable<Course> GetApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize);
+        IQueryable<Course> GetNonApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize);
 
-        Task<Course>PutCourseToApprovedAsync(int courseId);
+        Task<Course> PutCourseToApprovedAsync(int courseId);
 
     }
 }

@@ -14,27 +14,34 @@ namespace MindMission.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async override Task<IQueryable<Discussion>> GetAllAsync()
+
+        public override IQueryable<Discussion> GetAllAsync(int pageNumber, int pageSize)
         {
-            var Query = await _context.Discussions.Where(x => !x.IsDeleted).ToListAsync();
+
+            var Query = _context.Discussions.Include(d => d.ParentDiscussion)
+                                            .Include(d => d.User)
+                                            .Where(x => !x.IsDeleted).Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return Query.AsQueryable();
         }
-        public async Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
+        public IQueryable<Discussion> GetAllDiscussionByLessonIdAsync(int lessonId, int pageNumber, int pageSize)
         {
-            return await _context.Discussions
+            return _context.Discussions
                                     .Include(d => d.ParentDiscussion)
                                     .Include(d => d.User)
                                     .Where(e => e.LessonId == lessonId && !e.IsDeleted)
-                                    .OrderByDescending(d => d.CreatedAt).ToListAsync();
-
+            .OrderByDescending(d => d.CreatedAt).Skip((pageNumber - 1) * pageSize).Take(pageSize);
         }
 
+        public IQueryable<Discussion> GetAllDiscussionByParentIdAsync(int parentId, int pageNumber, int pageSize)
+        {
+
+            return _context.Discussions.Include(d => d.ParentDiscussion).Where(d => d.ParentDiscussionId == parentId && !d.IsDeleted).OrderByDescending(d => d.CreatedAt).Skip((pageNumber - 1) * pageSize).Take(pageSize);
+        }
         public async Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
         {
 
             return await _context.Discussions.Include(d => d.ParentDiscussion).Where(d => d.ParentDiscussionId == parentId && !d.IsDeleted).OrderByDescending(d => d.CreatedAt).ToListAsync();
         }
-
 
     }
 }

@@ -33,12 +33,11 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<InstructorDto>>> GetAllInstructors([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(
-             _instructorService.GetAllAsync,
+            return await GetEntitiesResponsePagination(
+             () => _instructorService.GetAllAsync(pagination.PageNumber, pagination.PageSize),
+             _instructorService.GetTotalCountAsync,
              pagination,
-             "Instructors",
-             instructor => instructor.User,
-             Instructor => Instructor.Courses
+             "Instructors"
          );
         }
 
@@ -52,7 +51,8 @@ namespace MindMission.API.Controllers
         [HttpGet("TopTenInstructors")]
         public async Task<ActionResult<IQueryable<InstructorDto>>> GetTopTenInstructors(int topNumber, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _instructorService.GetTopRatedInstructorsAsync(topNumber), pagination, "Top {topNumber} Instructors");
+
+            return await GetEntitiesResponsePagination(() => _instructorService.GetTopRatedInstructorsAsync(topNumber, pagination.PageNumber, pagination.PageSize), _instructorService.GetTotalCountAsync, pagination, "Top {topNumber} Instructors");
         }
 
         [HttpGet("{instructorId}")]

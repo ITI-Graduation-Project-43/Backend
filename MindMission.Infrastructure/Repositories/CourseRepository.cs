@@ -6,6 +6,7 @@ using MindMission.Domain.Enums;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
+using System.Drawing.Printing;
 using System.Formats.Asn1;
 using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -112,10 +113,10 @@ namespace MindMission.Infrastructure.Repositories
 
         }
 
-        public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
+        public IQueryable<Course> GetAllByCategoryAsync(int categoryId, int pageNumber, int pageSize)
         {
 
-            var courses = await _context.Courses.AsSplitQuery()
+            return _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -129,12 +130,12 @@ namespace MindMission.Infrastructure.Repositories
                          .Where(c => c.CategoryId == categoryId ||
                                      c.Category.ParentId == categoryId ||
                                      c.Category.Parent.ParentId == categoryId && !c.IsDeleted)
-                         .ToListAsync();
+                          .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
-            return courses.AsQueryable();
         }
 
-        public async Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId)
+        public async Task<IQueryable<Course>> GetRelatedCoursesAsync(int courseId, int pageNumber, int pageSize)
         {
             var course = await _context.Courses.FindAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
             int topicId = course.CategoryId;
@@ -161,11 +162,31 @@ namespace MindMission.Infrastructure.Repositories
                 .Where(c => (c.CategoryId == topicId ||
                             c.Category.ParentId == SubcategoryId ||
                             c.Category.Parent.ParentId == categoryId) &&
-                            c.Id != courseId && !c.IsDeleted);
+                            c.Id != courseId && !c.IsDeleted).Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return relatedCourses.AsQueryable();
         }
+        public IQueryable<Course> GetAllByInstructorAsync(string instructorId, int pageNumber, int pageSize)
+        {
+            var courses = _context.Courses
+                            .AsSplitQuery()
+                            .Include(c => c.Instructor)
+                            .Include(c => c.Chapters)
+                            .ThenInclude(c => c.Lessons)
+                            .ThenInclude(l => l.Attachment)
+                            .Include(c => c.CourseRequirements)
+                            .Include(c => c.LearningItems)
+                            .Include(c => c.EnrollmentItems)
+                            .Include(c => c.Category)
+                            .ThenInclude(c => c.Parent)
+                            .ThenInclude(c => c.Parent)
+                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted)
+                         .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
+            return courses.AsQueryable();
+        }
         public async Task<IQueryable<Course>> GetAllByInstructorAsync(string instructorId)
         {
             var courses = await _context.Courses
@@ -186,9 +207,9 @@ namespace MindMission.Infrastructure.Repositories
             return courses.AsQueryable();
         }
 
-        public async Task<IQueryable<Course>> GetInstructorOtherCourses(string instructorId, int courseId)
+        public IQueryable<Course> GetInstructorOtherCourses(string instructorId, int courseId, int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses
+            var courses = _context.Courses
                             .AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
@@ -201,14 +222,15 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
                          .Where(c => c.InstructorId == instructorId && c.Id != courseId && !c.IsDeleted)
-                         .ToListAsync();
+                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }
 
-        public async Task<IQueryable<Course>> GetTopRatedCoursesAsync(int topNumber)
+        public IQueryable<Course> GetTopRatedCoursesAsync(int topNumber, int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses
+            var courses = _context.Courses
                             .AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
@@ -222,15 +244,15 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                             .Where(c => !c.IsDeleted)
                             .OrderByDescending(c => c.AvgReview)
-                            .Take(topNumber)
-                            .ToListAsync();
+                            .Take(topNumber).Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }
 
-        public async Task<IQueryable<Course>> GetRecentCoursesAsync(int recentNumber)
+        public IQueryable<Course> GetRecentCoursesAsync(int recentNumber, int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses.AsSplitQuery()
+            var courses = _context.Courses.AsSplitQuery()
                          .Include(c => c.Instructor)
                          .Include(c => c.Chapters)
                          .ThenInclude(c => c.Lessons)
@@ -239,7 +261,8 @@ namespace MindMission.Infrastructure.Repositories
                          .Where(c => !c.IsDeleted)
                          .OrderByDescending(c => c.CreatedAt)
                          .Take(recentNumber)
-                         .ToListAsync();
+                         .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }
@@ -279,7 +302,7 @@ namespace MindMission.Infrastructure.Repositories
             return course ?? throw new NullReferenceException("Course");
         }
 
-        public async Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber)
+        public async Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, int pageNumber, int pageSize)
         {
             var course = await _context.Courses.FindAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
             int topicId = course.CategoryId;
@@ -291,7 +314,7 @@ namespace MindMission.Infrastructure.Repositories
             int subcategoryId = (int)subcategory.ParentId;
             int categoryId = (int)subcategory.Parent.ParentId;
 
-            var relatedCourses = await _context.Courses.AsSplitQuery()
+            var relatedCourses = _context.Courses.AsSplitQuery()
                                 .Include(c => c.Instructor)
                                 .Include(c => c.Enrollments)
                                     .ThenInclude(e => e.Student)
@@ -325,14 +348,14 @@ namespace MindMission.Infrastructure.Repositories
                                         })
                                         .Take(studentsNumber)
                                         .ToList()
-                                }).ToListAsync();
+                                }).Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return relatedCourses.AsQueryable();
         }
 
-        public async Task<IQueryable<StudentCourseDto>> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber)
+        public IQueryable<StudentCourseDto> GetInstructorOtherWithStudentsCourses(string instructorId, int courseId, int studentsNumber, int pageNumber, int pageSize)
         {
-            var instructorCourses = await _context.Courses.AsSplitQuery()
+            var instructorCourses = _context.Courses.AsSplitQuery()
                     .Include(c => c.Instructor)
                     .Include(c => c.Enrollments)
                         .ThenInclude(e => e.Student)
@@ -364,7 +387,8 @@ namespace MindMission.Infrastructure.Repositories
                             .Take(studentsNumber)
                             .ToList()
                     })
-                    .ToListAsync();
+                    .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return instructorCourses.AsQueryable();
         }
@@ -501,9 +525,9 @@ namespace MindMission.Infrastructure.Repositories
 
 
         //to be replaced by filter later
-        public async Task<IQueryable<Course>> GetApprovedCoursesByInstructorAsync(string instructorId)
+        public IQueryable<Course> GetApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses.AsSplitQuery()
+            var courses = _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -514,14 +538,15 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
                          .Where(c => c.InstructorId == instructorId && !c.IsDeleted && c.Approved)
-                         .ToListAsync();
+                         .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }
 
-        public async Task<IQueryable<Course>> GetNonApprovedCoursesByInstructorAsync(string instructorId)
+        public IQueryable<Course> GetNonApprovedCoursesByInstructorAsync(string instructorId, int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses.AsSplitQuery()
+            var courses = _context.Courses.AsSplitQuery()
                             .Include(c => c.Instructor)
                             .Include(c => c.Chapters)
                             .ThenInclude(c => c.Lessons)
@@ -532,7 +557,8 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
                          .Where(c => c.InstructorId == instructorId && !c.IsDeleted && !c.Approved)
-                         .ToListAsync();
+                         .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }
@@ -550,9 +576,9 @@ namespace MindMission.Infrastructure.Repositories
             return courseTobeApproved;
         }
 
-        public async Task<IQueryable<Course>> GetNonApprovedCoursesAsync()
+        public IQueryable<Course> GetNonApprovedCoursesAsync(int pageNumber, int pageSize)
         {
-            var courses = await _context.Courses.AsSplitQuery()
+            var courses = _context.Courses.AsSplitQuery()
                             .Include(c => c.CourseRequirements)
                             .Include(c => c.LearningItems)
                             .Include(c => c.EnrollmentItems)
@@ -564,7 +590,8 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
                             .Where(c => !c.Approved)
-                            .ToListAsync();
+                            .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
 
             return courses.AsQueryable();
         }

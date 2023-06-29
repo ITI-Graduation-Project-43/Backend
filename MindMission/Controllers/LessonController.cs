@@ -139,31 +139,31 @@ namespace MindMission.API.Controllers
         [HttpGet("byCourse/{courseId}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByCourseIdAsync(int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _lessonService.GetByCourseIdAsync(courseId), pagination, "Lessons");
+            return await GetEntitiesResponsePagination(() => _lessonService.GetByCourseIdAsync(courseId, pagination.PageNumber, pagination.PageSize), _lessonService.GetTotalCountAsync, pagination, "Lessons");
         }
 
         [HttpGet("byChapter/{chapterId}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByChapterIdAsync(int chapterId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _lessonService.GetByChapterIdAsync(chapterId), pagination, "Lessons");
+            return await GetEntitiesResponsePagination(() => _lessonService.GetByChapterIdAsync(chapterId, pagination.PageNumber, pagination.PageSize), _lessonService.GetTotalCountAsync, pagination, "Lessons");
         }
 
         [HttpGet("byCourseAndChapter/{courseId}/{chapterId}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByCourseAndChapterIdAsync(int courseId, int chapterId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _lessonService.GetByCourseAndChapterIdAsync(courseId, chapterId), pagination, "Lessons");
+            return await GetEntitiesResponsePagination(() => _lessonService.GetByCourseAndChapterIdAsync(courseId, chapterId, pagination.PageNumber, pagination.PageSize), _lessonService.GetTotalCountAsync, pagination, "Lessons");
         }
 
         [HttpGet("freeByCourse/{courseId}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetFreeByCourseIdAsync(int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _lessonService.GetFreeByCourseIdAsync(courseId), pagination, "Lessons");
+            return await GetEntitiesResponsePagination(() => _lessonService.GetFreeByCourseIdAsync(courseId, pagination.PageNumber, pagination.PageSize), _lessonService.GetTotalCountAsync, pagination, "Lessons");
         }
 
         [HttpGet("byType/{courseId}/{type}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByTypeAsync(int courseId, LessonType type, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _lessonService.GetByTypeAsync(courseId, type), pagination, "Lessons");
+            return await GetEntitiesResponsePagination(() => _lessonService.GetByTypeAsync(courseId, type, pagination.PageNumber, pagination.PageSize), _lessonService.GetTotalCountAsync, pagination, "Lessons");
         }
 
         #endregion

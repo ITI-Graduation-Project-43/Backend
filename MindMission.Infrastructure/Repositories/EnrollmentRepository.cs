@@ -4,6 +4,7 @@ using MindMission.Application.Repository_Interfaces;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
 using MindMission.Infrastructure.Repositories.Base;
+using System.Drawing.Printing;
 
 namespace MindMission.Infrastructure.Repositories
 {
@@ -18,15 +19,17 @@ namespace MindMission.Infrastructure.Repositories
             _dbSet = _context.Set<Enrollment>();
         }
 
-        public async Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId)
+        public IQueryable<Enrollment> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var Enrollments = await _dbSet.Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
+            var Enrollments =  _dbSet.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.CourseId == courseId && !w.IsDeleted)
+                                    .Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return Enrollments.AsQueryable();
         }
 
-        public async Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string StudentId)
+        public IQueryable<Enrollment> GetAllByStudentIdAsync(string StudentId, int pageNumber, int pageSize)
         {
-            var Enrollments = await _dbSet.Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.StudentId == StudentId && !w.IsDeleted).ToListAsync();
+            var Enrollments = _dbSet.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).ThenInclude(c => c.Instructor).Include(e => e.Course).ThenInclude(c => c.Category).Where(w => w.StudentId == StudentId && !w.IsDeleted)
+                                     .Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return Enrollments.AsQueryable();
         }
 

@@ -6,7 +6,6 @@ using MindMission.Application.Exceptions;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping.Base;
 using MindMission.Application.Service_Interfaces;
-using MindMission.Application.Services;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -32,8 +31,9 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<ChapterDto>>> GetAllChapter([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(
+            return await GetEntitiesResponseWithIncludePagination(
                 _chapterService.GetAllAsync,
+                _chapterService.GetTotalCountAsync,
                 pagination,
                 "Chapters",
                 chapter => chapter.Lessons
@@ -54,7 +54,7 @@ namespace MindMission.API.Controllers
         [HttpGet("byCourse/{courseId}")]
         public async Task<ActionResult<IQueryable<LessonDto>>> GetByCourseIdAsync(int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _chapterService.GetByCourseIdAsync(courseId), pagination, "Chapters");
+            return await GetEntitiesResponsePagination(() => _chapterService.GetByCourseIdAsync(courseId, pagination.PageNumber, pagination.PageSize), _chapterService.GetTotalCountAsync, pagination, "Chapters");
 
         }
         #endregion

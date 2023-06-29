@@ -17,11 +17,7 @@ namespace MindMission.API.Controllers
     {
         private readonly ICourseFeedbackService _courseFeedbackService;
         private readonly CourseFeedbackMappingService _courseFeedbackMappingService;
-        public static int EntitiesCount { get; set; }
-        static CourseFeedbackController()
-        {
-            EntitiesCount = 0;
-        }
+
 
         public CourseFeedbackController(ICourseFeedbackService courseFeedbackService, CourseFeedbackMappingService courseFeedbackMappingService)
         {
@@ -32,15 +28,16 @@ namespace MindMission.API.Controllers
         [HttpGet("Course/{id:int}")]
         public async Task<IActionResult> GetFeedbackByCourseId([FromRoute] int id, [FromQuery] PaginationDto pagination)
         {
-            var result = await _courseFeedbackService.GetFeedbackByCourseId(id);
+            var result = _courseFeedbackService.GetFeedbackByCourseId(id, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            EntitiesCount = courseFeedbacks.Count;
+            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
+
 
             if (courseFeedbacks.Count > 0)
             {
                 var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, EntitiesCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
@@ -50,15 +47,15 @@ namespace MindMission.API.Controllers
         [HttpGet("Instructor/{id:Guid}")]
         public async Task<IActionResult> GetFeedbackByInstructorId([FromRoute] string id, [FromQuery] PaginationDto pagination)
         {
-            var result = await _courseFeedbackService.GetFeedbackByInstructorId(id);
+            var result = _courseFeedbackService.GetFeedbackByInstructorId(id, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            EntitiesCount = courseFeedbacks.Count;
+            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
 
             if (courseFeedbacks.Count > 0)
             {
                 var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, EntitiesCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithInstructorDto>()));
@@ -67,14 +64,14 @@ namespace MindMission.API.Controllers
         [HttpGet("InstructorCourse")]
         public async Task<IActionResult> GetFeedbackByCourseIdAndInstructorId([FromQuery] string InstructorId, [FromQuery] int CourseId, [FromQuery] PaginationDto pagination)
         {
-            var result = await _courseFeedbackService.GetFeedbackByCourseIdAndInstructorId(CourseId, InstructorId);
+            var result = _courseFeedbackService.GetFeedbackByCourseIdAndInstructorId(CourseId, InstructorId, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            EntitiesCount = courseFeedbacks.Count;
+            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
             if (courseFeedbacks.Count > 0)
             {
                 var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, EntitiesCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
@@ -97,14 +94,14 @@ namespace MindMission.API.Controllers
         [HttpGet("Course")]
         public async Task<IActionResult> GetTopCoursesRating([FromQuery] int NumberOfCourses, [FromQuery] PaginationDto pagination)
         {
-            var result = await _courseFeedbackService.GetTopCoursesRating(NumberOfCourses);
+            var result = _courseFeedbackService.GetTopCoursesRating(NumberOfCourses, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            EntitiesCount = courseFeedbacks.Count;
+            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
 
             if (courseFeedbacks.Count > 0)
             {
                 var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfCourses} courses", _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, EntitiesCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfCourses} courses", _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No Courses", new List<CourseFeedbackWithCourseDto>()));
         }
@@ -112,14 +109,14 @@ namespace MindMission.API.Controllers
         [HttpGet("Instructor")]
         public async Task<IActionResult> GetTopInstructorsRating([FromQuery] int NumberOfInstructors, [FromQuery] PaginationDto pagination)
         {
-            var result = await _courseFeedbackService.GetTopInstructorsRating(NumberOfInstructors);
+            var result = _courseFeedbackService.GetTopInstructorsRating(NumberOfInstructors, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            EntitiesCount = courseFeedbacks.Count;
+            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
 
             if (courseFeedbacks.Count > 0)
             {
                 var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfInstructors} instructors", _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, EntitiesCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfInstructors} instructors", _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No instructors", new List<CourseFeedbackWithInstructorDto>()));
         }

@@ -5,7 +5,11 @@ namespace MindMission.Application.Repository_Interfaces
 {
     public interface IDiscussionRepository : IRepository<Discussion, int>
     {
-        Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId);
+
+        IQueryable<Discussion> GetAllDiscussionByLessonIdAsync(int lessonId, int pageNumber, int pageSize);
+
+        IQueryable<Discussion> GetAllDiscussionByParentIdAsync(int parentId, int pageNumber, int pageSize);
         Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId);
+
     }
 }

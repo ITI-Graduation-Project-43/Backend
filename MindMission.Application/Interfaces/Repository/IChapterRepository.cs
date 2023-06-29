@@ -5,7 +5,7 @@ namespace MindMission.Application.Repository_Interfaces
 {
     public interface IChapterRepository : IRepository<Chapter, int>
     {
-        Task<IQueryable<Chapter>> GetByCourseIdAsync(int courseId);
+        IQueryable<Chapter> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize);
 
     }
 }

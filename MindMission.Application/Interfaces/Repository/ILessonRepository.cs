@@ -9,12 +9,12 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<Lesson> GetByLessonIdAsync(int lessonId);
 
-        Task<IQueryable<Lesson>> GetByCourseIdAsync(int courseId);
-        Task<IQueryable<Lesson>> GetByChapterIdAsync(int chapterId);
+        IQueryable<Lesson> GetByCourseIdAsync(int courseId, int pageNumber, int pageSize);
+        IQueryable<Lesson> GetByChapterIdAsync(int chapterId, int pageNumber, int pageSize);
 
-        Task<IQueryable<Lesson>> GetByCourseAndChapterIdAsync(int courseId, int chapterId);
-        Task<IQueryable<Lesson>> GetFreeByCourseIdAsync(int courseId);
-        Task<IQueryable<Lesson>> GetByTypeAsync(int courseId, LessonType type);
+        IQueryable<Lesson> GetByCourseAndChapterIdAsync(int courseId, int chapterId, int pageNumber, int pageSize);
+        IQueryable<Lesson> GetFreeByCourseIdAsync(int courseId, int pageNumber, int pageSize);
+        IQueryable<Lesson> GetByTypeAsync(int courseId, LessonType type, int pageNumber, int pageSize);
 
         Task<Lesson> AddArticleLessonAsync(Lesson lesson);
 
