@@ -16,13 +16,13 @@ namespace MindMission.Application.Services
         }
 
 
-        public Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
+        public Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId)
         {
             return _context.GetAllDiscussionByLessonIdAsync(lessonId);
         }
 
 
-        public async Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
+        public async Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId)
         {
             return await _context.GetAllDiscussionByParentIdAsync(parentId);
         }

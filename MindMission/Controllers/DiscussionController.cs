@@ -43,13 +43,13 @@ namespace MindMission.API.Controllers
 
         public async Task<ActionResult<Discussion>> GetDiscussionByParentId(int parentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _discussionService.GetAllDiscussionByParentIdAsync(parentId), pagination, "Discussion");
+            return await GetEntitiesResponseEnumerable(() => _discussionService.GetAllDiscussionByParentIdAsync(parentId), pagination, "Discussion");
         }
 
         [HttpGet("Lesson/{lessonId}")]
         public async Task<ActionResult<Discussion>> GetDiscussionByLessonId(int lessonId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _discussionService.GetAllDiscussionByLessonIdAsync(lessonId), pagination, "Discussion");
+            return await GetEntitiesResponseEnumerable(() => _discussionService.GetAllDiscussionByLessonIdAsync(lessonId), pagination, "Discussion");
         }
         #endregion
 

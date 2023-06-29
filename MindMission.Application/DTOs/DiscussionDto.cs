@@ -15,6 +15,7 @@ namespace MindMission.Application.DTOs
         public string Username { get; set; } = string.Empty;
         public string ParentContent { get; set; } = string.Empty;
 
+        public List<DiscussionDto> Replies { get; set; } = new List<DiscussionDto>(); // NEW
 
 
         public bool Equals(DiscussionDto? other)

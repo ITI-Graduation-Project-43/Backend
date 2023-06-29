@@ -32,7 +32,7 @@ namespace MindMission.API.Controllers.Base
         {
             var dtoResults = new List<TDto>();
 
-            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Wishlist) || typeof(TEntity) == typeof(Enrollment))
+            if (typeof(TEntity) == typeof(Student) || typeof(TEntity) == typeof(Instructor) || typeof(TEntity) == typeof(Wishlist) || typeof(TEntity) == typeof(Enrollment) || typeof(TEntity) == typeof(Discussion))
             {
                 // Run the mapping sequentially for Student and Instructor types.
                 foreach (var entity in entities)
@@ -178,7 +178,23 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
+        protected async Task<ActionResult> GetEntitiesResponseEnumerable(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
+        {
+            var entities = await serviceMethod.Invoke();
 
+            if (entities == null)
+                return NotFound(NotFoundResponse(entityName));
+
+            EntitiesCount = entities.Count();
+
+            var entitiesPage = entities.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize);
+
+            var entityDTOs = await MapEntitiesToDTOs(entitiesPage);
+
+            var response = RetrieveSuccessResponse(entityDTOs, pagination, entityName, EntitiesCount);
+
+            return Ok(response);
+        }
         protected async Task<ActionResult> GetEntitiesResponseWithInclude(Func<Expression<Func<TEntity, object>>[], Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName, params Expression<Func<TEntity, object>>[] IncludeProperties)
         {
             var entities = await serviceMethod.Invoke(IncludeProperties);

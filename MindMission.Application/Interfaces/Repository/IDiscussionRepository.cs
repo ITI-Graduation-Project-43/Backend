@@ -5,7 +5,7 @@ namespace MindMission.Application.Repository_Interfaces
 {
     public interface IDiscussionRepository : IRepository<Discussion, int>
     {
-        Task<IQueryable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId);
-        Task<IQueryable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId);
+        Task<IEnumerable<Discussion>> GetAllDiscussionByLessonIdAsync(int lessonId);
+        Task<IEnumerable<Discussion>> GetAllDiscussionByParentIdAsync(int parentId);
     }
 }
