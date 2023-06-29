@@ -64,6 +64,11 @@ namespace MindMission.Infrastructure.Repositories
             return await _context.Courses.Where(e => e.Approved == true).CountAsync();
         }
 
+        public async Task<decimal> GetAvgRateCourses()
+        {
+            return  _context.Courses.Average(e => e.AvgReview);
+        }
+
         public async Task<Course> GetByNameAsync(string name)
         {
             if (name == null)

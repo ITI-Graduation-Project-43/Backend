@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.API.Utilities;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
@@ -10,6 +11,7 @@ using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
 using MindMission.Domain.Models;
 using MindMission.Infrastructure.Context;
+using static Sieve.Extensions.MethodInfoExtended;
 
 namespace MindMission.API.Controllers
 {
@@ -42,6 +44,13 @@ namespace MindMission.API.Controllers
              instructor => instructor.User,
              Instructor => Instructor.Courses
          );
+        }
+
+        [HttpGet("totalTopInstructor")]
+        public async Task<ActionResult<IQueryable<InstructorDto>>> GetTotalTopRatedInstructorsAsync([FromQuery] PaginationDto pagination)
+        {
+            var TotalTopRatedInstructorsAsync = await _instructorService.GetTotalTopRatedInstructorsAsync();
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Total TopRated Instructors", new List<int>() { TotalTopRatedInstructorsAsync }));
         }
 
         [HttpGet("TopTenInstructors")]

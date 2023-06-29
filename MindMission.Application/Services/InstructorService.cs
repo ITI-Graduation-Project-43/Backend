@@ -21,5 +21,10 @@ namespace MindMission.Application.Services
             return await _context.GetTopRatedInstructorsAsync(topNumber);
         }
 
+        public async Task<int> GetTotalTopRatedInstructorsAsync()
+        {
+            return await _context.GetTotalTopRatedInstructorsAsync();
+        }
+
     }
 }

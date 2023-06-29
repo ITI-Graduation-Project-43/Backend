@@ -7,5 +7,8 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IQueryable<Instructor>> GetTopRatedInstructorsAsync(int topNumber);
 
+        Task<int> GetTotalTopRatedInstructorsAsync();
+
+
     }
 }

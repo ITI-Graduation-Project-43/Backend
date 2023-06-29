@@ -8,7 +8,7 @@ namespace MindMission.Application.Repository_Interfaces
     {
         Task<IQueryable<Enrollment>> GetAllByStudentIdAsync(string studentId);
         Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId);
-        Task<EnrollmentDto> GetByStudentAndCourseAsync(string StudentId, int courseId);
-
+        Task<Enrollment> GetByStudentAndCourseAsync(string StudentId, int courseId);
+        Task<int> SuccessfulLearners();
     }
 }

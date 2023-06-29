@@ -56,6 +56,13 @@ namespace MindMission.API.Controllers
             return Ok(ResponseObjectFactory.CreateResponseObject(true, "Total Number of Courses", new List<int>() { coursesNumber }));
         }
 
+        [HttpGet("avgRate")]
+        public async Task<ActionResult> GetAvgCourseRate()
+        {
+            var coursesNumber = await _courseService.GetAvgRateCourses();
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "The avarage is of all courses", new List<decimal>() { coursesNumber }));
+        }
+
         [HttpGet("nonApprovedCourses")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetNonApprovedCourses([FromQuery] PaginationDto pagination)
         {

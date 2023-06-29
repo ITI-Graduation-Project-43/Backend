@@ -46,6 +46,12 @@ namespace MindMission.Application.Services
                 throw;
             }
         }
+
+        public Task<int> SuccessfulLearners()
+        {
+            return _context.SuccessfulLearners();
+        }
+
         public Task<IQueryable<Enrollment>> GetAllByCourseIdAsync(int courseId)
         {
             return _context.GetAllByCourseIdAsync(courseId);

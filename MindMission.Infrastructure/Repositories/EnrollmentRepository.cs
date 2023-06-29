@@ -60,5 +60,10 @@ namespace MindMission.Infrastructure.Repositories
                 .FirstOrDefaultAsync() ?? throw new NullReferenceException("Enrollment not found");
 
         }
+
+        public async Task<int> SuccessfulLearners()
+        {
+            return  _dbSet.Count();
+        }
     }
 }

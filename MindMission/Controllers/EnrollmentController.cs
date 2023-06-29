@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
+using MindMission.Application.DTOs.UserDtos;
 using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
@@ -30,6 +31,13 @@ namespace MindMission.API.Controllers
         public async Task<ActionResult<IQueryable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
         {
             return await GetEntitiesResponse(_EnrollmentService.GetAllAsync, pagination, "Enrollments");
+        }
+
+        [HttpGet("SuccessfulLearners")]
+        public async Task<ActionResult> SuccessfulLearners()
+        {
+            var TotalSuccessfulLearners = await _EnrollmentService.SuccessfulLearners();
+            return Ok(ResponseObjectFactory.CreateResponseObject(true, "Registration Succeeded", new List<int>() { TotalSuccessfulLearners}));
         }
 
         // GET: api/Enrollment/Student/{StudentId}
