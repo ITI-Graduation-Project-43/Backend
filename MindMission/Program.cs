@@ -339,18 +339,18 @@ builder.Services.AddSwaggerGen(Swagger =>
     });
 });
 
-/*builder.Services.AddCors(option =>
+builder.Services.AddCors(option =>
 {
     option.AddPolicy(TextCore,
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200");
+            //builder.WithOrigins("http://localhost:4200");
             builder.AllowAnyHeader();
             builder.AllowAnyMethod();
-            //builder.AllowAnyOrigin();
-            builder.AllowCredentials();
+            builder.AllowAnyOrigin();
+            //builder.AllowCredentials();
         });
-});*/
+});
 
 // Stripe Service Registration
 builder.Services.AddScoped<IStripeService, StripeService>();
@@ -375,9 +375,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-/*app.UseCors(TextCore);
-*/
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
+app.UseCors(TextCore);
+
+//app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
 
 app.UseAuthentication();
 
