@@ -8,7 +8,6 @@ using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
-using MindMission.Infrastructure.Repositories;
 
 namespace MindMission.API.Controllers
 {
@@ -81,6 +80,20 @@ namespace MindMission.API.Controllers
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
         }
 
+        [HttpGet("StudentFeedback")]
+        public async Task<IActionResult> GetFeedbackByCourseIdAndStudentId([FromQuery] string studentId, [FromQuery] int courseId, [FromQuery] PaginationDto pagination)
+        {
+            var courseFeedback = await _courseFeedbackService.GetFeedbackByCourseIdAndStudentId(courseId, studentId);
+            if (courseFeedback != null)
+            {
+                string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, new List<AddCourseFeedbackDto> { courseFeedback }));
+            }
+            string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
+        }
+
+
         [HttpGet("Course")]
         public async Task<IActionResult> GetTopCoursesRating([FromQuery] int NumberOfCourses, [FromQuery] PaginationDto pagination)
         {
@@ -135,5 +148,23 @@ namespace MindMission.API.Controllers
         #region Delete
 
         #endregion
+
+
+        // PUT: api/CourseFeedback/{Id}
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateCourseFeedback(int Id, [FromBody] CourseFeedback feedback)
+        {
+            if (ModelState.IsValid)
+            {
+                var Result = await _courseFeedbackService.UpdateCourseFeedback(Id, feedback);
+                if (Result != null)
+                {
+                    return Ok(ResponseObjectFactory.CreateResponseObject(true, "The feedback is updated successfully", new List<CourseFeedback> { Result }));
+                }
+
+                return BadRequest(ResponseObjectFactory.CreateResponseObject(false, Result.ToString(), new List<CourseFeedback> { }));
+            }
+            return BadRequest(ResponseObjectFactory.CreateResponseObject(false, ModelStateErrors.BadRequestError(ModelState), new List<CourseFeedback> { }));
+        }
     }
 }

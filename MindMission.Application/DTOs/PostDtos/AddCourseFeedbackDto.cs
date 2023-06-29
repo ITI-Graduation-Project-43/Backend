@@ -5,6 +5,7 @@ namespace MindMission.Application.DTOs.PostDtos
 {
     public class AddCourseFeedbackDto
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Required*")]
         public int CourseId { get; set; }
         [Required(ErrorMessage = "Required*")]

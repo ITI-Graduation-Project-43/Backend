@@ -12,8 +12,7 @@ namespace MindMission.Application.DTOs
         public int Upvotes { get; set; }
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;
 
-        public string username { get; set; } = string.Empty;
-
+        public string Username { get; set; } = string.Empty;
         public string ParentContent { get; set; } = string.Empty;
 
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindMission.Infrastructure.Context;
 
@@ -11,9 +12,10 @@ using MindMission.Infrastructure.Context;
 namespace MindMission.API.Migrations
 {
     [DbContext(typeof(MindMissionDbContext))]
-    partial class MindMissionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230628211705_uniqeuCourseStudentFeedback")]
+    partial class uniqeuCourseStudentFeedback
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -660,9 +662,6 @@ namespace MindMission.API.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("InstructorId");
-
-                    b.HasIndex("StudentId", "CourseId")
-                        .IsUnique();
 
                     b.HasIndex(new[] { "StudentId", "CourseId" }, "idx_coursefeedbacks_student_course");
 

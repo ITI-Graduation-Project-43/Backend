@@ -279,6 +279,7 @@ namespace MindMission.Infrastructure.Repositories
                                     CourseId = c.Id,
                                     Price = c.Price,
                                     CourseTitle = c.Title,
+                                    CourseDescription = c.ShortDescription,
                                     CourseImageUrl = c.ImageUrl,
                                     CourseAvgReview = c.AvgReview,
                                     CourseNoOfStudents = c.NoOfStudents,
@@ -287,7 +288,7 @@ namespace MindMission.Infrastructure.Repositories
                                     InstructorId = c.Instructor.Id,
                                     InstructorFirstName = c.Instructor.FirstName,
                                     InstructorLastName = c.Instructor.LastName,
-                                    InstructorProfilePicture = c.Instructor.ProfilePicture,
+                                    InstructorProfilePicture = c.Instructor.ProfilePicture ?? " ",
                                     Student = c.Enrollments
                                         .Where(e => e.Student.ProfilePicture != null && !e.IsDeleted)
                                         .Select(e => new CustomStudentDto
@@ -316,6 +317,7 @@ namespace MindMission.Infrastructure.Repositories
                         CourseId = c.Id,
                         Price = c.Price,
                         CourseTitle = c.Title,
+                        CourseDescription = c.ShortDescription,
                         CourseImageUrl = c.ImageUrl,
                         CourseAvgReview = c.AvgReview,
                         CourseNoOfStudents = c.NoOfStudents,
@@ -346,7 +348,7 @@ namespace MindMission.Infrastructure.Repositories
         {
             DateTime CutoffDate = DateTime.Now.AddDays(-7);
 
-            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate && !en.IsDeleted)).Where(c=>c.CategoryId == categoryId)
+            return await _context.Courses.Include(c => c.Instructor).Include(c => c.Enrollments.Where(en => en.EnrollmentDate >= CutoffDate && !en.IsDeleted)).Where(c => c.CategoryId == categoryId)
                 .OrderByDescending(c => c.Enrollments.Count())
                 .FirstOrDefaultAsync() ?? throw new Exception($"Feature This Week Course not found.");
         }

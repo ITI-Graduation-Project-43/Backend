@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MindMission.API.Controllers.Base;
 using MindMission.Application.DTOs;
 using MindMission.Application.Mapping;
+using MindMission.Application.Responses;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Domain.Models;
+using MindMission.Infrastructure.SignalR;
 
 namespace MindMission.API.Controllers
 {
@@ -13,17 +16,21 @@ namespace MindMission.API.Controllers
     {
         private readonly IDiscussionService _discussionService;
         private readonly DiscussionMappingService _discussionMappingService;
-        public DiscussionController(IDiscussionService discussionService, DiscussionMappingService discussionMappingService) : base(discussionMappingService)
+        private readonly IHubContext<DiscussionHub> _discussionHubContext;
+
+        public DiscussionController(IDiscussionService discussionService, DiscussionMappingService discussionMappingService, IHubContext<DiscussionHub> discussionHubContext) : base(discussionMappingService)
         {
             _discussionService = discussionService;
             _discussionMappingService = discussionMappingService;
+            _discussionHubContext = discussionHubContext;
+
         }
 
         #region GET
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DiscussionDto>>> GetAllDiscussion([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(_discussionService.GetAllAsync, pagination, "Discussions", d => d.ParentDiscussion);
+            return await GetEntitiesResponseWithInclude(_discussionService.GetAllAsync, pagination, "Discussions", d => d.ParentDiscussion, d => d.User);
         }
 
         [HttpGet("{Id}")]
@@ -69,10 +76,21 @@ namespace MindMission.API.Controllers
         #endregion
 
         #region Post
+
         [HttpPost]
         public async Task<ActionResult> AddDiscussion([FromBody] DiscussionDto discussionDTO)
         {
-            return await AddEntityResponse(_discussionService.AddAsync, discussionDTO, "Discussion", nameof(GetDiscussionById));
+            var result = await AddEntityResponse(_discussionService.AddAsync, discussionDTO, "Discussion", nameof(GetDiscussionById));
+
+            if (result is CreatedAtActionResult)
+            {
+                var responseObject = (ResponseObject<DiscussionDto>)((CreatedAtActionResult)result).Value;
+                var createdDto = responseObject.Items.First();
+
+                await _discussionHubContext.Clients.All.SendAsync("ReceiveComment", createdDto);
+            }
+
+            return result;
         }
         #endregion
 

@@ -38,7 +38,8 @@ namespace MindMission.Application.Mapping
             }
             if (entity.User != null)
             {
-                discussionDTO.username = entity.User.UserName;
+                discussionDTO.Username = entity.User.Email;
+
             }
 
             return discussionDTO;

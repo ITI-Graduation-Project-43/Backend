@@ -123,10 +123,6 @@ namespace MindMission.API.Controllers
                 return NotFound(NotFoundResponse("Courses"));
             }
 
-
-
-
-
             var coursesList = courses.ToList();
             EntitiesCount = coursesList.Count;
 
@@ -574,7 +570,7 @@ namespace MindMission.API.Controllers
 
 
         [HttpPut("makeCourseApproved/{courseId}")]
-        public async Task<ActionResult<Course>> makeCourseApproved(int courseId)
+        public async Task<ActionResult<Course>> MakeCourseApproved(int courseId)
         {
             var course = await _courseService.PutCourseToApprovedAsync(courseId);
             return Ok();

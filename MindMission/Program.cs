@@ -40,6 +40,7 @@ using MindMission.Application.Interfaces.Azure_services;
 using MindMission.Application.Services.Azure_services;
 using MindMission.Application.DTOs.CourseChapters;
 using MindMission.Application.DTOs.AttachmentDtos;
+using MindMission.Infrastructure.SignalR;
 
 string TextCore = "Messi";
 var builder = WebApplication.CreateBuilder(args);
@@ -52,7 +53,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers().AddNewtonsoftJson();
-
+builder.Services.AddSignalR();
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 builder.Services.AddDbContext<MindMissionDbContext>(options =>
@@ -338,16 +339,18 @@ builder.Services.AddSwaggerGen(Swagger =>
     });
 });
 
-builder.Services.AddCors(option =>
+/*builder.Services.AddCors(option =>
 {
     option.AddPolicy(TextCore,
         builder =>
         {
+            builder.WithOrigins("http://localhost:4200");
             builder.AllowAnyHeader();
             builder.AllowAnyMethod();
-            builder.AllowAnyOrigin();
+            //builder.AllowAnyOrigin();
+            builder.AllowCredentials();
         });
-});
+});*/
 
 // Stripe Service Registration
 builder.Services.AddScoped<IStripeService, StripeService>();
@@ -372,14 +375,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(TextCore);
+/*app.UseCors(TextCore);
+*/
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
+
+app.MapHub<DiscussionHub>("/discussionHub");
 
 app.Run();

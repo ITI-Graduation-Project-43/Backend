@@ -19,8 +19,9 @@ namespace MindMission.Application.DTOs
         public string StudentId { get; set; } = string.Empty;
         public string StudentName { get; set; } = string.Empty;
 
-		public decimal? CourseAvgReview { get; set; }
-		public string CategoryName { get; set; } = string.Empty;
+        public decimal? CourseAvgReview { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
+        public string InstructorId { get; set; } = string.Empty;
         public string InstructorName { get; set; } = string.Empty;
         public string? InstructorProfilePicture { get; set; }
         public int CourseNoOfEnrollment { get; set; }
