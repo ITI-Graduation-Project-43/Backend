@@ -13,6 +13,7 @@ using MindMission.Domain.Models;
 using MindMission.Application.Exceptions;
 using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MindMission.API.Controllers
 {
@@ -121,6 +122,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/related/{studentsNumber}")]
         public async Task<ActionResult<IQueryable<CourseDto>>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, [FromQuery] PaginationDto pagination)
         {
+
             var courses = await _courseService.GetRelatedCoursesWithStudentsAsync(courseId, studentsNumber);
 
             if (courses == null)
@@ -128,15 +130,17 @@ namespace MindMission.API.Controllers
                 return NotFound(NotFoundResponse("Courses"));
             }
 
-
             var coursesList = courses.ToList();
+            EntitiesCount = coursesList.Count;
+
             if (coursesList.Count == 0)
             {
                 return NotFound(NotFoundResponse("Courses"));
             }
             var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize);
+            string message = string.Format(SuccessMessages.RetrievedSuccessfully, "Courses");
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesPage, pagination.PageNumber, pagination.PageSize, EntitiesCount);
             return Ok(response);
         }
 
@@ -191,10 +195,10 @@ namespace MindMission.API.Controllers
         }
 
         // GET: api/Course/featureThisWeek
-        [HttpGet("featureThisWeek")]
-        public async Task<ActionResult<CourseDto>> GetFeatureThisWeekCourse()
+        [HttpGet("featureThisWeek/{categoryId}")]
+        public async Task<ActionResult<CourseDto>> GetFeatureThisWeekCourse(int categoryId)
         {
-            return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(), "Course");
+            return await GetEntityResponse(() => _courseService.GetFeatureThisWeekCourse(categoryId), "Course");
         }
 
 
@@ -573,7 +577,7 @@ namespace MindMission.API.Controllers
 
 
         [HttpPut("makeCourseApproved/{courseId}")]
-        public async Task<ActionResult<Course>> makeCourseApproved(int courseId)
+        public async Task<ActionResult<Course>> MakeCourseApproved(int courseId)
         {
             var course = await _courseService.PutCourseToApprovedAsync(courseId);
             return Ok();

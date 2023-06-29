@@ -197,6 +197,8 @@ namespace MindMission.Infrastructure.Context
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__CourseFee__Stude__4E53A1AA");
+                entity.HasIndex(e => new { e.StudentId, e.CourseId })
+                       .IsUnique();
             });
 
             builder.Entity<Discussion>(entity =>

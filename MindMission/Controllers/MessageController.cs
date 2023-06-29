@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Identity.Client;
+using Microsoft.VisualBasic;
 using MindMission.API.Controllers.Base;
 using MindMission.API.EmailSettings;
 using MindMission.Application.DTOs;
+using MindMission.Application.Factories;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Application.Mapping;
 using MindMission.Application.Mapping.Base;
@@ -43,13 +46,13 @@ namespace MindMission.API.Controllers
             return await AddEntityResponse(_messageService.AddAsync, messageDTO, "Message", nameof(GetMessageById));
         }
 
-        [HttpPost("replay/{id:int}")]
+        [HttpPost("reply/{id:int}")]
         public async Task<ActionResult> Replay(int id, MailData mailData)
         {
             if (MailService.SendMail(mailData))
             {
-                //modify in IsReplayed column to be true
-                return Ok("Send");
+               await _messageService.messageReplyed(id);
+                return Ok(ResponseObjectFactory.CreateResponseObject(true,"Email has been sent",new List<bool> { true},0));
             }
             return BadRequest();
 

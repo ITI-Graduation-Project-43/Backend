@@ -1,4 +1,5 @@
-﻿using MindMission.Application.Interfaces.Repository.Base;
+﻿using MindMission.Application.DTOs;
+using MindMission.Application.Interfaces.Repository.Base;
 using MindMission.Application.Repository_Interfaces;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services.Base;
@@ -61,7 +62,7 @@ namespace MindMission.Application.Services
             return _context.GetAllByStudentIdAsync(studentId);
         }
 
-        public async Task<Enrollment> GetByStudentAndCourseAsync(string StudentId, int courseId)
+        public async Task<EnrollmentDto> GetByStudentAndCourseAsync(string StudentId, int courseId)
         {
             return await _context.GetByStudentAndCourseAsync(StudentId, courseId);
         }

@@ -6,6 +6,7 @@ using MindMission.Application.Factories;
 using MindMission.Application.Mapping;
 using MindMission.Application.Service_Interfaces;
 using MindMission.Application.Services;
+using MindMission.Domain.Constants;
 using MindMission.Domain.Models;
 
 namespace MindMission.API.Controllers
@@ -65,7 +66,18 @@ namespace MindMission.API.Controllers
         [HttpGet("Student/{StudentId}/Course/{CourseId}")]
         public async Task<ActionResult<EnrollmentDto>> GetEnrollmentsByStudentAndCourse(string StudentId, int CourseId)
         {
-            return await GetEntityResponse(() => _EnrollmentService.GetByStudentAndCourseAsync(StudentId, CourseId), "Enrollments");
+
+            var enrollment = await _EnrollmentService.GetByStudentAndCourseAsync(StudentId, CourseId);
+
+            if (enrollment == null)
+            {
+                return NotFound(NotFoundResponse("Enrollments"));
+            }
+
+
+            string message = string.Format(SuccessMessages.RetrievedSuccessfully, "Enrollments");
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, new List<EnrollmentDto> { enrollment });
+            return Ok(response);
         }
 
         #endregion GET
@@ -82,7 +94,6 @@ namespace MindMission.API.Controllers
             {
                 EnrollmentId = addedEnrollment.Id
             });
-            // return await AddEntityResponse(_EnrollmentService.AddAsync, EnrollmentDTO, "Enrollment", nameof(GetEnrollmentById));
         }
 
         #endregion Add
