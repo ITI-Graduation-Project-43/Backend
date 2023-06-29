@@ -59,6 +59,41 @@ namespace MindMission.API.Controllers
             var response = (ResponseObjectFactory
                     .CreateResponseObject(true, "coupon added successfully.", new List<SiteCoupon> { coupon }, 1, 1, 1));
             return CreatedAtAction(nameof(GetSiteCouponByCode), new { code = siteCoupon.Code }, response);
-        }   
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditSiteCoupon(SiteCoupon siteCoupon)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ResponseObjectFactory
+                    .CreateResponseObject(false, "The provided data is not valid.", new List<SiteCoupon>(), 1, 1, 1));
+            }
+
+            var coupon = await _siteCouponService.UpdateAsync(siteCoupon);
+
+            if(coupon is null)
+                return BadRequest(ResponseObjectFactory
+                    .CreateResponseObject(false, "coupon not found.", new List<SiteCoupon>(), 1, 1, 1));
+
+            var response = (ResponseObjectFactory
+                    .CreateResponseObject(true, "coupon added successfully.", new List<SiteCoupon> { coupon }, 1, 1, 1));
+            return CreatedAtAction(nameof(GetSiteCouponByCode), new { code = siteCoupon.Code }, response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCoupon(int id)
+        {
+            var coupon = await _siteCouponService.GetByIdAsync(id);
+
+            if (coupon is null)
+                return BadRequest(ResponseObjectFactory
+                    .CreateResponseObject(false, "coupon not found.", new List<SiteCoupon>(), 1, 1, 1));
+
+            await _siteCouponService.DeleteAsync(id);
+            return Ok(ResponseObjectFactory
+                    .CreateResponseObject(true, "coupon deleted successfully.", new List<SiteCoupon>(), 1, 1, 1));
+        }
+
     }
 }
