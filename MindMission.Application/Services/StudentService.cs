@@ -18,7 +18,7 @@ namespace MindMission.Application.Services
 
 
 
-        public Task<IQueryable<Student>> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)
+        public IQueryable<Student> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)
         {
             return _context.GetRecentStudentEnrollmentAsync(recentNumber, courseId);
         }

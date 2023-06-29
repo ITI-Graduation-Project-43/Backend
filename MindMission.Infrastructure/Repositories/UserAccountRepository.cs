@@ -26,10 +26,12 @@ namespace MindMission.Infrastructure.Repositories
             return userAccounts.AsQueryable();
         }
 
-        public async Task<IQueryable<UserAccount>> GetAllByUserIdAsync(string UserId)
+        public IQueryable<UserAccount> GetAllByUserIdAsync(string UserId, int pageNumber, int pageSize)
         {
-            var userAccounts = _dbSet.AsSplitQuery().Include(i => i.Account).Where(w => w.UserId == UserId && !w.IsDeleted);
-            return userAccounts.AsQueryable();
+            var userAccounts = _dbSet.AsSplitQuery().Include(i => i.Account).Where(w => w.UserId == UserId && !w.IsDeleted)
+                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+            return userAccounts;
         }
         
         public async Task<IQueryable<UserAccount>> GetUserAccountByUserIdAndAccountId(string userId)

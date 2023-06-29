@@ -5,7 +5,7 @@ namespace MindMission.Application.Interfaces.Repository
 {
     public interface IStudentRepository : IRepository<Student, string>
     {
-        Task<IQueryable<Student>> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId);
+        IQueryable<Student> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId);
 
     }
 }

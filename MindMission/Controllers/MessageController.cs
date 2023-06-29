@@ -32,7 +32,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DiscussionDto>>> GetAllMessages([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(_messageService.GetAllAsync, pagination, "Messages");
+            return await GetEntitiesResponseWithIncludePagination(_messageService.GetAllAsync, _messageService.GetTotalCountAsync, pagination, "Messages");
         }
         [HttpGet("{Id}")]
         public async Task<ActionResult<DiscussionDto>> GetMessageById(int Id)

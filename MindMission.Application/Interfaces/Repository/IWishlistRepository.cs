@@ -5,8 +5,8 @@ namespace MindMission.Application.Repository_Interfaces
 {
     public interface IWishlistRepository : IRepository<Wishlist, int>
     {
-        Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId);
-        Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId);
+        IQueryable<Wishlist> GetAllByStudentIdAsync(string studentId, int pageNumber, int pageSize);
+        IQueryable<Wishlist> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize);
         Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId);
 
     }

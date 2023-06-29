@@ -23,27 +23,27 @@ namespace MindMission.Application.Services
             return await _repository.Create(studentId, courseId);
         }
 
-        public async Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId)
+        public IQueryable<TimeTracking> GetByCourseId(int CourseId, int pageNumber, int pageSize)
         {
-            return await _repository.GetByCourseId(CourseId);
+            return  _repository.GetByCourseId(CourseId, pageNumber, pageSize);
         }
 
-        public async Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId)
+        public IQueryable<TimeTracking> GetByStudentId(string StudentId, int pageNumber, int pageSize)
         {
-            return await _repository.GetByStudentId(StudentId);
+            return _repository.GetByStudentId(StudentId, pageNumber, pageSize);
         }
 
         public async Task<TimeTracking> Update(string studentId, int courseId)
         {
-            return await _repository.Update(studentId, courseId);
+            return  await _repository.Update(studentId, courseId);
         }
-        public async Task<List<Student>> GetLastfourStudentIds(int courseId)
+        public  IQueryable<Student> GetLastfourStudentIds(int courseId)
         {
-            return await _repository.GetLastfourStudentIds(courseId);
+            return  _repository.GetLastfourStudentIds(courseId);
         }
-        public async Task<object> GetCourseVisitCount(int courseId)
+        public  object GetCourseVisitCount(int courseId, int pageNumber, int pageSize)
         {
-            var courseVisits = await _repository.GetByCourseId(courseId);
+            var courseVisits =  _repository.GetByCourseId(courseId, pageNumber, pageSize);
             var hourlyCounts = Enumerable.Range(0, 24)
             .Select(hour => new { Hour = hour, Count = courseVisits.Count(log => log.StartTime.Value.Hour == hour) })
             .ToArray();
@@ -63,12 +63,12 @@ namespace MindMission.Application.Services
             return result;
         }
         
-        public async Task<long> GetTotalHours (string instructorId)
+        public async Task<long> GetTotalHours (string instructorId, int pageNumber, int pageSize)
         {
             long totalHourSpent = 0;
             var totalCourses = await _courseRepository.GetAllByInstructorAsync(instructorId);
             var courseIds = totalCourses.Select(course => course.Id).ToList();
-            var timeTracks = await _repository.GetByCourseIds(courseIds);
+            var timeTracks =  _repository.GetByCourseIds(courseIds,pageNumber,pageSize);
 
             foreach (var course in totalCourses)
             {
@@ -87,9 +87,9 @@ namespace MindMission.Application.Services
                 return totalHourSpent;
         }
 
-        public async Task<IEnumerable<TimeTracking>> GetByCourseIds(List<int> courseIds)
+        public IQueryable<TimeTracking> GetByCourseIds(List<int> courseIds, int pageNumber, int pageSize)
         {
-            return await _repository.GetByCourseIds(courseIds);
+            return  _repository.GetByCourseIds(courseIds, pageNumber, pageSize);
         }
     }
 }
