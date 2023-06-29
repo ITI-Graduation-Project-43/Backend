@@ -19,6 +19,6 @@ namespace MindMission.Domain.Models
         [Required]
         public string Message { get; set; }
         public bool IsDeleted { get; set; } = false;
-        public bool IsReplyed { get; set; } = false;
+        public bool IsReplied { get; set; } = false;
     }
 }
