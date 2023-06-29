@@ -34,5 +34,10 @@ namespace MindMission.Infrastructure.Repositories
             return await _dbSet.Where(w => w.StudentId == StudentId && w.CourseId == CourseId && !w.IsDeleted).FirstOrDefaultAsync()
                 ?? throw new KeyNotFoundException($"There is no enrollment with courseId {CourseId} and studentId {StudentId}");
         }
+
+        public async Task<int> SuccessfulLearners()
+        {
+            return  _dbSet.Count();
+        }
     }
 }

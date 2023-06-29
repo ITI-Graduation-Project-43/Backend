@@ -29,6 +29,11 @@ namespace MindMission.Application.Services
             return await _context.GetByNameAsync(name);
         }
 
+        public async Task<decimal> GetAvgRateCourses()
+        {
+            return  await _context.GetAvgRateCourses();
+        }
+
         public async Task<IQueryable<Course>> GetAllByCategoryAsync(int categoryId)
         {
             return await _context.GetAllByCategoryAsync(categoryId);
