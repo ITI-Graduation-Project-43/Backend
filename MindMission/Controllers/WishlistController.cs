@@ -27,7 +27,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<WishlistDto>>> GetAllWishlist([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithInclude(_wishlistService.GetAllAsync, pagination, "Wishlists", e => e.Course, e => e.Student);
+            return await GetEntitiesResponseWithIncludePagination(_wishlistService.GetAllAsync, _wishlistService.GetTotalCountAsync, pagination, "Wishlists", e => e.Course, e => e.Student);
         }
 
         // GET: api/Wishlist/Student/{StudentId}
@@ -35,7 +35,7 @@ namespace MindMission.API.Controllers
         [HttpGet("Student/{StudentId}")]
         public async Task<ActionResult<IEnumerable<WishlistDto>>> GetWishlistsByStudentId(string StudentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _wishlistService.GetAllByStudentIdAsync(StudentId), pagination, "Wishlists");
+            return await GetEntitiesResponsePagination(() => _wishlistService.GetAllByStudentIdAsync(StudentId, pagination.PageNumber, pagination.PageSize), _wishlistService.GetTotalCountAsync, pagination, "Wishlists");
         }
 
         // GET: api/Wishlist/Course/{CourseId}
@@ -43,7 +43,7 @@ namespace MindMission.API.Controllers
         [HttpGet("Course/{CourseId}")]
         public async Task<ActionResult<IEnumerable<WishlistDto>>> GetWishlistsByCourseId(int CourseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _wishlistService.GetAllByCourseIdAsync(CourseId), pagination, "Wishlists");
+            return await GetEntitiesResponsePagination(() => _wishlistService.GetAllByCourseIdAsync(CourseId, pagination.PageNumber, pagination.PageSize), _wishlistService.GetTotalCountAsync, pagination, "Wishlists");
         }
 
         // GET: api/Wishlist/{wishlistId}

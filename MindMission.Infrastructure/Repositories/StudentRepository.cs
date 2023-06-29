@@ -19,14 +19,13 @@ namespace MindMission.Infrastructure.Repositories
             var Query = await _context.Students.Where(x => !x.IsDeleted).ToListAsync();
             return Query.AsQueryable();
         }
-        public async Task<IQueryable<Student>> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)
+        public IQueryable<Student> GetRecentStudentEnrollmentAsync(int recentNumber, int courseId)
         {
-            var recentStudents = await _context.Students
+            var recentStudents = _context.Students
                                        .Include(std => std.Enrollments)
                                        .Where(std => std.Enrollments.Any(enrollment => enrollment.CourseId == courseId) && std.ProfilePicture != null && !std.IsDeleted)
                                        .OrderByDescending(c => c.CreatedAt)
-                                       .Take(recentNumber)
-                                       .ToListAsync();
+                                       .Take(recentNumber);
             return recentStudents.AsQueryable();
         }
 

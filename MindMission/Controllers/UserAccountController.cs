@@ -39,7 +39,7 @@ namespace MindMission.API.Controllers
         [HttpGet("UserAccount/{UserId}")]
         public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetAccountsByUserId(string UserId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(() => _context.GetAllByUserIdAsync(UserId), pagination, "UserAccounts");          
+            return await GetEntitiesResponsePagination(() => _context.GetAllByUserIdAsync(UserId, pagination.PageNumber, pagination.PageSize), _context.GetTotalCountAsync, pagination, "UserAccounts");          
         }
 
         [HttpPatch("Accounts")]

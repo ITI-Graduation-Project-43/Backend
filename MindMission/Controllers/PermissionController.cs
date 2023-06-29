@@ -25,7 +25,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<PermissionDto>>> GetAllPermissions([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponse(_permissionService.GetAllAsync, pagination, "Permission");
+            return await GetEntitiesResponsePagination(()=>_permissionService.GetAllAsync(pagination.PageNumber, pagination.PageSize), _permissionService.GetTotalCountAsync, pagination, "Permission");
         }
 
         [HttpGet("{id}")]

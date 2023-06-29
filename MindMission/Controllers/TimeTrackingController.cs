@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MindMission.Application.DTOs;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
 
@@ -17,34 +18,34 @@ namespace MindMission.API.Controllers
 
         #region Get
         [HttpGet ("student/{studentId}")]
-        public async Task<ActionResult<IEnumerable<TimeTracking>>> GetAllByStudentId(string studentId)
+        public ActionResult<IQueryable<TimeTracking>> GetAllByStudentId(string studentId, [FromQuery] PaginationDto pagination)
         {
-            var courseVisits = await _service.GetByStudentId(studentId);
+            var courseVisits = _service.GetByStudentId(studentId, pagination.PageNumber,pagination.PageSize);
             return Ok(courseVisits);
         }
         [HttpGet("course/{courseId}")]
-        public async Task<ActionResult<IEnumerable<TimeTracking>>> GetAllByCourseId(int courseId)
+        public  ActionResult<IQueryable<TimeTracking>> GetAllByCourseId(int courseId, [FromQuery] PaginationDto pagination)
         {
-            var courseVisits = await _service.GetByCourseId(courseId);
+            var courseVisits = _service.GetByCourseId(courseId, pagination.PageNumber, pagination.PageSize);
             return Ok(courseVisits);
         }
         [HttpGet ("recentStudent/{courseId}")]
         public async Task<ActionResult<List<TimeTracking>>> GetRecentStudent(int courseId)
         {
-            var students = await _service.GetLastfourStudentIds(courseId);
+            var students =  _service.GetLastfourStudentIds(courseId);
             return Ok(students);
         }
         [HttpGet("CourseCount/{courseId}")]
-        public async Task<ActionResult<Object>> GetCourseVisitCount(int courseId)
+        public ActionResult<Object> GetCourseVisitCount(int courseId, [FromQuery] PaginationDto pagination)
         {
-            var hourObject = await _service.GetCourseVisitCount(courseId);
+            var hourObject =  _service.GetCourseVisitCount(courseId, pagination.PageNumber, pagination.PageSize);
                 return Ok(hourObject);
         }
         
         [HttpGet("hours/{instructorId}")]
-        public async Task<ActionResult<long>> GetTotalHours(string instructorId)
+        public async Task<ActionResult<long>> GetTotalHours(string instructorId, [FromQuery] PaginationDto pagination)
         {
-            long hours = await _service.GetTotalHours(instructorId);
+            long hours = await _service.GetTotalHours(instructorId, pagination.PageNumber, pagination.PageSize);
             return Ok(hours);
         }
         

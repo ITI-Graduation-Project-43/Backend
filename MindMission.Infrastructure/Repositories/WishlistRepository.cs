@@ -17,10 +17,13 @@ namespace MindMission.Infrastructure.Repositories
             _dbSet = _context.Set<Wishlist>();
         }
 
-        public async Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId)
+        public IQueryable<Wishlist> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.CourseId == courseId && !w.IsDeleted).ToListAsync();
-            return wishlists.AsQueryable();
+            var wishlists = _dbSet.Include(e => e.Student)
+                .Include(e => e.Course).Where(w => w.CourseId == courseId && !w.IsDeleted)
+                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+            return wishlists;
         }
 
         public async Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId)
@@ -29,10 +32,13 @@ namespace MindMission.Infrastructure.Repositories
             return wishlists;
         }
 
-        public async Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId)
+        public IQueryable<Wishlist> GetAllByStudentIdAsync(string studentId, int pageNumber, int pageSize)
         {
-            var wishlists = await _dbSet.Include(e => e.Student).Include(e => e.Course).Where(w => w.StudentId == studentId && !w.IsDeleted).ToListAsync();
-            return wishlists.AsQueryable();
+            var wishlists = _dbSet.Include(e => e.Student)
+                .Include(e => e.Course).Where(w => w.StudentId == studentId && !w.IsDeleted)
+                .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize); ;
+            return wishlists;
         }
     }
 }

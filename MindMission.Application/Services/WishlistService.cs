@@ -17,9 +17,9 @@ namespace MindMission.Application.Services
 
 
 
-        public Task<IQueryable<Wishlist>> GetAllByCourseIdAsync(int courseId)
+        public IQueryable<Wishlist> GetAllByCourseIdAsync(int courseId, int pageNumber, int pageSize)
         {
-            return _context.GetAllByCourseIdAsync(courseId);
+            return _context.GetAllByCourseIdAsync(courseId, pageNumber, pageSize);
         }
 
         public Task<Wishlist> GetByCourseStudentAsync(int courseId, string studentId)
@@ -27,9 +27,9 @@ namespace MindMission.Application.Services
             return _context.GetByCourseStudentAsync(courseId, studentId);
         }
 
-        public Task<IQueryable<Wishlist>> GetAllByStudentIdAsync(string studentId)
+        public IQueryable<Wishlist> GetAllByStudentIdAsync(string studentId, int pageNumber, int pageSize)
         {
-            return _context.GetAllByStudentIdAsync(studentId);
+            return _context.GetAllByStudentIdAsync(studentId, pageNumber, pageSize);
         }
 
 
