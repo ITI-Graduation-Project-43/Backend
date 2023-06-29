@@ -28,7 +28,7 @@ namespace MindMission.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IQueryable<EnrollmentDto>>> GetAllEnrollment([FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponseWithIncludePagination(_EnrollmentService.GetAllAsync, pagination, "Enrollments", e => e.Course, e => e.Course.Instructor, e => e.Course.Category, e => e.Student);
+            return await GetEntitiesResponseWithIncludePagination(_EnrollmentService.GetAllAsync, _EnrollmentService.GetTotalCountAsync, pagination, "Enrollments", e => e.Course, e => e.Course.Instructor, e => e.Course.Category, e => e.Student);
         }
 
         [HttpGet("SuccessfulLearners")]

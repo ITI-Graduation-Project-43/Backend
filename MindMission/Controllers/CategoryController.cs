@@ -64,7 +64,7 @@ namespace MindMission.API.Controllers
         [HttpGet("ParentSubCategories/{parentId}")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesByParentId(int parentId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponsePagination(() => _categoryService.GetByParentIdAsync(parentId, pagination.PageNumber, pagination.PageSize), pagination, "Categories");
+            return await GetEntitiesResponsePagination(() => _categoryService.GetByParentIdAsync(parentId, pagination.PageNumber, pagination.PageSize), _categoryService.GetTotalCountAsync, pagination, "Categories");
         }
 
 

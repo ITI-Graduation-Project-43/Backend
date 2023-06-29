@@ -178,9 +178,9 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
-        protected async Task<ActionResult> GetEntitiesResponsePagination(Func<Task<IQueryable<TEntity>>> serviceMethod, Func<Task<int>> totalCountMethod, PaginationDto pagination, string entityName)
+        protected async Task<ActionResult> GetEntitiesResponsePagination(Func<IQueryable<TEntity>> serviceMethod, Func<Task<int>> totalCountMethod, PaginationDto pagination, string entityName)
         {
-            var entities = await serviceMethod.Invoke();
+            var entities = serviceMethod.Invoke();
 
             if (entities == null)
                 return NotFound(NotFoundResponse(entityName));
