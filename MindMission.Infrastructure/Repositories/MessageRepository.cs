@@ -26,7 +26,7 @@ namespace MindMission.Infrastructure.Repositories
             var entity = await _context.Messages.FindAsync(id);
             if (entity != null)
             {
-                entity.IsReplyed = true;
+                entity.IsReplied = true;
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
