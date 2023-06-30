@@ -20,6 +20,12 @@ namespace MindMission.Application.Repository_Interfaces
         Task<StudentCourseDto> GetCourseByIdWithStudentsAsync(int courseId, int studentsNumber);
 
         Task<int> GetCourseNumber();
+        Task<int> GetCourseRelatedNumber(int courseId);
+        Task<int> GetCourseNumberByCourseId(int courseId);
+        Task<int> GetCourseNumberByCourseIdAndInstructorId(int courseId, string instructorId);
+        Task<int> GetCourseNumberByCategoryId(int category);
+        Task<int> GetCourseNumberByInstructorId(string instructorId);
+
 
         Task<decimal> GetAvgRateCourses();
 

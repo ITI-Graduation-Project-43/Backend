@@ -1,4 +1,5 @@
-﻿using MindMission.Application.DTOs.PostDtos;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.DTOs.PostDtos;
 using MindMission.Domain.Models;
 
 namespace MindMission.Application.Interfaces.Repository
@@ -8,8 +9,13 @@ namespace MindMission.Application.Interfaces.Repository
         Task<int> GetTotalCountAsync();
 
         IQueryable<CourseFeedback> GetFeedbackByCourseId(int courseId, int pageNumber, int pageSize);
+        Task<int> GetTotalFeedbackCountByCourseId(int courseId);
+
         IQueryable<CourseFeedback> GetFeedbackByInstructorId(string instructorId, int pageNumber, int pageSize);
         IQueryable<CourseFeedback> GetFeedbackByCourseIdAndInstructorId(int courseId, string instructorId, int pageNumber, int pageSize);
+
+        Task<int> GetTotalFeedbackCountByCourseIdAndInstructorId(int courseId, string instructorId);
+
         Task<AddCourseFeedbackDto> GetFeedbackByCourseIdAndStudentId(int courseId, string studentId);
 
         IQueryable<CourseFeedback> GetTopCoursesRating(int numberOfCourses, int pageNumber, int pageSize);

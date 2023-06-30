@@ -37,7 +37,11 @@ namespace MindMission.Infrastructure.Repositories
 
             return CourseFeedbacks.AsQueryable();
         }
-
+        public async Task<int> GetTotalFeedbackCountByCourseId(int courseId)
+        {
+            return await _context.CourseFeedbacks
+                            .CountAsync(f => f.CourseId == courseId);
+        }
         public IQueryable<CourseFeedback> GetFeedbackByInstructorId(string instructorId, int pageNumber, int pageSize)
         {
             var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).Include(e => e.Instructor).Where(e => e.InstructorId == instructorId && !e.IsDeleted)
@@ -54,7 +58,11 @@ namespace MindMission.Infrastructure.Repositories
                                                         .Take(pageSize);
             return CourseFeedbacks.AsQueryable();
         }
-
+        public async Task<int> GetTotalFeedbackCountByCourseIdAndInstructorId(int courseId, string instructorId)
+        {
+            return await _context.CourseFeedbacks
+                            .CountAsync(f => f.CourseId == courseId && f.InstructorId == instructorId);
+        }
         public IQueryable<CourseFeedback> GetTopCoursesRating(int numberOfCourses, int pageNumber, int pageSize)
         {
             var CourseFeedbacks = _context.CourseFeedbacks.AsSplitQuery().Include(e => e.Student).Include(e => e.Course).Where(r => !r.IsDeleted).OrderByDescending(e => e.CourseRating).Take(numberOfCourses)

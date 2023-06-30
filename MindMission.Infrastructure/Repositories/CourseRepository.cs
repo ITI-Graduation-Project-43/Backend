@@ -34,7 +34,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                            .Where(c => !c.IsDeleted)
+                            .Where(c => !c.IsDeleted && c.Approved)
                             .ToListAsync();
 
             return courses.AsQueryable();
@@ -52,7 +52,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                            .Where(c => !c.IsDeleted)
+                            .Where(c => !c.IsDeleted && c.Approved)
                                 .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
 
@@ -80,7 +80,32 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<int> GetCourseNumber()
         {
-            return await _context.Courses.Where(e => e.Approved == true).CountAsync();
+            return await _context.Courses.Where(e => e.Approved).CountAsync();
+        }
+        public async Task<int> GetCourseNumberByCourseId(int courseId)
+        {
+            return await _context.Courses
+                            .CountAsync(c => c.Id == courseId && c.Approved);
+        }
+        public async Task<int> GetCourseRelatedNumber(int courseId)
+        {
+            var relatedCoursesQuery = await GetRelatedCoursesQueryAsync(courseId);
+            return await relatedCoursesQuery.CountAsync();
+        }
+        public async Task<int> GetCourseNumberByCategoryId(int categoryId)
+        {
+            return await _context.Courses
+                            .CountAsync(c => c.CategoryId == categoryId && c.Approved);
+        }
+        public async Task<int> GetCourseNumberByCourseIdAndInstructorId(int courseId, string instructorId)
+        {
+            return await _context.Courses
+                            .CountAsync(c => c.Id == courseId && c.InstructorId == instructorId && c.Approved);
+        }
+        public async Task<int> GetCourseNumberByInstructorId(string instructorId)
+        {
+            return await _context.Courses
+                            .CountAsync(c => c.InstructorId == instructorId && c.Approved);
         }
 
         public async Task<decimal> GetAvgRateCourses()
@@ -129,7 +154,7 @@ namespace MindMission.Infrastructure.Repositories
                             .ThenInclude(c => c.Parent)
                          .Where(c => c.CategoryId == categoryId ||
                                      c.Category.ParentId == categoryId ||
-                                     c.Category.Parent.ParentId == categoryId && !c.IsDeleted)
+                                     c.Category.Parent.ParentId == categoryId && !c.IsDeleted && c.Approved)
                           .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
 
@@ -162,7 +187,7 @@ namespace MindMission.Infrastructure.Repositories
                 .Where(c => (c.CategoryId == topicId ||
                             c.Category.ParentId == SubcategoryId ||
                             c.Category.Parent.ParentId == categoryId) &&
-                            c.Id != courseId && !c.IsDeleted).Skip((pageNumber - 1) * pageSize)
+                            c.Id != courseId && !c.IsDeleted && c.Approved).Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
 
             return relatedCourses.AsQueryable();
@@ -181,7 +206,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted)
+                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted && c.Approved)
                          .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
 
@@ -201,7 +226,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted)
+                         .Where(c => c.InstructorId == instructorId && !c.IsDeleted && c.Approved)
                          .ToListAsync();
 
             return courses.AsQueryable();
@@ -221,7 +246,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                         .Where(c => c.InstructorId == instructorId && c.Id != courseId && !c.IsDeleted)
+                         .Where(c => c.InstructorId == instructorId && c.Id != courseId && !c.IsDeleted && c.Approved)
                         .Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
 
@@ -242,7 +267,7 @@ namespace MindMission.Infrastructure.Repositories
                             .Include(c => c.Category)
                             .ThenInclude(c => c.Parent)
                             .ThenInclude(c => c.Parent)
-                            .Where(c => !c.IsDeleted)
+                            .Where(c => !c.IsDeleted && c.Approved)
                             .OrderByDescending(c => c.AvgReview)
                             .Take(topNumber).Skip((pageNumber - 1) * pageSize)
                                         .Take(pageSize);
@@ -258,7 +283,7 @@ namespace MindMission.Infrastructure.Repositories
                          .ThenInclude(c => c.Lessons)
                          .ThenInclude(l => l.Attachment)
                          .Include(c => c.Category)
-                         .Where(c => !c.IsDeleted)
+                         .Where(c => !c.IsDeleted && c.Approved)
                          .OrderByDescending(c => c.CreatedAt)
                          .Take(recentNumber)
                          .Skip((pageNumber - 1) * pageSize)
@@ -274,7 +299,7 @@ namespace MindMission.Infrastructure.Repositories
                         .Include(c => c.Instructor)
                         .Include(c => c.Enrollments)
                             .ThenInclude(e => e.Student)
-                        .Where(c => c.Id == courseId && !c.IsDeleted)
+                        .Where(c => c.Id == courseId && !c.IsDeleted && c.Approved)
                         .Select(c => new StudentCourseDto
                         {
                             CourseId = c.Id,
@@ -304,40 +329,27 @@ namespace MindMission.Infrastructure.Repositories
 
         public async Task<IQueryable<StudentCourseDto>> GetRelatedCoursesWithStudentsAsync(int courseId, int studentsNumber, int pageNumber, int pageSize)
         {
-            var course = await _context.Courses.FindAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
-            int topicId = course.CategoryId;
-            var subcategory = await _context.Categories
-                .Include(c => c.Parent)
-                    .ThenInclude(c => c.Parent)
-                 .Where(c => c.Id == topicId && !c.IsDeleted)
-                .FirstOrDefaultAsync() ?? throw new Exception($"SubCategory with id {topicId} not found.");
-            int subcategoryId = (int)subcategory.ParentId;
-            int categoryId = (int)subcategory.Parent.ParentId;
-
-            var relatedCourses = _context.Courses.AsSplitQuery()
-                                .Include(c => c.Instructor)
-                                .Include(c => c.Enrollments)
-                                    .ThenInclude(e => e.Student)
-                                .Where(c => (c.CategoryId == topicId ||
-                                            c.Category.ParentId == subcategoryId ||
-                                            c.Category.Parent.ParentId == categoryId) &&
-                                            c.Id != courseId && !c.IsDeleted)
-                                .Select(c => new StudentCourseDto
-                                {
-                                    CourseId = c.Id,
-                                    Price = c.Price,
-                                    CourseTitle = c.Title,
-                                    CourseDescription = c.ShortDescription,
-                                    CourseImageUrl = c.ImageUrl,
-                                    CourseAvgReview = c.AvgReview,
-                                    CourseNoOfStudents = c.NoOfStudents,
-                                    CourseDiscount = c.Discount,
-                                    CourseCategoryName = c.Category.Name,
-                                    InstructorId = c.Instructor.Id,
-                                    InstructorFirstName = c.Instructor.FirstName,
-                                    InstructorLastName = c.Instructor.LastName,
-                                    InstructorProfilePicture = c.Instructor.ProfilePicture ?? " ",
-                                    Student = c.Enrollments
+            var relatedCoursesQuery = await GetRelatedCoursesQueryAsync(courseId);
+            var relatedCourses = relatedCoursesQuery.AsSplitQuery()
+                .Include(c => c.Instructor)
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                                        .Select(c => new StudentCourseDto
+                                        {
+                                            CourseId = c.Id,
+                                            Price = c.Price,
+                                            CourseTitle = c.Title,
+                                            CourseDescription = c.ShortDescription,
+                                            CourseImageUrl = c.ImageUrl,
+                                            CourseAvgReview = c.AvgReview,
+                                            CourseNoOfStudents = c.NoOfStudents,
+                                            CourseDiscount = c.Discount,
+                                            CourseCategoryName = c.Category.Name,
+                                            InstructorId = c.Instructor.Id,
+                                            InstructorFirstName = c.Instructor.FirstName,
+                                            InstructorLastName = c.Instructor.LastName,
+                                            InstructorProfilePicture = c.Instructor.ProfilePicture ?? " ",
+                                            Student = c.Enrollments
                                         .Where(e => e.Student.ProfilePicture != null && !e.IsDeleted)
                                         .Select(e => new CustomStudentDto
                                         {
@@ -348,7 +360,7 @@ namespace MindMission.Infrastructure.Repositories
                                         })
                                         .Take(studentsNumber)
                                         .ToList()
-                                }).Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                                        }).Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             return relatedCourses.AsQueryable();
         }
@@ -359,7 +371,7 @@ namespace MindMission.Infrastructure.Repositories
                     .Include(c => c.Instructor)
                     .Include(c => c.Enrollments)
                         .ThenInclude(e => e.Student)
-                    .Where(c => c.InstructorId == instructorId && c.Id != courseId && !c.IsDeleted)
+                    .Where(c => c.InstructorId == instructorId && c.Id != courseId && !c.IsDeleted && c.Approved)
                     .Select(c => new StudentCourseDto
                     {
                         CourseId = c.Id,
@@ -595,5 +607,28 @@ namespace MindMission.Infrastructure.Repositories
 
             return courses.AsQueryable();
         }
+
+
+        private async Task<IQueryable<Course>> GetRelatedCoursesQueryAsync(int courseId)
+        {
+            var course = await _context.Courses.FindAsync(courseId) ?? throw new Exception($"Course with id {courseId} not found.");
+            int topicId = course.CategoryId;
+            var subcategory = await _context.Categories
+                .Include(c => c.Parent)
+                    .ThenInclude(c => c.Parent)
+                 .Where(c => c.Id == topicId && !c.IsDeleted)
+                .FirstOrDefaultAsync() ?? throw new Exception($"SubCategory with id {topicId} not found.");
+            int subcategoryId = (int)subcategory.ParentId;
+            int categoryId = (int)subcategory.Parent.ParentId;
+
+            var relatedCoursesQuery = _context.Courses
+                .Where(c => (c.CategoryId == topicId ||
+                            c.Category.ParentId == subcategoryId ||
+                            c.Category.Parent.ParentId == categoryId) &&
+                            c.Id != courseId && !c.IsDeleted && c.Approved);
+
+            return relatedCoursesQuery;
+        }
+
     }
 }

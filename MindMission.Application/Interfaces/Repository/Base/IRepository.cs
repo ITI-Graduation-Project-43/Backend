@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindMission.Domain.Common;
-using MindMission.Domain.Models;
 using System.Linq.Expressions;
 
 namespace MindMission.Application.Interfaces.Repository.Base

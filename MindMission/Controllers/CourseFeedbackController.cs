@@ -30,14 +30,13 @@ namespace MindMission.API.Controllers
         {
             var result = _courseFeedbackService.GetFeedbackByCourseId(id, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
+            var totalCount = await _courseFeedbackService.GetTotalFeedbackCountByCourseId(id);
 
 
             if (courseFeedbacks.Count > 0)
             {
-                var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbacks).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
@@ -53,9 +52,8 @@ namespace MindMission.API.Controllers
 
             if (courseFeedbacks.Count > 0)
             {
-                var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbacks).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithInstructorDto>()));
@@ -66,12 +64,11 @@ namespace MindMission.API.Controllers
         {
             var result = _courseFeedbackService.GetFeedbackByCourseIdAndInstructorId(CourseId, InstructorId, pagination.PageNumber, pagination.PageSize);
             var courseFeedbacks = result.ToList();
-            var totalCount = await _courseFeedbackService.GetTotalCountAsync();
+            var totalCount = await _courseFeedbackService.GetTotalFeedbackCountByCourseIdAndInstructorId(CourseId, InstructorId);
             if (courseFeedbacks.Count > 0)
             {
-                var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
                 string successMessage = string.Format(SuccessMessages.RetrievedSuccessfully, "Course Feedback");
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, successMessage, _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbacks).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             string message = string.Format(ErrorMessages.ResourceNotFound, "Course Feedback");
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, message, new List<CourseFeedbackWithCourseDto>()));
@@ -100,8 +97,7 @@ namespace MindMission.API.Controllers
 
             if (courseFeedbacks.Count > 0)
             {
-                var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfCourses} courses", _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfCourses} courses", _courseFeedbackMappingService.SendMapEntityToDtoWithCourse(courseFeedbacks).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No Courses", new List<CourseFeedbackWithCourseDto>()));
         }
@@ -115,8 +111,7 @@ namespace MindMission.API.Controllers
 
             if (courseFeedbacks.Count > 0)
             {
-                var courseFeedbakItems = courseFeedbacks.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
-                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfInstructors} instructors", _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbakItems).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
+                return Ok(ResponseObjectFactory.CreateResponseObject(true, $"The top {NumberOfInstructors} instructors", _courseFeedbackMappingService.SendMapEntityToDtoWithInstructor(courseFeedbacks).Result.ToList(), pagination.PageNumber, pagination.PageSize, totalCount));
             }
             return BadRequest(ResponseObjectFactory.CreateResponseObject(false, "No instructors", new List<CourseFeedbackWithInstructorDto>()));
         }

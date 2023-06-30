@@ -1,4 +1,5 @@
-﻿using MindMission.Application.DTOs.PostDtos;
+﻿using Microsoft.EntityFrameworkCore;
+using MindMission.Application.DTOs.PostDtos;
 using MindMission.Application.Interfaces.Repository;
 using MindMission.Application.Interfaces.Services;
 using MindMission.Domain.Models;
@@ -25,6 +26,10 @@ namespace MindMission.Application.Services
         {
             return CourseFeedbackRepository.GetFeedbackByCourseId(courseId, pageNumber, pageSize);
         }
+        public Task<int> GetTotalFeedbackCountByCourseId(int courseId)
+        {
+            return CourseFeedbackRepository.GetTotalFeedbackCountByCourseId(courseId);
+        }
         public IQueryable<CourseFeedback> GetFeedbackByInstructorId(string instructorId, int pageNumber, int pageSize)
         {
             return CourseFeedbackRepository.GetFeedbackByInstructorId(instructorId, pageNumber, pageSize);
@@ -34,7 +39,10 @@ namespace MindMission.Application.Services
         {
             return CourseFeedbackRepository.GetFeedbackByCourseIdAndInstructorId(courseId, instructorId, pageNumber, pageSize);
         }
-
+        public Task<int> GetTotalFeedbackCountByCourseIdAndInstructorId(int courseId, string instructorId)
+        {
+            return CourseFeedbackRepository.GetTotalFeedbackCountByCourseIdAndInstructorId(courseId, instructorId);
+        }
         public IQueryable<CourseFeedback> GetTopCoursesRating(int numberOfCourses, int pageNumber, int pageSize)
         {
             return CourseFeedbackRepository.GetTopCoursesRating(numberOfCourses, pageNumber, pageSize);

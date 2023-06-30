@@ -74,7 +74,7 @@ namespace MindMission.API.Controllers
         [HttpGet("category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByCategory(int categoryId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponsePagination(() => _courseService.GetAllByCategoryAsync(categoryId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetAllByCategoryAsync(categoryId, pagination.PageNumber, pagination.PageSize), () => _courseService.GetCourseNumberByCategoryId(categoryId), pagination, "Courses");
         }
 
         // GET: api/Course/{courseId}/related
@@ -88,7 +88,7 @@ namespace MindMission.API.Controllers
             if (entities == null)
                 return NotFound(NotFoundResponse("Courses"));
 
-            var totalCount = await _courseService.GetTotalCountAsync();
+            var totalCount = await _courseService.GetCourseNumberByCourseId(courseId);
 
             var entityDTOs = await MapEntitiesToDTOs(entities);
 
@@ -102,7 +102,7 @@ namespace MindMission.API.Controllers
         [HttpGet("instructor/{instructorId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByInstructor(string instructorId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponsePagination(() => _courseService.GetAllByInstructorAsync(instructorId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetAllByInstructorAsync(instructorId, pagination.PageNumber, pagination.PageSize), () => _courseService.GetCourseNumberByInstructorId(instructorId), pagination, "Courses");
         }
 
         // GET: api/Course/instructorOtherCourses/{instructorId}
@@ -110,7 +110,7 @@ namespace MindMission.API.Controllers
         [HttpGet("{courseId}/instructor/{instructorId}")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorOtherCourses(string instructorId, int courseId, [FromQuery] PaginationDto pagination)
         {
-            return await GetEntitiesResponsePagination(() => _courseService.GetInstructorOtherCourses(instructorId, courseId, pagination.PageNumber, pagination.PageSize), _courseService.GetTotalCountAsync, pagination, "Courses");
+            return await GetEntitiesResponsePagination(() => _courseService.GetInstructorOtherCourses(instructorId, courseId, pagination.PageNumber, pagination.PageSize), () => _courseService.GetCourseNumberByCourseIdAndInstructorId(courseId, instructorId), pagination, "Courses");
         }
 
         // GET: api/Course/top/{topNumber}
@@ -143,16 +143,15 @@ namespace MindMission.API.Controllers
             }
 
             var coursesList = courses.ToList();
-            var totalCount = await _courseService.GetTotalCountAsync();
+            var totalCount = await _courseService.GetCourseRelatedNumber(courseId);
 
             if (coursesList.Count == 0)
             {
                 return NotFound(NotFoundResponse("Courses"));
             }
-            var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
             string message = string.Format(SuccessMessages.RetrievedSuccessfully, "Courses");
-            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesPage, pagination.PageNumber, pagination.PageSize, totalCount);
+            var response = ResponseObjectFactory.CreateResponseObject(true, message, coursesList, pagination.PageNumber, pagination.PageSize, totalCount);
             return Ok(response);
         }
 
@@ -169,15 +168,14 @@ namespace MindMission.API.Controllers
             }
 
             var coursesList = courses.ToList();
-            var totalCount = await _courseService.GetTotalCountAsync();
+            var totalCount = await _courseService.GetCourseNumberByCourseIdAndInstructorId(courseId, instructorId);
 
             if (coursesList.Count == 0)
             {
                 return NotFound(NotFoundResponse("Courses"));
             }
-            var coursesPage = coursesList.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToList();
 
-            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesPage, pagination.PageNumber, pagination.PageSize, totalCount);
+            var response = ResponseObjectFactory.CreateResponseObject(true, string.Format(SuccessMessages.RetrievedSuccessfully, "Courses"), coursesList, pagination.PageNumber, pagination.PageSize, totalCount);
             return Ok(response);
         }
 

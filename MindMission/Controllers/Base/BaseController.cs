@@ -193,6 +193,8 @@ namespace MindMission.API.Controllers.Base
 
             return Ok(response);
         }
+
+
         protected async Task<ActionResult> GetEntitiesResponseEnumerable(Func<Task<IEnumerable<TEntity>>> serviceMethod, PaginationDto pagination, string entityName)
         {
             var entities = await serviceMethod.Invoke();

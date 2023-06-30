@@ -84,6 +84,28 @@ namespace MindMission.Application.Services
         {
             return await _context.GetFeatureThisWeekCourse(categoryId);
         }
+
+        public async Task<int> GetCourseNumberByCourseId(int courseId)
+        {
+            return await _context.GetCourseNumberByCourseId(courseId);
+        }
+        public async Task<int> GetCourseRelatedNumber(int courseId)
+        {
+            return await _context.GetCourseRelatedNumber(courseId);
+        }
+        public async Task<int> GetCourseNumberByCategoryId(int category)
+        {
+            return await _context.GetCourseNumberByCategoryId(category);
+        }
+        public async Task<int> GetCourseNumberByCourseIdAndInstructorId(int courseId, string instructorId)
+        {
+            return await _context.GetCourseNumberByCourseIdAndInstructorId(courseId, instructorId);
+        }
+
+        public async Task<int> GetCourseNumberByInstructorId(string instructorId)
+        {
+            return await _context.GetCourseNumberByInstructorId(instructorId);
+        }
         #endregion
 
 
