@@ -46,40 +46,36 @@ namespace MindMission.Infrastructure.Repositories
              
         }
 
-        public IQueryable<Student> GetLastfourStudentIds(int courseId )
+        public async Task<List<Student>> GetLastfourStudentIds(int courseId)
         {
             List<Student> students =  new List<Student>();
-            var timetracks =  _context.TimeTrackings
+            var timetracks = await _context.TimeTrackings
                                 .Where(cv => cv.CourseId == courseId && cv.EndTime != null)
-                                .OrderByDescending(s => s.EndTime);
+                                .OrderByDescending(s => s.EndTime).ToListAsync();
             var studentIds= timetracks.Select(cv => cv.StudentId).Distinct().Take(4);
             foreach (var stdId in studentIds)
             {
-                Student student = _context.Students.FirstOrDefault(s => s.Id == stdId);
+                Student student =  _context.Students.FirstOrDefault(s => s.Id == stdId);
                  students.Add(student);
             }
-            return students.AsQueryable();
+            return students;
         }
-        public IQueryable<TimeTracking> GetByCourseIds(List<int> courseIds, int pageNumber, int pageSize)
+
+        public async Task<IEnumerable<TimeTracking>> GetByCourseIds(List<int> courseIds)
         {
-            var timeTrackings =  _context.TimeTrackings
-                .Where(e => courseIds.Contains(e.CourseId)).Skip((pageNumber - 1) * pageSize)
-                                        .Take(pageSize); ;
+            var timeTrackings = await _context.TimeTrackings.Where(e => courseIds.Contains(e.CourseId)).ToListAsync();
             return timeTrackings;
         }
-        public IQueryable<TimeTracking> GetByCourseId(int CourseId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<TimeTracking>> GetByCourseId(int CourseId)
         {
-            var TimeTrackings = _context.TimeTrackings.Where(e => e.CourseId == CourseId)
-                .Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var TimeTrackings = _context.TimeTrackings.Where(e => e.CourseId == CourseId).ToList();
+                
             return TimeTrackings;
         }
 
-        public IQueryable<TimeTracking> GetByStudentId(string StudentId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<TimeTracking>> GetByStudentId(string StudentId)
         {
-            var TimeTrackings =  _context.TimeTrackings
-                .Where(e => e.StudentId == StudentId)
-                .Skip((pageNumber - 1) * pageSize)
-                                        .Take(pageSize); ;
+            var TimeTrackings = await _context.TimeTrackings.Where(e => e.StudentId == StudentId).ToListAsync();
             return  TimeTrackings;
         }
 

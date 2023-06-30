@@ -47,11 +47,11 @@ namespace MindMission.API.Controllers
             return await GetEntitiesResponsePagination(() => _wishlistService.GetAllByCourseIdAsync(CourseId, pagination.PageNumber, pagination.PageSize), _wishlistService.GetTotalCountAsync, pagination, "Wishlists");
         }
 
-        // GET: api/Wishlist/{wishlistId}
-        [HttpGet("{wishlistId}")]
-        public async Task<ActionResult<WishlistDto>> GetWishlistById(int wishlistId)
+        // GET: api/Wishlist/{Id}
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<WishlistDto>> GetWishlistById(int Id)
         {
-            return await GetEntityResponse(() => _wishlistService.GetByIdAsync(wishlistId, w => w.Course, w => w.Student), "Wishlist");
+            return await GetEntityResponse(() => _wishlistService.GetByIdAsync(Id, w => w.Course, w => w.Student), "Wishlist");
         }
 
         #endregion GET
