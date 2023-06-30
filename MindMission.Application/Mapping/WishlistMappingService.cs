@@ -17,15 +17,15 @@ namespace MindMission.Application.Mapping
             {
                 Id = wishlist.Id,
                 AddedDate = wishlist.AddedDate,
-                CourseId = wishlist.Course.Id,
-                CourseTitle = wishlist.Course.Title,
-                CourseDescription = wishlist.Course.Description,
-                CourseImageUrl = wishlist.Course.ImageUrl,
-                CoursePrice = wishlist.Course.Price,
-                CourseAvgReview = wishlist.Course.AvgReview,
-                CategoryName = wishlist.Course.Category?.Name,
-                StudentId = wishlist.Student.Id,
-                StudentName = wishlist.Student.FullName
+                CourseId = wishlist.Course?.Id ?? 0,
+                CourseTitle = wishlist.Course?.Title,
+                CourseDescription = wishlist.Course?.Description,
+                CourseImageUrl = wishlist.Course?.ImageUrl,
+                CoursePrice = wishlist.Course?.Price ?? 0,
+                CourseAvgReview = wishlist.Course?.AvgReview,
+                CategoryName = wishlist.Course?.Category?.Name,
+                StudentId = wishlist.Student?.Id,
+                StudentName = wishlist.Student?.FullName
             };
 
             return wishlistDto;
